@@ -229,8 +229,13 @@ export const ChatInput: FC<ChatInputProps> = ({}) => {
             className="hidden"
             type="file"
             onChange={e => {
-              if (!e.target.files) return
-              handleSelectDeviceFile(e.target.files[0])
+              const input = e.target
+              if (!input.files || input.files.length === 0) return
+
+              handleSelectDeviceFile(input.files[0])
+
+              // Clear the input value so the same file can be selected again after cancel
+              input.value = ""
             }}
             accept={filesToAccept}
           />
@@ -264,10 +269,10 @@ export const ChatInput: FC<ChatInputProps> = ({}) => {
             <IconSend
               className={cn(
                 "bg-primary text-secondary rounded p-1",
-                !userInput && "cursor-not-allowed opacity-50"
+                !userInput.trim() && "cursor-not-allowed opacity-50"
               )}
               onClick={() => {
-                if (!userInput) return
+                if (!userInput.trim()) return
 
                 handleSendMessage(userInput, chatMessages, false)
               }}
