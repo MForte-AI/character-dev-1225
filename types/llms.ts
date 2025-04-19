@@ -7,6 +7,7 @@ export type LLMID =
   | MistralLLMID
   | GroqLLMID
   | PerplexityLLMID
+  | PollinationsLLMID
 
 // OpenAI Models (UPDATED 5/13/24)
 export type OpenAILLMID =
@@ -60,6 +61,13 @@ export type PerplexityLLMID =
   | "sonar-small-online" // Sonar Small Online
   | "sonar-medium-chat" // Sonar Medium Chat
   | "sonar-medium-online" // Sonar Medium Online
+
+// Pollinations Models
+export type PollinationsLLMID =
+  | "pollinations-openai" // Pollinations OpenAI
+  | "pollinations-openai-large" // Pollinations OpenAI Large
+  | "pollinations-mistral" // Pollinations Mistral
+  | "pollinations-llama" // Pollinations Llama
 
 export interface LLM {
   modelId: LLMID
