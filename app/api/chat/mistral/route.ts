@@ -24,9 +24,31 @@ export async function POST(request: Request) {
       baseURL: "https://api.mistral.ai/v1"
     })
 
+    // Implement RAG (Retrieval-Augmented Generation)
+    const retrievedData = await fetch("/api/retrieval/retrieve", {
+      method: "POST",
+      body: JSON.stringify({
+        userInput: messages[messages.length - 1].content,
+        fileIds: [], // Add appropriate file IDs if needed
+        embeddingsProvider: "openai", // or "local" based on your setup
+        sourceCount: 5 // Adjust the source count as needed
+      })
+    })
+
+    const { results } = await retrievedData.json()
+
+    // Append retrieved data to the messages
+    const augmentedMessages = [
+      ...messages,
+      {
+        role: "system",
+        content: `Retrieved data: ${results.map(result => result.content).join("\n")}`
+      }
+    ]
+
     const response = await mistral.chat.completions.create({
-      model: chatSettings.model,
-      messages,
+      model: "mistral:7b-instruct-v0.3-q4_K_M",
+      messages: augmentedMessages,
       max_tokens:
         CHAT_SETTING_LIMITS[chatSettings.model].MAX_TOKEN_OUTPUT_LENGTH,
       stream: true
