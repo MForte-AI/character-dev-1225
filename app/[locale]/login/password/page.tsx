@@ -10,17 +10,17 @@ export default function ChangePasswordPage() {
 
   const router = useRouter()
 
-  useEffect(() => {
-    ;(async () => {
-      const session = (await supabase.auth.getSession()).data.session
+//  useEffect(() => {
+//    ;(async () => {
+//      const session = (await supabase.auth.getSession()).data.session
 
-      if (!session) {
-        router.push("/login")
-      } else {
-        setLoading(false)
-      }
-    })()
-  }, [])
+//      if (!session) {
+//        router.push("/login")
+//      } else {
+//        setLoading(false)
+//      }
+//    })()
+//  }, [])
 
   if (loading) {
     return null

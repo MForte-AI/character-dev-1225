@@ -61,43 +61,43 @@ export default function SetupPage() {
   const [perplexityAPIKey, setPerplexityAPIKey] = useState("")
   const [openrouterAPIKey, setOpenrouterAPIKey] = useState("")
 
-  useEffect(() => {
-    ;(async () => {
-      const session = (await supabase.auth.getSession()).data.session
+//  useEffect(() => {
+//    ;(async () => {
+//      const session = (await supabase.auth.getSession()).data.session
 
-      if (!session) {
-        return router.push("/login")
-      } else {
-        const user = session.user
+//      if (!session) {
+//        return router.push("/login")
+//      } else {
+//        const user = session.user
 
-        const profile = await getProfileByUserId(user.id)
-        setProfile(profile)
-        setUsername(profile.username)
+//        const profile = await getProfileByUserId(user.id)
+//        setProfile(profile)
+//        setUsername(profile.username)
 
-        if (!profile.has_onboarded) {
-          setLoading(false)
-        } else {
-          const data = await fetchHostedModels(profile)
+//        if (!profile.has_onboarded) {
+//          setLoading(false)
+//        } else {
+//          const data = await fetchHostedModels(profile)
 
-          if (!data) return
+//          if (!data) return
 
-          setEnvKeyMap(data.envKeyMap)
-          setAvailableHostedModels(data.hostedModels)
+//          setEnvKeyMap(data.envKeyMap)
+//          setAvailableHostedModels(data.hostedModels)
 
-          if (profile["openrouter_api_key"] || data.envKeyMap["openrouter"]) {
-            const openRouterModels = await fetchOpenRouterModels()
-            if (!openRouterModels) return
-            setAvailableOpenRouterModels(openRouterModels)
-          }
+//          if (profile["openrouter_api_key"] || data.envKeyMap["openrouter"]) {
+//            const openRouterModels = await fetchOpenRouterModels()
+//            if (!openRouterModels) return
+//            setAvailableOpenRouterModels(openRouterModels)
+//          }
 
-          const homeWorkspaceId = await getHomeWorkspaceByUserId(
-            session.user.id
-          )
-          return router.push(`/${homeWorkspaceId}/chat`)
-        }
-      }
-    })()
-  }, [])
+//          const homeWorkspaceId = await getHomeWorkspaceByUserId(
+//            session.user.id
+//          )
+//          return router.push(`/${homeWorkspaceId}/chat`)
+//        }
+//      }
+//    })()
+//  }, [])
 
   const handleShouldProceed = (proceed: boolean) => {
     if (proceed) {
@@ -111,11 +111,11 @@ export default function SetupPage() {
     }
   }
 
-  const handleSaveSetupSetting = async () => {
-    const session = (await supabase.auth.getSession()).data.session
-    if (!session) {
-      return router.push("/login")
-    }
+//  const handleSaveSetupSetting = async () => {
+//    const session = (await supabase.auth.getSession()).data.session
+//    if (!session) {
+//      return router.push("/login")
+//    }
 
     const user = session.user
     const profile = await getProfileByUserId(user.id)
