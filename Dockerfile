@@ -15,6 +15,8 @@ RUN npm run build
 # ---- Production ----
 FROM node:19-alpine AS production
 WORKDIR /app
+
+# Copy only what's necessary for production
 COPY --from=dependencies /app/node_modules ./node_modules
 COPY --from=build /app/.next ./.next
 COPY --from=build /app/public ./public
@@ -22,8 +24,8 @@ COPY --from=build /app/package*.json ./
 COPY --from=build /app/next.config.js ./next.config.js
 COPY --from=build /app/next-i18next.config.js ./next-i18next.config.js
 
-# Expose the port the app will run on
+# Expose the port the app runs on
 EXPOSE 3000
 
-# Start the application
+# Start the app
 CMD ["npm", "start"]
