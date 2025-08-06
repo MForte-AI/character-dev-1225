@@ -21,16 +21,18 @@ import { useChatHistoryHandler } from "./chat-hooks/use-chat-history"
 import { usePromptAndCommand } from "./chat-hooks/use-prompt-and-command"
 import { useSelectFileHandler } from "./chat-hooks/use-select-file-handler"
 
-interface ChatInputProps {}
+interface ChatInputProps { }
 
-export const ChatInput: FC<ChatInputProps> = ({}) => {
+export const ChatInput: FC<ChatInputProps> = ({ }) => {
   const { t } = useTranslation()
 
   useHotkey("l", () => {
     handleFocusChatInput()
   })
 
+
   const [isTyping, setIsTyping] = useState<boolean>(false)
+  const [useWebSearch, setUseWebSearch] = useState(false)
 
   const {
     isAssistantPickerOpen,
@@ -85,7 +87,7 @@ export const ChatInput: FC<ChatInputProps> = ({}) => {
     if (!isTyping && event.key === "Enter" && !event.shiftKey) {
       event.preventDefault()
       setIsPromptPickerOpen(false)
-      handleSendMessage(userInput, chatMessages, false)
+      handleSendMessage(userInput, chatMessages, false, useWebSearch)
     }
 
     // Consolidate conditions to avoid TypeScript error
@@ -209,6 +211,19 @@ export const ChatInput: FC<ChatInputProps> = ({}) => {
             </div>
           </div>
         )}
+        {/* ==== web‑search toggle ==== */}
+        <div className="flex items-center px-4">
+          <input
+            id="web-search-toggle"
+            type="checkbox"
+            checked={useWebSearch}
+            onChange={e => setUseWebSearch(e.target.checked)}
+            className="mr-2 size-4 rounded border-gray-300"
+          />
+          <label htmlFor="web-search-toggle" className="text-sm">
+            {t("Web search")}
+          </label>
+        </div>
       </div>
 
       <div className="border-input relative mt-3 flex min-h-[60px] w-full items-center justify-center rounded-xl border-2">
