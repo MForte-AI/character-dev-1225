@@ -66,7 +66,7 @@ export const ChatSettings: FC<ChatSettingsProps> = ({}) => {
 
   return (
     <Popover>
-      <PopoverTrigger>
+      <PopoverTrigger asChild>
         <Button
           ref={buttonRef}
           className="flex items-center space-x-2"
@@ -75,7 +75,6 @@ export const ChatSettings: FC<ChatSettingsProps> = ({}) => {
           <div className="max-w-[120px] truncate text-lg sm:max-w-[300px] lg:max-w-[500px]">
             {fullModel?.modelName || chatSettings.model}
           </div>
-
           <IconAdjustmentsHorizontal size={28} />
         </Button>
       </PopoverTrigger>

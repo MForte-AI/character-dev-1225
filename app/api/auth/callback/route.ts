@@ -10,7 +10,18 @@ export async function GET(request: Request) {
   if (code) {
     const cookieStore = cookies()
     const supabase = createClient(cookieStore)
-    await supabase.auth.exchangeCodeForSession(code)
+    const { data, error } = await supabase.auth.exchangeCodeForSession(code)
+
+    if (error) {
+      console.error("Error exchanging code:", error)
+    }
+
+    if (data?.session) {
+      // Redirect back to home page with tokens in query params
+      return NextResponse.redirect(
+        `${requestUrl.origin}/?access_token=${data.session.access_token}&refresh_token=${data.session.refresh_token}`
+      )
+    }
   }
 
   if (next) {

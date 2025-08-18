@@ -95,9 +95,9 @@ export default function WorkspaceLayout({ children }: WorkspaceLayoutProps) {
     setSelectedWorkspace(workspace)
 
     const assistantData = await getAssistantWorkspacesByWorkspaceId(workspaceId)
-    setAssistants(assistantData.assistants)
+    setAssistants(assistantData.assistant_workspaces)
 
-    for (const assistant of assistantData.assistants) {
+    for (const assistant of assistantData.assistant_workspaces) {
       let url = ""
 
       if (assistant.image_path) {

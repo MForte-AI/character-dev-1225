@@ -31,10 +31,11 @@ export default async function Login({
       }
     }
   )
+
   const session = (await supabase.auth.getSession()).data.session
 
   if (session) {
-    const { data: homeWorkspace, error } = await supabase
+    let { data: homeWorkspace, error: homeWorkspaceError } = await supabase
       .from("workspaces")
       .select("*")
       .eq("user_id", session.user.id)
@@ -42,10 +43,41 @@ export default async function Login({
       .single()
 
     if (!homeWorkspace) {
-      throw new Error(error.message)
+      const { data: newWorkspace, error: createError } = await supabase
+        .from("workspaces")
+        .insert([
+          { user_id: session.user.id, is_home: true, name: "Home Workspace" }
+        ])
+        .select()
+        .single()
+
+      if (!newWorkspace || createError) {
+        throw new Error(
+          createError?.message ||
+            homeWorkspaceError?.message ||
+            "Failed to create home workspace"
+        )
+      }
+
+      homeWorkspace = newWorkspace
     }
 
     return redirect(`/${homeWorkspace.id}/chat`)
+  }
+
+  const handleOAuthLogin = async () => {
+    "use server"
+
+    const origin = headers().get("origin")
+    const cookieStore = cookies()
+    const supabase = createClient(cookieStore)
+
+    await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${origin}/auth/callback`
+      }
+    })
   }
 
   const signIn = async (formData: FormData) => {
@@ -61,11 +93,13 @@ export default async function Login({
       password
     })
 
+    console.log("signIn result", data, error)
+
     if (error) {
-      return redirect(`/login?message=${error.message}`)
+      return redirect(`/login?message=${encodeURIComponent(error.message)}`)
     }
 
-    const { data: homeWorkspace, error: homeWorkspaceError } = await supabase
+    let { data: homeWorkspace, error: homeWorkspaceError } = await supabase
       .from("workspaces")
       .select("*")
       .eq("user_id", data.user.id)
@@ -73,73 +107,26 @@ export default async function Login({
       .single()
 
     if (!homeWorkspace) {
-      throw new Error(
-        homeWorkspaceError?.message || "An unexpected error occurred"
-      )
+      const { data: newWorkspace, error: createError } = await supabase
+        .from("workspaces")
+        .insert([
+          { user_id: data.user.id, is_home: true, name: "Home Workspace" }
+        ])
+        .select()
+        .single()
+
+      if (!newWorkspace || createError) {
+        throw new Error(
+          createError?.message ||
+            homeWorkspaceError?.message ||
+            "Failed to create home workspace"
+        )
+      }
+
+      homeWorkspace = newWorkspace
     }
 
     return redirect(`/${homeWorkspace.id}/chat`)
-  }
-
-  const getEnvVarOrEdgeConfigValue = async (name: string) => {
-    "use server"
-    if (process.env.EDGE_CONFIG) {
-      return await get<string>(name)
-    }
-
-    return process.env[name]
-  }
-
-  const signUp = async (formData: FormData) => {
-    "use server"
-
-    const email = formData.get("email") as string
-    const password = formData.get("password") as string
-
-    const emailDomainWhitelistPatternsString = await getEnvVarOrEdgeConfigValue(
-      "EMAIL_DOMAIN_WHITELIST"
-    )
-    const emailDomainWhitelist = emailDomainWhitelistPatternsString?.trim()
-      ? emailDomainWhitelistPatternsString?.split(",")
-      : []
-    const emailWhitelistPatternsString =
-      await getEnvVarOrEdgeConfigValue("EMAIL_WHITELIST")
-    const emailWhitelist = emailWhitelistPatternsString?.trim()
-      ? emailWhitelistPatternsString?.split(",")
-      : []
-
-    // If there are whitelist patterns, check if the email is allowed to sign up
-    if (emailDomainWhitelist.length > 0 || emailWhitelist.length > 0) {
-      const domainMatch = emailDomainWhitelist?.includes(email.split("@")[1])
-      const emailMatch = emailWhitelist?.includes(email)
-      if (!domainMatch && !emailMatch) {
-        return redirect(
-          `/login?message=Email ${email} is not allowed to sign up.`
-        )
-      }
-    }
-
-    const cookieStore = cookies()
-    const supabase = createClient(cookieStore)
-
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        // USE IF YOU WANT TO SEND EMAIL VERIFICATION, ALSO CHANGE TOML FILE
-        // emailRedirectTo: `${origin}/auth/callback`
-      }
-    })
-
-    if (error) {
-      console.error(error)
-      return redirect(`/login?message=${error.message}`)
-    }
-
-    return redirect("/setup")
-
-    // USE IF YOU WANT TO SEND EMAIL VERIFICATION, ALSO CHANGE TOML FILE
-    // return redirect("/login?message=Check email to continue sign in process")
   }
 
   const handleResetPassword = async (formData: FormData) => {
@@ -193,13 +180,6 @@ export default async function Login({
           Login
         </SubmitButton>
 
-        <SubmitButton
-          formAction={signUp}
-          className="border-foreground/20 mb-2 rounded-md border px-4 py-2"
-        >
-          Sign Up
-        </SubmitButton>
-
         <div className="text-muted-foreground mt-1 flex justify-center text-sm">
           <span className="mr-1">Forgot your password?</span>
           <button
@@ -215,6 +195,15 @@ export default async function Login({
             {searchParams.message}
           </p>
         )}
+      </form>
+
+      <form
+        action={handleOAuthLogin}
+        className="animate-in mt-4 flex justify-center"
+      >
+        <SubmitButton className="rounded-md bg-red-600 px-4 py-2 text-white">
+          Continue with Google
+        </SubmitButton>
       </form>
     </div>
   )

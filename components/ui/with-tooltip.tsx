@@ -1,33 +1,24 @@
-import { FC } from "react"
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger
-} from "./tooltip"
+"use client"
 
-interface WithTooltipProps {
-  display: React.ReactNode
-  trigger: React.ReactNode
+import React, { forwardRef } from "react"
+import { Tooltip, TooltipTrigger, TooltipContent } from "./tooltip"
 
-  delayDuration?: number
-  side?: "left" | "right" | "top" | "bottom"
-}
-
-export const WithTooltip: FC<WithTooltipProps> = ({
-  display,
-  trigger,
-
-  delayDuration = 500,
-  side = "right"
-}) => {
+export const WithTooltip = forwardRef<
+  HTMLButtonElement,
+  React.ComponentPropsWithoutRef<"button">
+>(({ children, ...props }, ref) => {
   return (
-    <TooltipProvider delayDuration={delayDuration}>
-      <Tooltip>
-        <TooltipTrigger>{trigger}</TooltipTrigger>
-
-        <TooltipContent side={side}>{display}</TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <button ref={ref} {...props}>
+          {children}
+        </button>
+      </TooltipTrigger>
+      {props["aria-label"] && (
+        <TooltipContent>{props["aria-label"]}</TooltipContent>
+      )}
+    </Tooltip>
   )
-}
+})
+
+WithTooltip.displayName = "WithTooltip"
