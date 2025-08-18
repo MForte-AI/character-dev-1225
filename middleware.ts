@@ -4,43 +4,58 @@ import { NextResponse, type NextRequest } from "next/server"
 import i18nConfig from "./i18nConfig"
 
 export async function middleware(request: NextRequest) {
-  const i18nResult = i18nRouter(request, i18nConfig)
-  if (i18nResult) return i18nResult
+const { pathname } = request.nextUrl;
 
-  try {
-    const { supabase, response } = createClient(request)
+// Allow public files and Next.js internals to pass without auth
+if (
+pathname === '/manifest.json' ||
+pathname === '/favicon.ico' ||
+pathname.startsWith('/_next/')
+) {
+return NextResponse.next();
+}
 
-    const session = await supabase.auth.getSession()
+// i18n routing
+const i18nResult = i18nRouter(request, i18nConfig)
+if (i18nResult) return i18nResult
 
-    const redirectToChat = session && request.nextUrl.pathname === "/"
+try {
+const { supabase, response } = createClient(request)
 
-    if (redirectToChat) {
-      const { data: homeWorkspace, error } = await supabase
-        .from("workspaces")
-        .select("*")
-        .eq("user_id", session.data.session?.user.id)
-        .eq("is_home", true)
-        .single()
+const session = await supabase.auth.getSession()
 
-      if (!homeWorkspace) {
-        throw new Error(error?.message)
-      }
+const redirectToChat = session && request.nextUrl.pathname === "/"
 
-      return NextResponse.redirect(
-        new URL(`/${homeWorkspace.id}/chat`, request.url)
-      )
-    }
+if (redirectToChat) {
+const { data: homeWorkspace, error } = await supabase
+.from("workspaces")
+.select("*")
+.eq("user_id", session.data.session?.user.id)
+.eq("is_home", true)
+.single()
 
-    return response
-  } catch (e) {
-    return NextResponse.next({
-      request: {
-        headers: request.headers
-      }
-    })
-  }
+if (!homeWorkspace) {
+throw new Error(error?.message)
+}
+
+return NextResponse.redirect(
+new URL(`/${homeWorkspace.id}/chat`, request.url)
+)
+}
+
+return response
+} catch (e) {
+return NextResponse.next({
+request: {
+headers: request.headers
+}
+})
+}
 }
 
 export const config = {
-  matcher: "/((?!api|static|.*\\..*|_next|auth).*)"
+matcher: [
+"/((?!api|static|.*\\..*|_next|auth|manifest.json|favicon.ico).*)"
+],
 }
+
