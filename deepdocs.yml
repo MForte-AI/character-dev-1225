@@ -1,0 +1,11 @@
+target:
+  - url: "docu.md"
+
+reinit: "unique-string-to-force-refresh-2"
+
+include:
+  - "app"
+  - "db"
+  - "lib"
+  - "components"
+  - "db/models.ts" 
