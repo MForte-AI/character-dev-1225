@@ -1,3 +1,5 @@
+"use client"
+
 import { ChatbotUIContext } from "@/context/context"
 import {
   PROFILE_CONTEXT_MAX,
@@ -24,6 +26,7 @@ import {
 import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { FC, useCallback, useContext, useRef, useState } from "react"
+import { useTranslation } from "react-i18next"
 import { toast } from "sonner"
 import { SIDEBAR_ICON_SIZE } from "../sidebar/sidebar-switcher"
 import { Button } from "../ui/button"
@@ -46,6 +49,8 @@ import { ThemeSwitcher } from "./theme-switcher"
 interface ProfileSettingsProps {}
 
 export const ProfileSettings: FC<ProfileSettingsProps> = ({}) => {
+  const { t } = useTranslation()
+
   const {
     profile,
     setProfile,
@@ -319,7 +324,7 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({}) => {
         <div className="grow overflow-auto">
           <SheetHeader>
             <SheetTitle className="flex items-center justify-between space-x-2">
-              <div>User Settings</div>
+              <div>{t("User Settings")}</div>
 
               <Button
                 tabIndex={-1}
@@ -328,28 +333,28 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({}) => {
                 onClick={handleSignOut}
               >
                 <IconLogout className="mr-1" size={20} />
-                Logout
+                {t("Logout")}
               </Button>
             </SheetTitle>
           </SheetHeader>
 
           <Tabs defaultValue="profile">
             <TabsList className="mt-4 grid w-full grid-cols-2">
-              <TabsTrigger value="profile">Profile</TabsTrigger>
-              <TabsTrigger value="keys">API Keys</TabsTrigger>
+              <TabsTrigger value="profile">{t("Profile")}</TabsTrigger>
+              <TabsTrigger value="keys">{t("API Keys")}</TabsTrigger>
             </TabsList>
 
             <TabsContent className="mt-4 space-y-4" value="profile">
               <div className="space-y-1">
                 <div className="flex items-center space-x-2">
-                  <Label>Username</Label>
+                  <Label>{t("Username")}</Label>
 
                   <div className="text-xs">
                     {username !== profile.username ? (
                       usernameAvailable ? (
-                        <div className="text-green-500">AVAILABLE</div>
+                        <div className="text-green-500">{t("AVAILABLE")}</div>
                       ) : (
-                        <div className="text-red-500">UNAVAILABLE</div>
+                        <div className="text-red-500">{t("UNAVAILABLE")}</div>
                       )
                     ) : null}
                   </div>
@@ -358,7 +363,7 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({}) => {
                 <div className="relative">
                   <Input
                     className="pr-10"
-                    placeholder="Username..."
+                    placeholder={t("Username...")}
                     value={username}
                     onChange={e => {
                       setUsername(e.target.value)
@@ -388,7 +393,7 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({}) => {
               </div>
 
               <div className="space-y-1">
-                <Label>Profile Image</Label>
+                <Label>{t("Profile Image")}</Label>
 
                 <ImagePicker
                   src={profileImageSrc}
@@ -401,10 +406,10 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({}) => {
               </div>
 
               <div className="space-y-1">
-                <Label>Chat Display Name</Label>
+                <Label>{t("Chat Display Name")}</Label>
 
                 <Input
-                  placeholder="Chat display name..."
+                  placeholder={t("Chat display name...")}
                   value={displayName}
                   onChange={e => setDisplayName(e.target.value)}
                   maxLength={PROFILE_DISPLAY_NAME_MAX}
@@ -413,14 +418,15 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({}) => {
 
               <div className="space-y-1">
                 <Label className="text-sm">
-                  What would you like the AI to know about you to provide better
-                  responses?
+                  {t(
+                    "What would you like the AI to know about you to provide better responses?"
+                  )}
                 </Label>
 
                 <TextareaAutosize
                   value={profileInstructions}
                   onValueChange={setProfileInstructions}
-                  placeholder="Profile context... (optional)"
+                  placeholder={t("Profile context... (optional)")}
                   minRows={6}
                   maxRows={10}
                 />
@@ -438,10 +444,10 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({}) => {
                   {useAzureOpenai
                     ? envKeyMap["azure"]
                       ? ""
-                      : "Azure OpenAI API Key"
+                      : t("Azure OpenAI API Key")
                     : envKeyMap["openai"]
                       ? ""
-                      : "OpenAI API Key"}
+                      : t("OpenAI API Key")}
 
                   <Button
                     className={cn(
@@ -454,18 +460,18 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({}) => {
                     onClick={() => setUseAzureOpenai(!useAzureOpenai)}
                   >
                     {useAzureOpenai
-                      ? "Switch To Standard OpenAI"
-                      : "Switch To Azure OpenAI"}
+                      ? t("Switch To Standard OpenAI")
+                      : t("Switch To Azure OpenAI")}
                   </Button>
                 </Label>
 
                 {useAzureOpenai ? (
                   <>
                     {envKeyMap["azure"] ? (
-                      <Label>Azure OpenAI API key set by admin.</Label>
+                      <Label>{t("Azure OpenAI API key set by admin.")}</Label>
                     ) : (
                       <Input
-                        placeholder="Azure OpenAI API Key"
+                        placeholder={t("Azure OpenAI API Key")}
                         type="password"
                         value={azureOpenaiAPIKey}
                         onChange={e => setAzureOpenaiAPIKey(e.target.value)}
@@ -475,10 +481,10 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({}) => {
                 ) : (
                   <>
                     {envKeyMap["openai"] ? (
-                      <Label>OpenAI API key set by admin.</Label>
+                      <Label>{t("OpenAI API key set by admin.")}</Label>
                     ) : (
                       <Input
-                        placeholder="OpenAI API Key"
+                        placeholder={t("OpenAI API Key")}
                         type="password"
                         value={openaiAPIKey}
                         onChange={e => setOpenaiAPIKey(e.target.value)}
@@ -495,11 +501,11 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({}) => {
                       <div className="space-y-1">
                         {envKeyMap["azure_openai_endpoint"] ? (
                           <Label className="text-xs">
-                            Azure endpoint set by admin.
+                            {t("Azure endpoint set by admin.")}
                           </Label>
                         ) : (
                           <>
-                            <Label>Azure Endpoint</Label>
+                            <Label>{t("Azure Endpoint")}</Label>
 
                             <Input
                               placeholder="https://your-endpoint.openai.azure.com"
@@ -517,14 +523,20 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({}) => {
                       <div className="space-y-1">
                         {envKeyMap["azure_gpt_35_turbo_name"] ? (
                           <Label className="text-xs">
-                            Azure GPT-3.5 Turbo deployment name set by admin.
+                            {t(
+                              "Azure GPT-3.5 Turbo deployment name set by admin."
+                            )}
                           </Label>
                         ) : (
                           <>
-                            <Label>Azure GPT-3.5 Turbo Deployment Name</Label>
+                            <Label>
+                              {t("Azure GPT-3.5 Turbo Deployment Name")}
+                            </Label>
 
                             <Input
-                              placeholder="Azure GPT-3.5 Turbo Deployment Name"
+                              placeholder={t(
+                                "Azure GPT-3.5 Turbo Deployment Name"
+                              )}
                               value={azureOpenai35TurboID}
                               onChange={e =>
                                 setAzureOpenai35TurboID(e.target.value)
@@ -539,14 +551,20 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({}) => {
                       <div className="space-y-1">
                         {envKeyMap["azure_gpt_45_turbo_name"] ? (
                           <Label className="text-xs">
-                            Azure GPT-4.5 Turbo deployment name set by admin.
+                            {t(
+                              "Azure GPT-4.5 Turbo deployment name set by admin."
+                            )}
                           </Label>
                         ) : (
                           <>
-                            <Label>Azure GPT-4.5 Turbo Deployment Name</Label>
+                            <Label>
+                              {t("Azure GPT-4.5 Turbo Deployment Name")}
+                            </Label>
 
                             <Input
-                              placeholder="Azure GPT-4.5 Turbo Deployment Name"
+                              placeholder={t(
+                                "Azure GPT-4.5 Turbo Deployment Name"
+                              )}
                               value={azureOpenai45TurboID}
                               onChange={e =>
                                 setAzureOpenai45TurboID(e.target.value)
@@ -561,14 +579,20 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({}) => {
                       <div className="space-y-1">
                         {envKeyMap["azure_gpt_45_vision_name"] ? (
                           <Label className="text-xs">
-                            Azure GPT-4.5 Vision deployment name set by admin.
+                            {t(
+                              "Azure GPT-4.5 Vision deployment name set by admin."
+                            )}
                           </Label>
                         ) : (
                           <>
-                            <Label>Azure GPT-4.5 Vision Deployment Name</Label>
+                            <Label>
+                              {t("Azure GPT-4.5 Vision Deployment Name")}
+                            </Label>
 
                             <Input
-                              placeholder="Azure GPT-4.5 Vision Deployment Name"
+                              placeholder={t(
+                                "Azure GPT-4.5 Vision Deployment Name"
+                              )}
                               value={azureOpenai45VisionID}
                               onChange={e =>
                                 setAzureOpenai45VisionID(e.target.value)
@@ -583,14 +607,20 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({}) => {
                       <div className="space-y-1">
                         {envKeyMap["azure_embeddings_name"] ? (
                           <Label className="text-xs">
-                            Azure Embeddings deployment name set by admin.
+                            {t(
+                              "Azure Embeddings deployment name set by admin."
+                            )}
                           </Label>
                         ) : (
                           <>
-                            <Label>Azure Embeddings Deployment Name</Label>
+                            <Label>
+                              {t("Azure Embeddings Deployment Name")}
+                            </Label>
 
                             <Input
-                              placeholder="Azure Embeddings Deployment Name"
+                              placeholder={t(
+                                "Azure Embeddings Deployment Name"
+                              )}
                               value={azureEmbeddingsID}
                               onChange={e =>
                                 setAzureEmbeddingsID(e.target.value)
@@ -606,14 +636,14 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({}) => {
                     <div className="space-y-1">
                       {envKeyMap["openai_organization_id"] ? (
                         <Label className="text-xs">
-                          OpenAI Organization ID set by admin.
+                          {t("OpenAI Organization ID set by admin.")}
                         </Label>
                       ) : (
                         <>
-                          <Label>OpenAI Organization ID</Label>
+                          <Label>{t("OpenAI Organization ID")}</Label>
 
                           <Input
-                            placeholder="OpenAI Organization ID (optional)"
+                            placeholder={t("OpenAI Organization ID (optional)")}
                             disabled={
                               !!process.env.NEXT_PUBLIC_OPENAI_ORGANIZATION_ID
                             }
@@ -630,12 +660,12 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({}) => {
 
               <div className="space-y-1">
                 {envKeyMap["anthropic"] ? (
-                  <Label>Anthropic API key set by admin.</Label>
+                  <Label>{t("Anthropic API key set by admin.")}</Label>
                 ) : (
                   <>
-                    <Label>Anthropic API Key</Label>
+                    <Label>{t("Anthropic API Key")}</Label>
                     <Input
-                      placeholder="Anthropic API Key"
+                      placeholder={t("Anthropic API Key")}
                       type="password"
                       value={anthropicAPIKey}
                       onChange={e => setAnthropicAPIKey(e.target.value)}
@@ -646,12 +676,12 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({}) => {
 
               <div className="space-y-1">
                 {envKeyMap["google"] ? (
-                  <Label>Google Gemini API key set by admin.</Label>
+                  <Label>{t("Google Gemini API key set by admin.")}</Label>
                 ) : (
                   <>
-                    <Label>Google Gemini API Key</Label>
+                    <Label>{t("Google Gemini API Key")}</Label>
                     <Input
-                      placeholder="Google Gemini API Key"
+                      placeholder={t("Google Gemini API Key")}
                       type="password"
                       value={googleGeminiAPIKey}
                       onChange={e => setGoogleGeminiAPIKey(e.target.value)}
@@ -662,12 +692,12 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({}) => {
 
               <div className="space-y-1">
                 {envKeyMap["mistral"] ? (
-                  <Label>Mistral API key set by admin.</Label>
+                  <Label>{t("Mistral API key set by admin.")}</Label>
                 ) : (
                   <>
-                    <Label>Mistral API Key</Label>
+                    <Label>{t("Mistral API Key")}</Label>
                     <Input
-                      placeholder="Mistral API Key"
+                      placeholder={t("Mistral API Key")}
                       type="password"
                       value={mistralAPIKey}
                       onChange={e => setMistralAPIKey(e.target.value)}
@@ -678,12 +708,12 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({}) => {
 
               <div className="space-y-1">
                 {envKeyMap["groq"] ? (
-                  <Label>Groq API key set by admin.</Label>
+                  <Label>{t("Groq API key set by admin.")}</Label>
                 ) : (
                   <>
-                    <Label>Groq API Key</Label>
+                    <Label>{t("Groq API Key")}</Label>
                     <Input
-                      placeholder="Groq API Key"
+                      placeholder={t("Groq API Key")}
                       type="password"
                       value={groqAPIKey}
                       onChange={e => setGroqAPIKey(e.target.value)}
@@ -694,12 +724,12 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({}) => {
 
               <div className="space-y-1">
                 {envKeyMap["perplexity"] ? (
-                  <Label>Perplexity API key set by admin.</Label>
+                  <Label>{t("Perplexity API key set by admin.")}</Label>
                 ) : (
                   <>
-                    <Label>Perplexity API Key</Label>
+                    <Label>{t("Perplexity API Key")}</Label>
                     <Input
-                      placeholder="Perplexity API Key"
+                      placeholder={t("Perplexity API Key")}
                       type="password"
                       value={perplexityAPIKey}
                       onChange={e => setPerplexityAPIKey(e.target.value)}
@@ -710,12 +740,12 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({}) => {
 
               <div className="space-y-1">
                 {envKeyMap["openrouter"] ? (
-                  <Label>OpenRouter API key set by admin.</Label>
+                  <Label>{t("OpenRouter API key set by admin.")}</Label>
                 ) : (
                   <>
-                    <Label>OpenRouter API Key</Label>
+                    <Label>{t("OpenRouter API Key")}</Label>
                     <Input
-                      placeholder="OpenRouter API Key"
+                      placeholder={t("OpenRouter API Key")}
                       type="password"
                       value={openrouterAPIKey}
                       onChange={e => setOpenrouterAPIKey(e.target.value)}
@@ -734,7 +764,9 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({}) => {
             <WithTooltip
               display={
                 <div>
-                  Download Chatbot UI 1.0 data as JSON. Import coming soon!
+                  {t(
+                    "Download Chatbot UI 1.0 data as JSON. Import coming soon!"
+                  )}
                 </div>
               }
               trigger={
@@ -749,11 +781,11 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({}) => {
 
           <div className="ml-auto space-x-2">
             <Button variant="ghost" onClick={() => setIsOpen(false)}>
-              Cancel
+              {t("Cancel")}
             </Button>
 
             <Button ref={buttonRef} onClick={handleSave}>
-              Save
+              {t("Save")}
             </Button>
           </div>
         </div>

@@ -1,3 +1,5 @@
+"use client"
+
 import { IconMessage } from "@tabler/icons-react"
 import { FC, useState } from "react"
 import {
@@ -10,10 +12,12 @@ import {
 } from "../ui/sheet"
 import { WithTooltip } from "../ui/with-tooltip"
 import { MESSAGE_ICON_SIZE } from "./message-actions"
+import { useTranslation } from "react-i18next"
 
 interface MessageRepliesProps {}
 
 export const MessageReplies: FC<MessageRepliesProps> = ({}) => {
+  const { t } = useTranslation()
   const [isOpen, setIsOpen] = useState(false)
 
   return (
@@ -22,7 +26,7 @@ export const MessageReplies: FC<MessageRepliesProps> = ({}) => {
         <WithTooltip
           delayDuration={1000}
           side="bottom"
-          display={<div>View Replies</div>}
+          display={<div>{t("View Replies")}</div>}
           trigger={
             <div
               className="relative cursor-pointer hover:opacity-50"
@@ -39,10 +43,11 @@ export const MessageReplies: FC<MessageRepliesProps> = ({}) => {
 
       <SheetContent>
         <SheetHeader>
-          <SheetTitle>Are you sure absolutely sure?</SheetTitle>
+          <SheetTitle>{t("Are you sure absolutely sure?")}</SheetTitle>
           <SheetDescription>
-            This action cannot be undone. This will permanently delete your
-            account and remove your data from our servers.
+            {t(
+              "This action cannot be undone. This will permanently delete your account and remove your data from our servers."
+            )}
           </SheetDescription>
         </SheetHeader>
       </SheetContent>

@@ -1,3 +1,5 @@
+"use client"
+
 import { cn } from "@/lib/utils"
 import mistral from "@/public/providers/mistral.png"
 import groq from "@/public/providers/groq.png"
@@ -7,6 +9,7 @@ import { IconSparkles } from "@tabler/icons-react"
 import { useTheme } from "next-themes"
 import Image from "next/image"
 import { FC, HTMLAttributes } from "react"
+import { useTranslation } from "react-i18next"
 import { AnthropicSVG } from "../icons/anthropic-svg"
 import { GoogleSVG } from "../icons/google-svg"
 import { OpenAISVG } from "../icons/openai-svg"
@@ -23,6 +26,7 @@ export const ModelIcon: FC<ModelIconProps> = ({
   width,
   ...props
 }) => {
+  const { t } = useTranslation()
   const { theme } = useTheme()
 
   switch (provider as ModelProvider) {
@@ -46,7 +50,7 @@ export const ModelIcon: FC<ModelIconProps> = ({
             theme === "dark" ? "bg-white" : "border-DEFAULT border-black"
           )}
           src={mistral.src}
-          alt="Mistral"
+          alt={"Mistral"}
           width={width}
           height={height}
         />
@@ -59,7 +63,7 @@ export const ModelIcon: FC<ModelIconProps> = ({
             theme === "dark" ? "bg-white" : "border-DEFAULT border-black"
           )}
           src={groq.src}
-          alt="Groq"
+          alt={"Groq"}
           width={width}
           height={height}
         />
@@ -96,7 +100,7 @@ export const ModelIcon: FC<ModelIconProps> = ({
             theme === "dark" ? "bg-white" : "border-DEFAULT border-black"
           )}
           src={perplexity.src}
-          alt="Mistral"
+          alt={t("Mistral")}
           width={width}
           height={height}
         />

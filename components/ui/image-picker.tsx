@@ -1,5 +1,8 @@
+"use client"
+
 import Image from "next/image"
 import { ChangeEvent, FC, useState } from "react"
+import { useTranslation } from "react-i18next"
 import { toast } from "sonner"
 import { Input } from "./input"
 
@@ -20,6 +23,8 @@ const ImagePicker: FC<ImagePickerProps> = ({
   width = 200,
   height = 200
 }) => {
+  const { t } = useTranslation()
+
   const [previewSrc, setPreviewSrc] = useState<string>(src)
   const [previewImage, setPreviewImage] = useState<File | null>(image)
 
@@ -28,7 +33,7 @@ const ImagePicker: FC<ImagePickerProps> = ({
       const file = e.target.files[0]
 
       if (file.size > 6000000) {
-        toast.error("Image must be less than 6MB!")
+        toast.error(t("Image must be less than 6MB!"))
         return
       }
 
@@ -42,7 +47,7 @@ const ImagePicker: FC<ImagePickerProps> = ({
         const ctx = canvas.getContext("2d")
 
         if (!ctx) {
-          toast.error("Unable to create canvas context.")
+          toast.error(t("Unable to create canvas context."))
           return
         }
 
@@ -81,7 +86,7 @@ const ImagePicker: FC<ImagePickerProps> = ({
           height={width}
           width={width}
           src={previewSrc}
-          alt={"Image"}
+          alt={t("Image")}
         />
       )}
 

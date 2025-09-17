@@ -1,8 +1,11 @@
+"use client"
+
 import { LLM_LIST } from "@/lib/models/llm/llm-list"
 import { Tables } from "@/supabase/types"
 import { IconCircleCheckFilled, IconRobotFace } from "@tabler/icons-react"
 import Image from "next/image"
 import { FC } from "react"
+import { useTranslation } from "react-i18next"
 import { ModelIcon } from "../models/model-icon"
 import { DropdownMenuItem } from "../ui/dropdown-menu"
 
@@ -21,6 +24,7 @@ export const QuickSettingOption: FC<QuickSettingOptionProps> = ({
   onSelect,
   image
 }) => {
+  const { t } = useTranslation()
   const modelDetails = LLM_LIST.find(model => model.modelId === item.model)
 
   return (
@@ -41,7 +45,7 @@ export const QuickSettingOption: FC<QuickSettingOptionProps> = ({
             style={{ width: "32px", height: "32px" }}
             className="rounded"
             src={image}
-            alt="Assistant"
+            alt={t("Assistant")}
             width={32}
             height={32}
           />

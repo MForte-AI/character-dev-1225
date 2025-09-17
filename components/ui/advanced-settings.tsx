@@ -1,9 +1,12 @@
+"use client"
+
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger
 } from "@/components/ui/collapsible"
 import { IconChevronDown, IconChevronRight } from "@tabler/icons-react"
+import { useTranslation } from "react-i18next"
 import { FC, useState } from "react"
 
 interface AdvancedSettingsProps {
@@ -11,6 +14,8 @@ interface AdvancedSettingsProps {
 }
 
 export const AdvancedSettings: FC<AdvancedSettingsProps> = ({ children }) => {
+  const { t } = useTranslation()
+
   const [isOpen, setIsOpen] = useState(
     false
     // localStorage.getItem("advanced-settings-open") === "true"
@@ -25,7 +30,7 @@ export const AdvancedSettings: FC<AdvancedSettingsProps> = ({ children }) => {
     <Collapsible className="pt-2" open={isOpen} onOpenChange={handleOpenChange}>
       <CollapsibleTrigger className="hover:opacity-50">
         <div className="flex items-center font-bold">
-          <div className="mr-1">Advanced Settings</div>
+          <div className="mr-1">{t("Advanced Settings")}</div>
           {isOpen ? (
             <IconChevronDown size={20} stroke={3} />
           ) : (

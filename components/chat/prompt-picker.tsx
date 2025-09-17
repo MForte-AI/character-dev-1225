@@ -1,6 +1,9 @@
+"use client"
+
 import { ChatbotUIContext } from "@/context/context"
 import { Tables } from "@/supabase/types"
 import { FC, useContext, useEffect, useRef, useState } from "react"
+import { useTranslation } from "react-i18next"
 import { Button } from "../ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "../ui/dialog"
 import { Label } from "../ui/label"
@@ -10,6 +13,8 @@ import { usePromptAndCommand } from "./chat-hooks/use-prompt-and-command"
 interface PromptPickerProps {}
 
 export const PromptPicker: FC<PromptPickerProps> = ({}) => {
+  const { t } = useTranslation()
+
   const {
     prompts,
     isPromptPickerOpen,
@@ -144,7 +149,7 @@ export const PromptPicker: FC<PromptPickerProps> = ({}) => {
             >
               <DialogContent onKeyDown={handleKeydownPromptVariables}>
                 <DialogHeader>
-                  <DialogTitle>Enter Prompt Variables</DialogTitle>
+                  <DialogTitle>{t("Enter Prompt Variables")}</DialogTitle>
                 </DialogHeader>
 
                 <div className="mt-2 space-y-6">
@@ -153,7 +158,9 @@ export const PromptPicker: FC<PromptPickerProps> = ({}) => {
                       <Label>{variable.name}</Label>
 
                       <TextareaAutosize
-                        placeholder={`Enter a value for ${variable.name}...`}
+                        placeholder={t("Enter a value for {variableName}...", {
+                          variableName: variable.name
+                        })}
                         value={variable.value}
                         onValueChange={value => {
                           const newPromptVariables = [...promptVariables]
@@ -175,18 +182,18 @@ export const PromptPicker: FC<PromptPickerProps> = ({}) => {
                     size="sm"
                     onClick={handleCancelPromptVariables}
                   >
-                    Cancel
+                    {t("Cancel")}
                   </Button>
 
                   <Button size="sm" onClick={handleSubmitPromptVariables}>
-                    Submit
+                    {t("Submit")}
                   </Button>
                 </div>
               </DialogContent>
             </Dialog>
           ) : filteredPrompts.length === 0 ? (
             <div className="text-md flex h-14 cursor-pointer items-center justify-center italic hover:opacity-50">
-              No matching prompts.
+              {t("No matching prompts.")}
             </div>
           ) : (
             filteredPrompts.map((prompt, index) => (

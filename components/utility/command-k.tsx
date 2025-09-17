@@ -1,7 +1,10 @@
+"use client"
+
 import { ChatbotUIContext } from "@/context/context"
 import useHotkey from "@/lib/hooks/use-hotkey"
 import { IconLoader2, IconSend } from "@tabler/icons-react"
 import { FC, useContext, useState } from "react"
+import { useTranslation } from "react-i18next"
 import { Dialog, DialogContent } from "../ui/dialog"
 import { TextareaAutosize } from "../ui/textarea-autosize"
 
@@ -10,6 +13,7 @@ interface CommandKProps {}
 export const CommandK: FC<CommandKProps> = ({}) => {
   useHotkey("k", () => setIsOpen(prevState => !prevState))
 
+  const { t } = useTranslation()
   const { profile } = useContext(ChatbotUIContext)
 
   const [isOpen, setIsOpen] = useState(false)
@@ -51,15 +55,15 @@ export const CommandK: FC<CommandKProps> = ({}) => {
             <div className="space-y-2">
               <div>{content}</div>
 
-              <div>turn dark mode on.</div>
-              <div>find my sql chat</div>
-              <div>i need a new assistant</div>
-              <div>start a chat with my 2024 resolutions file</div>
+              <div>{t("turn dark mode on.")}</div>
+              <div>{t("find my sql chat")}</div>
+              <div>{t("i need a new assistant")}</div>
+              <div>{t("start a chat with my 2024 resolutions file")}</div>
 
               <div className="border-input relative flex min-h-[50px] w-full items-center justify-center rounded-xl border-2">
                 <TextareaAutosize
                   className="ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring text-md flex w-full resize-none rounded-md border-none bg-transparent px-3 py-2 pr-14 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-                  placeholder="create a prompt for writing sql code"
+                  placeholder={t("create a prompt for writing sql code")}
                   value={value}
                   onValueChange={setValue}
                 />
@@ -78,7 +82,9 @@ export const CommandK: FC<CommandKProps> = ({}) => {
               </div>
             </div>
           ) : (
-            <div>Add your OpenAI API key in the settings to unlock CMD+K.</div>
+            <div>
+              {t("Add your OpenAI API key in the settings to unlock CMD+K.")}
+            </div>
           )}
         </DialogContent>
       </Dialog>

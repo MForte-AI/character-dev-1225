@@ -1,3 +1,5 @@
+"use client"
+
 import { ModelIcon } from "@/components/models/model-icon"
 import { WithTooltip } from "@/components/ui/with-tooltip"
 import { ChatbotUIContext } from "@/context/context"
@@ -9,6 +11,7 @@ import { IconRobotFace } from "@tabler/icons-react"
 import Image from "next/image"
 import { useParams, useRouter } from "next/navigation"
 import { FC, useContext, useRef } from "react"
+import { useTranslation } from "react-i18next"
 import { DeleteChat } from "./delete-chat"
 import { UpdateChat } from "./update-chat"
 
@@ -17,6 +20,8 @@ interface ChatItemProps {
 }
 
 export const ChatItem: FC<ChatItemProps> = ({ chat }) => {
+  const { t } = useTranslation()
+
   const {
     selectedWorkspace,
     selectedChat,
@@ -70,7 +75,7 @@ export const ChatItem: FC<ChatItemProps> = ({ chat }) => {
             style={{ width: "30px", height: "30px" }}
             className="rounded"
             src={assistantImage}
-            alt="Assistant image"
+            alt={t("Assistant image")}
             width={30}
             height={30}
           />

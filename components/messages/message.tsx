@@ -1,3 +1,5 @@
+"use client"
+
 import { useChatHandler } from "@/components/chat/chat-hooks/use-chat-handler"
 import { ChatbotUIContext } from "@/context/context"
 import { LLM_LIST } from "@/lib/models/llm/llm-list"
@@ -15,6 +17,7 @@ import {
 } from "@tabler/icons-react"
 import Image from "next/image"
 import { FC, useContext, useEffect, useRef, useState } from "react"
+import { useTranslation } from "react-i18next"
 import { ModelIcon } from "../models/model-icon"
 import { Button } from "../ui/button"
 import { FileIcon } from "../ui/file-icon"
@@ -45,6 +48,8 @@ export const Message: FC<MessageProps> = ({
   onCancelEdit,
   onSubmitEdit
 }) => {
+  const { t } = useTranslation()
+
   const {
     assistants,
     profile,
@@ -209,7 +214,7 @@ export const Message: FC<MessageProps> = ({
                 size={ICON_SIZE}
               />
 
-              <div className="text-lg font-semibold">Prompt</div>
+              <div className="text-lg font-semibold">{t("Prompt")}</div>
             </div>
           ) : (
             <div className="flex items-center space-x-3">
@@ -222,7 +227,7 @@ export const Message: FC<MessageProps> = ({
                     }}
                     className="rounded"
                     src={messageAssistantImage}
-                    alt="assistant image"
+                    alt={t("assistant image")}
                     height={ICON_SIZE}
                     width={ICON_SIZE}
                   />
@@ -244,7 +249,7 @@ export const Message: FC<MessageProps> = ({
                   src={profile?.image_url}
                   height={32}
                   width={32}
-                  alt="user image"
+                  alt={t("user image")}
                 />
               ) : (
                 <IconMoodSmile
@@ -282,7 +287,7 @@ export const Message: FC<MessageProps> = ({
                       <div className="flex animate-pulse items-center space-x-2">
                         <IconFileText size={20} />
 
-                        <div>Searching files...</div>
+                        <div>{t("Searching files...")}</div>
                       </div>
                     )
                   default:
@@ -290,7 +295,11 @@ export const Message: FC<MessageProps> = ({
                       <div className="flex animate-pulse items-center space-x-2">
                         <IconBolt size={20} />
 
-                        <div>Using {toolInUse}...</div>
+                        <div>
+                          {t("Using {toolInUse}...", {
+                            toolInUse
+                          })}
+                        </div>
                       </div>
                     )
                 }
@@ -316,10 +325,13 @@ export const Message: FC<MessageProps> = ({
                 className="flex cursor-pointer items-center text-lg hover:opacity-50"
                 onClick={() => setViewSources(true)}
               >
-                {fileItems.length}
-                {fileItems.length > 1 ? " Sources " : " Source "}
-                from {Object.keys(fileSummary).length}{" "}
-                {Object.keys(fileSummary).length > 1 ? "Files" : "File"}{" "}
+                {t(
+                  "{{fileItemsLength}} Sources from {{fileSummaryLength}} Files",
+                  {
+                    fileItemsLength: fileItems.length,
+                    fileSummaryLength: Object.keys(fileSummary).length
+                  }
+                )}
                 <IconCaretRightFilled className="ml-1" />
               </div>
             ) : (
@@ -328,10 +340,13 @@ export const Message: FC<MessageProps> = ({
                   className="flex cursor-pointer items-center text-lg hover:opacity-50"
                   onClick={() => setViewSources(false)}
                 >
-                  {fileItems.length}
-                  {fileItems.length > 1 ? " Sources " : " Source "}
-                  from {Object.keys(fileSummary).length}{" "}
-                  {Object.keys(fileSummary).length > 1 ? "Files" : "File"}{" "}
+                  {t(
+                    "{{fileItemsLength}} Sources from {{fileSummaryLength}} Files",
+                    {
+                      fileItemsLength: fileItems.length,
+                      fileSummaryLength: Object.keys(fileSummary).length
+                    }
+                  )}
                   <IconCaretDownFilled className="ml-1" />
                 </div>
 
@@ -385,7 +400,7 @@ export const Message: FC<MessageProps> = ({
                 key={index}
                 className="cursor-pointer rounded hover:opacity-50"
                 src={path.startsWith("data") ? path : item?.base64}
-                alt="message image"
+                alt={t("message image")}
                 width={300}
                 height={300}
                 onClick={() => {
@@ -407,11 +422,11 @@ export const Message: FC<MessageProps> = ({
         {isEditing && (
           <div className="mt-4 flex justify-center space-x-2">
             <Button size="sm" onClick={handleSendEdit}>
-              Save & Send
+              {t("Save & Send")}
             </Button>
 
             <Button size="sm" variant="outline" onClick={onCancelEdit}>
-              Cancel
+              {t("Cancel")}
             </Button>
           </div>
         )}

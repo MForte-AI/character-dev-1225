@@ -1,3 +1,5 @@
+"use client"
+
 import { ChatbotUIContext } from "@/context/context"
 import { getFileFromStorage } from "@/db/storage/files"
 import useHotkey from "@/lib/hooks/use-hotkey"
@@ -17,6 +19,7 @@ import {
 } from "@tabler/icons-react"
 import Image from "next/image"
 import { FC, useContext, useState } from "react"
+import { useTranslation } from "react-i18next"
 import { Button } from "../ui/button"
 import { FilePreview } from "../ui/file-preview"
 import { WithTooltip } from "../ui/with-tooltip"
@@ -27,6 +30,8 @@ interface ChatFilesDisplayProps {}
 export const ChatFilesDisplay: FC<ChatFilesDisplayProps> = ({}) => {
   useHotkey("f", () => setShowFilesDisplay(prev => !prev))
   useHotkey("e", () => setUseRetrieval(prev => !prev))
+
+  const { t } = useTranslation()
 
   const {
     files,
@@ -106,7 +111,7 @@ export const ChatFilesDisplay: FC<ChatFilesDisplayProps> = ({}) => {
           >
             <RetrievalToggle />
 
-            <div>Hide files</div>
+            <div>{t("Hide files")}</div>
 
             <div onClick={e => e.stopPropagation()}>
               <ChatRetrievalSettings />
@@ -131,7 +136,7 @@ export const ChatFilesDisplay: FC<ChatFilesDisplayProps> = ({}) => {
                     maxWidth: "56px"
                   }}
                   src={image.base64} // Preview images will always be base64
-                  alt="File image"
+                  alt={t("File image")}
                   width={56}
                   height={56}
                   onClick={() => {
@@ -235,8 +240,11 @@ export const ChatFilesDisplay: FC<ChatFilesDisplayProps> = ({}) => {
 
           <div>
             {" "}
-            View {combinedMessageFiles.length} file
-            {combinedMessageFiles.length > 1 ? "s" : ""}
+            {combinedMessageFiles.length > 1
+              ? t("View {{count}} files", {
+                  count: combinedMessageFiles.length
+                })
+              : "View file"}
           </div>
 
           <div onClick={e => e.stopPropagation()}>
@@ -249,6 +257,7 @@ export const ChatFilesDisplay: FC<ChatFilesDisplayProps> = ({}) => {
 }
 
 const RetrievalToggle = ({}) => {
+  const { t } = useTranslation()
   const { useRetrieval, setUseRetrieval } = useContext(ChatbotUIContext)
 
   return (
@@ -259,8 +268,12 @@ const RetrievalToggle = ({}) => {
         display={
           <div>
             {useRetrieval
-              ? "File retrieval is enabled on the selected files for this message. Click the indicator to disable."
-              : "Click the indicator to enable file retrieval for this message."}
+              ? t(
+                  "File retrieval is enabled on the selected files for this message. Click the indicator to disable."
+                )
+              : t(
+                  "Click the indicator to enable file retrieval for this message."
+                )}
           </div>
         }
         trigger={

@@ -1,6 +1,9 @@
+"use client"
+
 import { ChatbotUIContext } from "@/context/context"
 import { IconAdjustmentsHorizontal } from "@tabler/icons-react"
 import { FC, useContext, useState } from "react"
+import { useTranslation } from "react-i18next"
 import { Button } from "../ui/button"
 import {
   Dialog,
@@ -15,6 +18,7 @@ import { WithTooltip } from "../ui/with-tooltip"
 interface ChatRetrievalSettingsProps {}
 
 export const ChatRetrievalSettings: FC<ChatRetrievalSettingsProps> = ({}) => {
+  const { t } = useTranslation()
   const { sourceCount, setSourceCount } = useContext(ChatbotUIContext)
 
   const [isOpen, setIsOpen] = useState(false)
@@ -25,7 +29,7 @@ export const ChatRetrievalSettings: FC<ChatRetrievalSettingsProps> = ({}) => {
         <WithTooltip
           delayDuration={0}
           side="top"
-          display={<div>Adjust retrieval settings.</div>}
+          display={<div>{t("Adjust retrieval settings.")}</div>}
           trigger={
             <IconAdjustmentsHorizontal
               className="cursor-pointer pt-[4px] hover:opacity-50"
@@ -38,7 +42,7 @@ export const ChatRetrievalSettings: FC<ChatRetrievalSettingsProps> = ({}) => {
       <DialogContent>
         <div className="space-y-3">
           <Label className="flex items-center space-x-1">
-            <div>Source Count:</div>
+            <div>{t("Source Count:")}</div>
 
             <div>{sourceCount}</div>
           </Label>
@@ -56,7 +60,7 @@ export const ChatRetrievalSettings: FC<ChatRetrievalSettingsProps> = ({}) => {
 
         <DialogFooter>
           <Button size="sm" onClick={() => setIsOpen(false)}>
-            Save & Close
+            {t("Save & Close")}
           </Button>
         </DialogFooter>
       </DialogContent>

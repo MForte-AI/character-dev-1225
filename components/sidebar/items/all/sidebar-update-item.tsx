@@ -1,3 +1,5 @@
+"use client"
+
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import {
@@ -81,6 +83,7 @@ import { convertBlobToBase64 } from "@/lib/blob-to-b64"
 import { Tables, TablesUpdate } from "@/supabase/types"
 import { CollectionFile, ContentType, DataItemType } from "@/types"
 import { FC, useContext, useEffect, useRef, useState } from "react"
+import { useTranslation } from "react-i18next"
 import profile from "react-syntax-highlighter/dist/esm/languages/hljs/profile"
 import { toast } from "sonner"
 import { SidebarDeleteItem } from "./sidebar-delete-item"
@@ -102,6 +105,8 @@ export const SidebarUpdateItem: FC<SidebarUpdateItemProps> = ({
   updateState,
   isTyping
 }) => {
+  const { t } = useTranslation()
+
   const {
     workspaces,
     selectedWorkspace,
@@ -600,9 +605,19 @@ export const SidebarUpdateItem: FC<SidebarUpdateItemProps> = ({
 
       setIsOpen(false)
 
-      toast.success(`${contentType.slice(0, -1)} updated successfully`)
+      toast.success(
+        t("{{contentType}} updated successfully", {
+          contentType: contentType.slice(0, -1)
+        })
+      )
     } catch (error) {
-      toast.error(`Error updating ${contentType.slice(0, -1)}. ${error}`)
+      toast.error(
+        t("Error updating {{contentType}}.", {
+          contentType: contentType.slice(0, -1)
+        }) +
+          " " +
+          error
+      )
     }
   }
 
@@ -641,14 +656,16 @@ export const SidebarUpdateItem: FC<SidebarUpdateItemProps> = ({
         <div className="grow overflow-auto">
           <SheetHeader>
             <SheetTitle className="text-2xl font-bold">
-              Edit {contentType.slice(0, -1)}
+              {t("Edit {{contentType}}", {
+                contentType: contentType.slice(0, -1)
+              })}
             </SheetTitle>
           </SheetHeader>
 
           <div className="mt-4 space-y-3">
             {workspaces.length > 1 && (
               <div className="space-y-1">
-                <Label>Assigned Workspaces</Label>
+                <Label>{t("Assigned Workspaces")}</Label>
 
                 <AssignWorkspaces
                   selectedWorkspaces={selectedWorkspaces}
@@ -666,11 +683,11 @@ export const SidebarUpdateItem: FC<SidebarUpdateItemProps> = ({
 
           <div className="flex grow justify-end space-x-2">
             <Button variant="outline" onClick={() => setIsOpen(false)}>
-              Cancel
+              {t("Cancel")}
             </Button>
 
             <Button ref={buttonRef} onClick={handleUpdate}>
-              Save
+              {t("Save")}
             </Button>
           </div>
         </SheetFooter>

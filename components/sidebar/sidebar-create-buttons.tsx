@@ -12,6 +12,7 @@ import { CreateModel } from "./items/models/create-model"
 import { CreatePreset } from "./items/presets/create-preset"
 import { CreatePrompt } from "./items/prompts/create-prompt"
 import { CreateTool } from "./items/tools/create-tool"
+import { useTranslation } from "react-i18next"
 
 interface SidebarCreateButtonsProps {
   contentType: ContentType
@@ -34,6 +35,8 @@ export const SidebarCreateButtons: FC<SidebarCreateButtonsProps> = ({
   const [isCreatingTool, setIsCreatingTool] = useState(false)
   const [isCreatingModel, setIsCreatingModel] = useState(false)
 
+  const { t } = useTranslation()
+
   const handleCreateFolder = async () => {
     if (!profile) return
     if (!selectedWorkspace) return
@@ -41,7 +44,7 @@ export const SidebarCreateButtons: FC<SidebarCreateButtonsProps> = ({
     const createdFolder = await createFolder({
       user_id: profile.user_id,
       workspace_id: selectedWorkspace.id,
-      name: "New Folder",
+      name: t("New Folder"),
       description: "",
       type: contentType
     })
@@ -95,13 +98,17 @@ export const SidebarCreateButtons: FC<SidebarCreateButtonsProps> = ({
     }
   }
 
+  const translatedContentType = t(contentType)
+
   return (
     <div className="flex w-full space-x-2">
       <Button className="flex h-[36px] grow" onClick={getCreateFunction()}>
         <IconPlus className="mr-1" size={20} />
-        New{" "}
-        {contentType.charAt(0).toUpperCase() +
-          contentType.slice(1, contentType.length - 1)}
+        {t("New {{contentType}}", {
+          contentType:
+            translatedContentType.charAt(0).toUpperCase() +
+            translatedContentType.slice(1, translatedContentType.length - 1)
+        })}
       </Button>
 
       {hasData && (

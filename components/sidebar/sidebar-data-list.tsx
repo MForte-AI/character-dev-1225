@@ -21,6 +21,7 @@ import { ModelItem } from "./items/models/model-item"
 import { PresetItem } from "./items/presets/preset-item"
 import { PromptItem } from "./items/prompts/prompt-item"
 import { ToolItem } from "./items/tools/tool-item"
+import { useTranslation } from "react-i18next"
 
 interface SidebarDataListProps {
   contentType: ContentType
@@ -216,6 +217,7 @@ export const SidebarDataList: FC<SidebarDataListProps> = ({
 
   const dataWithFolders = data.filter(item => item.folder_id)
   const dataWithoutFolders = data.filter(item => item.folder_id === null)
+  const { t } = useTranslation()
 
   return (
     <>
@@ -227,7 +229,7 @@ export const SidebarDataList: FC<SidebarDataListProps> = ({
         {data.length === 0 && (
           <div className="flex grow flex-col items-center justify-center">
             <div className=" text-centertext-muted-foreground p-8 text-lg italic">
-              No {contentType}.
+              {t("No {{contentType}}.", { contentType: t(contentType) })}
             </div>
           </div>
         )}
@@ -278,7 +280,7 @@ export const SidebarDataList: FC<SidebarDataListProps> = ({
                       sortedData.length > 0 && (
                         <div key={dateCategory} className="pb-2">
                           <div className="text-muted-foreground mb-1 text-sm font-bold">
-                            {dateCategory}
+                            {t(dateCategory)}
                           </div>
 
                           <div

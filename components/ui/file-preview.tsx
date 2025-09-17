@@ -1,9 +1,12 @@
+"use client"
+
 import { cn } from "@/lib/utils"
 import { Tables } from "@/supabase/types"
 import { ChatFile, MessageImage } from "@/types"
 import { IconFileFilled } from "@tabler/icons-react"
 import Image from "next/image"
 import { FC } from "react"
+import { useTranslation } from "react-i18next"
 import { DrawingCanvas } from "../utility/drawing-canvas"
 import { Dialog, DialogContent } from "./dialog"
 
@@ -20,6 +23,8 @@ export const FilePreview: FC<FilePreviewProps> = ({
   isOpen,
   onOpenChange
 }) => {
+  const { t } = useTranslation()
+
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
       <DialogContent
@@ -38,7 +43,7 @@ export const FilePreview: FC<FilePreviewProps> = ({
               <Image
                 className="rounded"
                 src={imageItem.base64 || imageItem.url}
-                alt="File image"
+                alt={t("File image")}
                 width={2000}
                 height={2000}
                 style={{

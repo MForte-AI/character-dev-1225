@@ -1,6 +1,7 @@
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { FC } from "react"
+import { useTranslation } from "react-i18next"
 import { Button } from "../ui/button"
 
 interface APIStepProps {
@@ -68,12 +69,14 @@ export const APIStep: FC<APIStepProps> = ({
   onUseAzureOpenaiChange,
   onOpenrouterAPIKeyChange
 }) => {
+  const { t } = useTranslation()
+
   return (
     <>
       <div className="mt-5 space-y-2">
         <Label className="flex items-center">
           <div>
-            {useAzureOpenai ? "Azure OpenAI API Key" : "OpenAI API Key"}
+            {useAzureOpenai ? t("Azure OpenAI API Key") : t("OpenAI API Key")}
           </div>
 
           <Button
@@ -81,14 +84,14 @@ export const APIStep: FC<APIStepProps> = ({
             onClick={() => onUseAzureOpenaiChange(!useAzureOpenai)}
           >
             {useAzureOpenai
-              ? "Switch To Standard OpenAI"
-              : "Switch To Azure OpenAI"}
+              ? t("Switch To Standard OpenAI")
+              : t("Switch To Azure OpenAI")}
           </Button>
         </Label>
 
         <Input
           placeholder={
-            useAzureOpenai ? "Azure OpenAI API Key" : "OpenAI API Key"
+            useAzureOpenai ? t("Azure OpenAI API Key") : t("OpenAI API Key")
           }
           type="password"
           value={useAzureOpenai ? azureOpenaiAPIKey : openaiAPIKey}
@@ -104,10 +107,10 @@ export const APIStep: FC<APIStepProps> = ({
         {useAzureOpenai ? (
           <>
             <div className="space-y-1">
-              <Label>Azure OpenAI Endpoint</Label>
+              <Label>{t("Azure OpenAI Endpoint")}</Label>
 
               <Input
-                placeholder="https://your-endpoint.openai.azure.com"
+                placeholder={t("https://your-endpoint.openai.azure.com")}
                 type="password"
                 value={azureOpenaiEndpoint}
                 onChange={e => onAzureOpenaiEndpointChange(e.target.value)}
@@ -115,10 +118,10 @@ export const APIStep: FC<APIStepProps> = ({
             </div>
 
             <div className="space-y-1">
-              <Label>Azure OpenAI GPT-3.5 Turbo ID</Label>
+              <Label>{t("Azure OpenAI GPT-3.5 Turbo ID")}</Label>
 
               <Input
-                placeholder="Azure OpenAI GPT-3.5 Turbo ID"
+                placeholder={t("Azure OpenAI GPT-3.5 Turbo ID")}
                 type="password"
                 value={azureOpenai35TurboID}
                 onChange={e => onAzureOpenai35TurboIDChange(e.target.value)}
@@ -126,10 +129,10 @@ export const APIStep: FC<APIStepProps> = ({
             </div>
 
             <div className="space-y-1">
-              <Label>Azure OpenAI GPT-4.5 Turbo ID</Label>
+              <Label>{t("Azure OpenAI GPT-4.5 Turbo ID")}</Label>
 
               <Input
-                placeholder="Azure OpenAI GPT-4.5 Turbo ID"
+                placeholder={t("Azure OpenAI GPT-4.5 Turbo ID")}
                 type="password"
                 value={azureOpenai45TurboID}
                 onChange={e => onAzureOpenai45TurboIDChange(e.target.value)}
@@ -137,10 +140,10 @@ export const APIStep: FC<APIStepProps> = ({
             </div>
 
             <div className="space-y-1">
-              <Label>Azure OpenAI GPT-4.5 Vision ID</Label>
+              <Label>{t("Azure OpenAI GPT-4.5 Vision ID")}</Label>
 
               <Input
-                placeholder="Azure OpenAI GPT-4.5 Vision ID"
+                placeholder={t("Azure OpenAI GPT-4.5 Vision ID")}
                 type="password"
                 value={azureOpenai45VisionID}
                 onChange={e => onAzureOpenai45VisionIDChange(e.target.value)}
@@ -148,10 +151,10 @@ export const APIStep: FC<APIStepProps> = ({
             </div>
 
             <div className="space-y-1">
-              <Label>Azure OpenAI Embeddings ID</Label>
+              <Label>{t("Azure OpenAI Embeddings ID")}</Label>
 
               <Input
-                placeholder="Azure OpenAI Embeddings ID"
+                placeholder={t("Azure OpenAI Embeddings ID")}
                 type="password"
                 value={azureOpenaiEmbeddingsID}
                 onChange={e => onAzureOpenaiEmbeddingsIDChange(e.target.value)}
@@ -161,10 +164,10 @@ export const APIStep: FC<APIStepProps> = ({
         ) : (
           <>
             <div className="space-y-1">
-              <Label>OpenAI Organization ID</Label>
+              <Label>{t("OpenAI Organization ID")}</Label>
 
               <Input
-                placeholder="OpenAI Organization ID (optional)"
+                placeholder={t("OpenAI Organization ID (optional)")}
                 type="password"
                 value={openaiOrgID}
                 onChange={e => onOpenaiOrgIDChange(e.target.value)}
@@ -175,10 +178,10 @@ export const APIStep: FC<APIStepProps> = ({
       </div>
 
       <div className="space-y-1">
-        <Label>Anthropic API Key</Label>
+        <Label>{t("Anthropic API Key")}</Label>
 
         <Input
-          placeholder="Anthropic API Key"
+          placeholder={t("Anthropic API Key")}
           type="password"
           value={anthropicAPIKey}
           onChange={e => onAnthropicAPIKeyChange(e.target.value)}
@@ -186,10 +189,10 @@ export const APIStep: FC<APIStepProps> = ({
       </div>
 
       <div className="space-y-1">
-        <Label>Google Gemini API Key</Label>
+        <Label>{t("Google Gemini API Key")}</Label>
 
         <Input
-          placeholder="Google Gemini API Key"
+          placeholder={t("Google Gemini API Key")}
           type="password"
           value={googleGeminiAPIKey}
           onChange={e => onGoogleGeminiAPIKeyChange(e.target.value)}
@@ -197,10 +200,10 @@ export const APIStep: FC<APIStepProps> = ({
       </div>
 
       <div className="space-y-1">
-        <Label>Mistral API Key</Label>
+        <Label>{t("Mistral API Key")}</Label>
 
         <Input
-          placeholder="Mistral API Key"
+          placeholder={t("Mistral API Key")}
           type="password"
           value={mistralAPIKey}
           onChange={e => onMistralAPIKeyChange(e.target.value)}
@@ -208,10 +211,10 @@ export const APIStep: FC<APIStepProps> = ({
       </div>
 
       <div className="space-y-1">
-        <Label>Groq API Key</Label>
+        <Label>{t("Groq API Key")}</Label>
 
         <Input
-          placeholder="Groq API Key"
+          placeholder={t("Groq API Key")}
           type="password"
           value={groqAPIKey}
           onChange={e => onGroqAPIKeyChange(e.target.value)}
@@ -219,20 +222,20 @@ export const APIStep: FC<APIStepProps> = ({
       </div>
 
       <div className="space-y-1">
-        <Label>Perplexity API Key</Label>
+        <Label>{t("Perplexity API Key")}</Label>
 
         <Input
-          placeholder="Perplexity API Key"
+          placeholder={t("Perplexity API Key")}
           type="password"
           value={perplexityAPIKey}
           onChange={e => onPerplexityAPIKeyChange(e.target.value)}
         />
       </div>
       <div className="space-y-1">
-        <Label>OpenRouter API Key</Label>
+        <Label>{t("OpenRouter API Key")}</Label>
 
         <Input
-          placeholder="OpenRouter API Key"
+          placeholder={t("OpenRouter API Key")}
           type="password"
           value={openrouterAPIKey}
           onChange={e => onOpenrouterAPIKeyChange(e.target.value)}
