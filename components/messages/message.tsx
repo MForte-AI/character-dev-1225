@@ -18,7 +18,6 @@ import { FC, useContext, useEffect, useRef, useState } from "react"
 import { ModelIcon } from "../models/model-icon"
 import { Button } from "../ui/button"
 import { FileIcon } from "../ui/file-icon"
-import { FilePreview } from "../ui/file-preview"
 import { TextareaAutosize } from "../ui/textarea-autosize"
 import { WithTooltip } from "../ui/with-tooltip"
 import { MessageActions } from "./message-actions"
@@ -59,7 +58,10 @@ export const Message: FC<MessageProps> = ({
     assistantImages,
     toolInUse,
     files,
-    models
+    models,
+    setShowFilePreview,
+    setFilePreviewItem,
+    setFilePreviewType
   } = useContext(ChatbotUIContext)
 
   const { handleSendMessage } = useChatHandler()
@@ -68,13 +70,6 @@ export const Message: FC<MessageProps> = ({
 
   const [isHovering, setIsHovering] = useState(false)
   const [editedMessage, setEditedMessage] = useState(message.content)
-
-  const [showImagePreview, setShowImagePreview] = useState(false)
-  const [selectedImage, setSelectedImage] = useState<MessageImage | null>(null)
-
-  const [showFileItemPreview, setShowFileItemPreview] = useState(false)
-  const [selectedFileItem, setSelectedFileItem] =
-    useState<Tables<"file_items"> | null>(null)
 
   const [viewSources, setViewSources] = useState(false)
 
@@ -358,8 +353,9 @@ export const Message: FC<MessageProps> = ({
                             key={index}
                             className="ml-8 mt-1.5 flex cursor-pointer items-center space-x-2 hover:opacity-50"
                             onClick={() => {
-                              setSelectedFileItem(fileItem)
-                              setShowFileItemPreview(true)
+                              setFilePreviewType("file_item")
+                              setFilePreviewItem(fileItem)
+                              setShowFilePreview(true)
                             }}
                           >
                             <div className="text-sm font-normal">
@@ -389,15 +385,15 @@ export const Message: FC<MessageProps> = ({
                 width={300}
                 height={300}
                 onClick={() => {
-                  setSelectedImage({
+                  setFilePreviewType("image")
+                  setFilePreviewItem({
                     messageId: message.id,
                     path,
                     base64: path.startsWith("data") ? path : item?.base64 || "",
                     url: path.startsWith("data") ? "" : item?.url || "",
                     file: null
                   })
-
-                  setShowImagePreview(true)
+                  setShowFilePreview(true)
                 }}
                 loading="lazy"
               />
@@ -416,30 +412,6 @@ export const Message: FC<MessageProps> = ({
           </div>
         )}
       </div>
-
-      {showImagePreview && selectedImage && (
-        <FilePreview
-          type="image"
-          item={selectedImage}
-          isOpen={showImagePreview}
-          onOpenChange={(isOpen: boolean) => {
-            setShowImagePreview(isOpen)
-            setSelectedImage(null)
-          }}
-        />
-      )}
-
-      {showFileItemPreview && selectedFileItem && (
-        <FilePreview
-          type="file_item"
-          item={selectedFileItem}
-          isOpen={showFileItemPreview}
-          onOpenChange={(isOpen: boolean) => {
-            setShowFileItemPreview(isOpen)
-            setSelectedFileItem(null)
-          }}
-        />
-      )}
     </div>
   )
 }

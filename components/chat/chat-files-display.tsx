@@ -2,7 +2,7 @@ import { ChatbotUIContext } from "@/context/context"
 import { getFileFromStorage } from "@/db/storage/files"
 import useHotkey from "@/lib/hooks/use-hotkey"
 import { cn } from "@/lib/utils"
-import { ChatFile, MessageImage } from "@/types"
+import { ChatFile } from "@/types"
 import {
   IconCircleFilled,
   IconFileFilled,
@@ -16,9 +16,8 @@ import {
   IconX
 } from "@tabler/icons-react"
 import Image from "next/image"
-import { FC, useContext, useState } from "react"
+import { FC, useContext } from "react"
 import { Button } from "../ui/button"
-import { FilePreview } from "../ui/file-preview"
 import { WithTooltip } from "../ui/with-tooltip"
 import { ChatRetrievalSettings } from "./chat-retrieval-settings"
 
@@ -40,12 +39,11 @@ export const ChatFilesDisplay: FC<ChatFilesDisplayProps> = ({}) => {
     chatImages,
     setChatImages,
     setChatFiles,
-    setUseRetrieval
+    setUseRetrieval,
+    setShowFilePreview,
+    setFilePreviewItem,
+    setFilePreviewType
   } = useContext(ChatbotUIContext)
-
-  const [selectedFile, setSelectedFile] = useState<ChatFile | null>(null)
-  const [selectedImage, setSelectedImage] = useState<MessageImage | null>(null)
-  const [showPreview, setShowPreview] = useState(false)
 
   const messageImages = [
     ...newMessageImages.filter(
@@ -74,30 +72,6 @@ export const ChatFilesDisplay: FC<ChatFilesDisplayProps> = ({}) => {
 
   return showFilesDisplay && combinedMessageFiles.length > 0 ? (
     <>
-      {showPreview && selectedImage && (
-        <FilePreview
-          type="image"
-          item={selectedImage}
-          isOpen={showPreview}
-          onOpenChange={(isOpen: boolean) => {
-            setShowPreview(isOpen)
-            setSelectedImage(null)
-          }}
-        />
-      )}
-
-      {showPreview && selectedFile && (
-        <FilePreview
-          type="file"
-          item={selectedFile}
-          isOpen={showPreview}
-          onOpenChange={(isOpen: boolean) => {
-            setShowPreview(isOpen)
-            setSelectedFile(null)
-          }}
-        />
-      )}
-
       <div className="space-y-2">
         <div className="flex w-full items-center justify-center">
           <Button
@@ -135,8 +109,9 @@ export const ChatFilesDisplay: FC<ChatFilesDisplayProps> = ({}) => {
                   width={56}
                   height={56}
                   onClick={() => {
-                    setSelectedImage(image)
-                    setShowPreview(true)
+                    setFilePreviewType("image")
+                    setFilePreviewItem(image)
+                    setShowFilePreview(true)
                   }}
                 />
 

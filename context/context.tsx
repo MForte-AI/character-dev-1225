@@ -125,6 +125,18 @@ interface ChatbotUIContext {
   showFilesDisplay: boolean
   setShowFilesDisplay: Dispatch<SetStateAction<boolean>>
 
+  // FILE PREVIEW STORE
+  showFilePreview: boolean
+  setShowFilePreview: Dispatch<SetStateAction<boolean>>
+  filePreviewItem: ChatFile | MessageImage | Tables<"file_items"> | null
+  setFilePreviewItem: Dispatch<
+    SetStateAction<ChatFile | MessageImage | Tables<"file_items"> | null>
+  >
+  filePreviewType: "image" | "file" | "file_item" | null
+  setFilePreviewType: Dispatch<
+    SetStateAction<"image" | "file" | "file_item" | null>
+  >
+
   // RETRIEVAL STORE
   useRetrieval: boolean
   setUseRetrieval: Dispatch<SetStateAction<boolean>>
@@ -250,6 +262,14 @@ export const ChatbotUIContext = createContext<ChatbotUIContext>({
   setNewMessageImages: () => {},
   showFilesDisplay: false,
   setShowFilesDisplay: () => {},
+
+  // FILE PREVIEW STORE
+  showFilePreview: false,
+  setShowFilePreview: () => {},
+  filePreviewItem: null,
+  setFilePreviewItem: () => {},
+  filePreviewType: null,
+  setFilePreviewType: () => {},
 
   // RETRIEVAL STORE
   useRetrieval: false,

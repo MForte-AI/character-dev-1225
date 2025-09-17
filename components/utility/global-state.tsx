@@ -115,6 +115,15 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
   const [newMessageImages, setNewMessageImages] = useState<MessageImage[]>([])
   const [showFilesDisplay, setShowFilesDisplay] = useState<boolean>(false)
 
+  // FILE PREVIEW STORE
+  const [showFilePreview, setShowFilePreview] = useState<boolean>(false)
+  const [filePreviewItem, setFilePreviewItem] = useState<
+    ChatFile | MessageImage | Tables<"file_items"> | null
+  >(null)
+  const [filePreviewType, setFilePreviewType] = useState<
+    "image" | "file" | "file_item" | null
+  >(null)
+
   // RETIEVAL STORE
   const [useRetrieval, setUseRetrieval] = useState<boolean>(true)
   const [sourceCount, setSourceCount] = useState<number>(4)
@@ -311,6 +320,14 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
         setNewMessageImages,
         showFilesDisplay,
         setShowFilesDisplay,
+
+        // FILE PREVIEW STORE
+        showFilePreview,
+        setShowFilePreview,
+        filePreviewItem,
+        setFilePreviewItem,
+        filePreviewType,
+        setFilePreviewType,
 
         // RETRIEVAL STORE
         useRetrieval,
