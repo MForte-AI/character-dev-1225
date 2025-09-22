@@ -138,11 +138,11 @@ export const useChatHandler = () => {
           id: file.id,
           name: file.name,
           type: file.type,
-          file: null
+          file: null,
+          description: file.description,
+          hidden: selectedAssistant.sharing === "public"
         }))
       )
-
-      if (allFiles.length > 0) setShowFilesDisplay(true)
     } else if (selectedPreset) {
       setChatSettings({
         model: selectedPreset.model as LLMID,

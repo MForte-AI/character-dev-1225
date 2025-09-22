@@ -70,7 +70,7 @@ export const createTool = async (
   }
 
   await createToolWorkspace({
-    user_id: createdTool.user_id,
+    user_id: createdTool.user_id!,
     tool_id: createdTool.id,
     workspace_id
   })
@@ -93,7 +93,7 @@ export const createTools = async (
 
   await createToolWorkspaces(
     createdTools.map(tool => ({
-      user_id: tool.user_id,
+      user_id: tool.user_id!,
       tool_id: tool.id,
       workspace_id
     }))

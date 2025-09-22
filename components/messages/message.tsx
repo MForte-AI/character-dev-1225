@@ -58,7 +58,7 @@ export const Message: FC<MessageProps> = ({
     chatImages,
     assistantImages,
     toolInUse,
-    files,
+    chatFiles,
     models
   } = useContext(ChatbotUIContext)
 
@@ -162,7 +162,7 @@ export const Message: FC<MessageProps> = ({
   > = {}
 
   const fileSummary = fileItems.reduce((acc, fileItem) => {
-    const parentFile = files.find(file => file.id === fileItem.file_id)
+    const parentFile = chatFiles.find(file => file.id === fileItem.file_id)
     if (parentFile) {
       if (!acc[parentFile.id]) {
         acc[parentFile.id] = {
@@ -170,7 +170,7 @@ export const Message: FC<MessageProps> = ({
           name: parentFile.name,
           count: 1,
           type: parentFile.type,
-          description: parentFile.description
+          description: parentFile.description || ""
         }
       } else {
         acc[parentFile.id].count += 1
@@ -348,7 +348,7 @@ export const Message: FC<MessageProps> = ({
 
                       {fileItems
                         .filter(fileItem => {
-                          const parentFile = files.find(
+                          const parentFile = chatFiles.find(
                             parentFile => parentFile.id === fileItem.file_id
                           )
                           return parentFile?.id === file.id

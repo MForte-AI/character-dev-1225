@@ -88,10 +88,11 @@ export const QuickSettings: FC<QuickSettingsProps> = ({}) => {
           id: file.id,
           name: file.name,
           type: file.type,
-          file: null
+          file: null,
+          description: file.description,
+          hidden: item.sharing === "public"
         }))
       )
-      if (allFiles.length > 0) setShowFilesDisplay(true)
       setLoading(false)
       setSelectedPreset(null)
     } else if (contentType === "presets" && item) {

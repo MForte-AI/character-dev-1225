@@ -24,7 +24,7 @@ export const SidebarItem: FC<SidebarItemProps> = ({
   icon,
   isTyping
 }) => {
-  const { selectedWorkspace, setChats, setSelectedAssistant } =
+  const { selectedWorkspace, setChats, setSelectedAssistant, profile } =
     useContext(ChatbotUIContext)
 
   const router = useRouter()
@@ -43,7 +43,7 @@ export const SidebarItem: FC<SidebarItemProps> = ({
       if (!selectedWorkspace) return
 
       const createdChat = await createChat({
-        user_id: assistant.user_id,
+        user_id: profile!.user_id,
         workspace_id: selectedWorkspace.id,
         assistant_id: assistant.id,
         context_length: assistant.context_length,

@@ -74,7 +74,7 @@ export const createCollection = async (
   }
 
   await createCollectionWorkspace({
-    user_id: createdCollection.user_id,
+    user_id: createdCollection.user_id!,
     collection_id: createdCollection.id,
     workspace_id
   })
@@ -97,7 +97,7 @@ export const createCollections = async (
 
   await createCollectionWorkspaces(
     createdCollections.map(collection => ({
-      user_id: collection.user_id,
+      user_id: collection.user_id!,
       collection_id: collection.id,
       workspace_id
     }))

@@ -172,11 +172,11 @@ export const usePromptAndCommand = () => {
         id: file.id,
         name: file.name,
         type: file.type,
-        file: null
+        file: null,
+        description: file.description,
+        hidden: assistant.sharing === "public"
       }))
     )
-
-    if (allFiles.length > 0) setShowFilesDisplay(true)
   }
 
   return {

@@ -58,7 +58,7 @@ export const ChatFilesDisplay: FC<ChatFilesDisplayProps> = ({}) => {
     ...newMessageFiles.filter(
       file => !chatFiles.some(chatFile => chatFile.id === file.id)
     ),
-    ...chatFiles
+    ...chatFiles.filter(file => !file.hidden) // Only show user files from chatFiles
   ]
 
   const combinedMessageFiles = [...messageImages, ...combinedChatFiles]

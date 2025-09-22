@@ -3,4 +3,6 @@ export interface ChatFile {
   name: string
   type: string
   file: File | null
+  description?: string
+  hidden?: boolean
 }

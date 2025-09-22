@@ -15,6 +15,19 @@ export const getAssistantById = async (assistantId: string) => {
   return assistant
 }
 
+export const getPublicAsistants = async () => {
+  const { data: assistants, error } = await supabase
+    .from("assistants")
+    .select("*")
+    .eq("sharing", "public")
+
+  if (!assistants) {
+    throw new Error(error.message)
+  }
+
+  return assistants
+}
+
 export const getAssistantWorkspacesByWorkspaceId = async (
   workspaceId: string
 ) => {
@@ -74,7 +87,7 @@ export const createAssistant = async (
   }
 
   await createAssistantWorkspace({
-    user_id: createdAssistant.user_id,
+    user_id: createdAssistant.user_id!,
     assistant_id: createdAssistant.id,
     workspace_id
   })
@@ -97,7 +110,7 @@ export const createAssistants = async (
 
   await createAssistantWorkspaces(
     createdAssistants.map(assistant => ({
-      user_id: assistant.user_id,
+      user_id: assistant.user_id!,
       assistant_id: assistant.id,
       workspace_id
     }))
