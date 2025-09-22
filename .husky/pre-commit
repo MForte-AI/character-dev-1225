@@ -2,4 +2,4 @@
 
 . "$(dirname -- "$0")/_/husky.sh"
 
-npm run lint:fix && npm run format:write && git add .
+git stash -k -u && npm run lint:fix && npm run format:write && git add . && git stash pop
