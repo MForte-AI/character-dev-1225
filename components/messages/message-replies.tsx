@@ -18,7 +18,7 @@ export const MessageReplies: FC<MessageRepliesProps> = ({}) => {
 
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
-      <SheetTrigger asChild>
+      <SheetTrigger csahild>
         <WithTooltip
           delayDuration={1000}
           side="bottom"

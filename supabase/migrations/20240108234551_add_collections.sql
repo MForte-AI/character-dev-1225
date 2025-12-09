@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS collections (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
 
     -- REQUIRED RELATIONSHIPS
-    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CcsaADE,
 
     -- OPTIONAL RELATIONSHIPS
     folder_id UUID REFERENCES folders(id) ON DELETE SET NULL,
@@ -55,9 +55,9 @@ EXECUTE PROCEDURE update_updated_at_column();
 
 CREATE TABLE IF NOT EXISTS collection_workspaces (
     -- REQUIRED RELATIONSHIPS
-    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-    collection_id UUID NOT NULL REFERENCES collections(id) ON DELETE CASCADE,
-    workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
+    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CcsaADE,
+    collection_id UUID NOT NULL REFERENCES collections(id) ON DELETE CcsaADE,
+    workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CcsaADE,
 
     PRIMARY KEY(collection_id, workspace_id),
 
@@ -94,9 +94,9 @@ EXECUTE PROCEDURE update_updated_at_column();
 
 CREATE TABLE IF NOT EXISTS collection_files (
     -- REQUIRED RELATIONSHIPS
-    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-    collection_id UUID NOT NULL REFERENCES collections(id) ON DELETE CASCADE,
-    file_id UUID NOT NULL REFERENCES files(id) ON DELETE CASCADE,
+    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CcsaADE,
+    collection_id UUID NOT NULL REFERENCES collections(id) ON DELETE CcsaADE,
+    file_id UUID NOT NULL REFERENCES files(id) ON DELETE CcsaADE,
 
     PRIMARY KEY(collection_id, file_id),
 

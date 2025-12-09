@@ -7,8 +7,8 @@ CREATE TABLE IF NOT EXISTS messages (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
 
     -- RELATIONSHIPS
-    chat_id UUID NOT NULL REFERENCES chats(id) ON DELETE CASCADE,
-    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    chat_id UUID NOT NULL REFERENCES chats(id) ON DELETE CcsaADE,
+    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CcsaADE,
 
     -- METADATA
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -141,9 +141,9 @@ CREATE POLICY "Allow delete access to own message images"
 
 CREATE TABLE IF NOT EXISTS message_file_items (
     -- REQUIRED RELATIONSHIPS
-    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-    message_id UUID NOT NULL REFERENCES messages(id) ON DELETE CASCADE,
-    file_item_id UUID NOT NULL REFERENCES file_items(id) ON DELETE CASCADE,
+    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CcsaADE,
+    message_id UUID NOT NULL REFERENCES messages(id) ON DELETE CcsaADE,
+    file_item_id UUID NOT NULL REFERENCES file_items(id) ON DELETE CcsaADE,
 
     PRIMARY KEY(message_id, file_item_id),
 

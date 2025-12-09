@@ -24,10 +24,10 @@ const ScrollArea = React.forwardRef<
 ScrollArea.displayName = ScrollAreaPrimitive.Root.displayName
 
 const ScrollBar = React.forwardRef<
-  React.ElementRef<typeof ScrollAreaPrimitive.ScrollAreaScrollbar>,
-  React.ComponentPropsWithoutRef<typeof ScrollAreaPrimitive.ScrollAreaScrollbar>
+  React.ElementRef<typeof ScrollAreaPrimitive.ScrollArecsarollbar>,
+  React.ComponentPropsWithoutRef<typeof ScrollAreaPrimitive.ScrollArecsarollbar>
 >(({ className, orientation = "vertical", ...props }, ref) => (
-  <ScrollAreaPrimitive.ScrollAreaScrollbar
+  <ScrollAreaPrimitive.ScrollArecsarollbar
     ref={ref}
     orientation={orientation}
     className={cn(
@@ -41,8 +41,8 @@ const ScrollBar = React.forwardRef<
     {...props}
   >
     <ScrollAreaPrimitive.ScrollAreaThumb className="bg-border relative flex-1 rounded-full" />
-  </ScrollAreaPrimitive.ScrollAreaScrollbar>
+  </ScrollAreaPrimitive.ScrollArecsarollbar>
 ))
-ScrollBar.displayName = ScrollAreaPrimitive.ScrollAreaScrollbar.displayName
+ScrollBar.displayName = ScrollAreaPrimitive.ScrollArecsarollbar.displayName
 
 export { ScrollArea, ScrollBar }

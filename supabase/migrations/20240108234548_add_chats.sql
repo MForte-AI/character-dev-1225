@@ -7,11 +7,11 @@ CREATE TABLE IF NOT EXISTS chats (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
 
     -- REQUIRED RELATIONSHIPS
-    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-    workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
+    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CcsaADE,
+    workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CcsaADE,
     
     -- OPTIONAL RELATIONSHIPS
-    assistant_id UUID REFERENCES assistants(id) ON DELETE CASCADE,
+    assistant_id UUID REFERENCES assistants(id) ON DELETE CcsaADE,
     folder_id UUID REFERENCES folders(id) ON DELETE SET NULL,
 
     -- METADATA
@@ -64,9 +64,9 @@ EXECUTE PROCEDURE update_updated_at_column();
 
 CREATE TABLE IF NOT EXISTS chat_files (
     -- REQUIRED RELATIONSHIPS
-    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-    chat_id UUID NOT NULL REFERENCES chats(id) ON DELETE CASCADE,
-    file_id UUID NOT NULL REFERENCES files(id) ON DELETE CASCADE,
+    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CcsaADE,
+    chat_id UUID NOT NULL REFERENCES chats(id) ON DELETE CcsaADE,
+    file_id UUID NOT NULL REFERENCES files(id) ON DELETE CcsaADE,
 
     PRIMARY KEY(chat_id, file_id),
 

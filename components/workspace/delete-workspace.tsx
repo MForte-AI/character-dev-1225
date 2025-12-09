@@ -65,7 +65,7 @@ export const DeleteWorkspace: FC<DeleteWorkspaceProps> = ({
 
   return (
     <Dialog open={showWorkspaceDialog} onOpenChange={setShowWorkspaceDialog}>
-      <DialogTrigger asChild>
+      <DialogTrigger csahild>
         <Button variant="destructive">Delete</Button>
       </DialogTrigger>
 

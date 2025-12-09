@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS models (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
 
     -- RELATIONSHIPS
-    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CcsaADE,
 
     -- OPTIONAL RELATIONSHIPS
     folder_id UUID REFERENCES folders(id) ON DELETE SET NULL,
@@ -58,9 +58,9 @@ EXECUTE PROCEDURE update_updated_at_column();
 
 CREATE TABLE IF NOT EXISTS model_workspaces (
     -- REQUIRED RELATIONSHIPS
-    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-    model_id UUID NOT NULL REFERENCES models(id) ON DELETE CASCADE,
-    workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
+    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CcsaADE,
+    model_id UUID NOT NULL REFERENCES models(id) ON DELETE CcsaADE,
+    workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CcsaADE,
 
     PRIMARY KEY(model_id, workspace_id),
 

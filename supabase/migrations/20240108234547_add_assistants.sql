@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS assistants (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
 
     -- REQUIRED RELATIONSHIPS
-    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CcsaADE,
 
     -- OPTIONAL RELATIONSHIPS
     folder_id UUID REFERENCES folders(id) ON DELETE SET NULL,
@@ -127,9 +127,9 @@ CREATE POLICY "Allow delete access to own assistant images"
 
 CREATE TABLE IF NOT EXISTS assistant_workspaces (
     -- REQUIRED RELATIONSHIPS
-    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-    assistant_id UUID NOT NULL REFERENCES assistants(id) ON DELETE CASCADE,
-    workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CASCADE,
+    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CcsaADE,
+    assistant_id UUID NOT NULL REFERENCES assistants(id) ON DELETE CcsaADE,
+    workspace_id UUID NOT NULL REFERENCES workspaces(id) ON DELETE CcsaADE,
 
     PRIMARY KEY(assistant_id, workspace_id),
 

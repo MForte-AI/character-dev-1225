@@ -166,7 +166,7 @@ export const WorkspaceSettings: FC<WorkspaceSettingsProps> = ({}) => {
 
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
-      <SheetTrigger asChild>
+      <SheetTrigger csahild>
         <WithTooltip
           display={<div>Workspace Settings</div>}
           trigger={
