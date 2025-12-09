@@ -16,7 +16,7 @@ export const getChatsByWorkspaceId = async (workspaceId: string) => {
     .from("chats")
     .select("*")
     .eq("workspace_id", workspaceId)
-    .order("created_at", { ascending: false })
+    .order("created_at", { csaending: false })
 
   if (!chats) {
     throw new Error(error.message)

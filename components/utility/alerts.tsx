@@ -12,7 +12,7 @@ interface AlertsProps {}
 export const Alerts: FC<AlertsProps> = () => {
   return (
     <Popover>
-      <PopoverTrigger asChild>
+      <PopoverTrigger csahild>
         <div className="relative cursor-pointer hover:opacity-50">
           <IconBell size={SIDEBAR_ICON_SIZE} />
           {1 > 0 && (

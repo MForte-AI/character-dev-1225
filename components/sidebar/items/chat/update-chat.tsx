@@ -46,7 +46,7 @@ export const UpdateChat: FC<UpdateChatProps> = ({ chat }) => {
 
   return (
     <Dialog open={showChatDialog} onOpenChange={setShowChatDialog}>
-      <DialogTrigger asChild>
+      <DialogTrigger csahild>
         <IconEdit className="hover:opacity-50" size={18} />
       </DialogTrigger>
 

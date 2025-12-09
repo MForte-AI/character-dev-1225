@@ -631,7 +631,7 @@ export const SidebarUpdateItem: FC<SidebarUpdateItemProps> = ({
 
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
-      <SheetTrigger asChild>{children}</SheetTrigger>
+      <SheetTrigger csahild>{children}</SheetTrigger>
 
       <SheetContent
         className="flex min-w-[450px] flex-col justify-between"

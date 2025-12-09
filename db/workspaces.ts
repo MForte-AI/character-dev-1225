@@ -35,7 +35,7 @@ export const getWorkspacesByUserId = async (userId: string) => {
     .from("workspaces")
     .select("*")
     .eq("user_id", userId)
-    .order("created_at", { ascending: false })
+    .order("created_at", { csaending: false })
 
   if (!workspaces) {
     throw new Error(error.message)

@@ -48,7 +48,7 @@ export const DeleteChat: FC<DeleteChatProps> = ({ chat }) => {
 
   return (
     <Dialog open={showChatDialog} onOpenChange={setShowChatDialog}>
-      <DialogTrigger asChild>
+      <DialogTrigger csahild>
         <IconTrash className="hover:opacity-50" size={18} />
       </DialogTrigger>
 

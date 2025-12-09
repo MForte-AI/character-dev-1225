@@ -4,9 +4,9 @@
 
 CREATE TABLE IF NOT EXISTS assistant_tools (
     -- REQUIRED RELATIONSHIPS
-    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-    assistant_id UUID NOT NULL REFERENCES assistants(id) ON DELETE CASCADE,
-    tool_id UUID NOT NULL REFERENCES tools(id) ON DELETE CASCADE,
+    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CcsaADE,
+    assistant_id UUID NOT NULL REFERENCES assistants(id) ON DELETE CcsaADE,
+    tool_id UUID NOT NULL REFERENCES tools(id) ON DELETE CcsaADE,
 
     PRIMARY KEY(assistant_id, tool_id),
 

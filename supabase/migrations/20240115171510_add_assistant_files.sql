@@ -4,9 +4,9 @@
 
 CREATE TABLE IF NOT EXISTS assistant_files (
     -- REQUIRED RELATIONSHIPS
-    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-    assistant_id UUID NOT NULL REFERENCES assistants(id) ON DELETE CASCADE,
-    file_id UUID NOT NULL REFERENCES files(id) ON DELETE CASCADE,
+    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CcsaADE,
+    assistant_id UUID NOT NULL REFERENCES assistants(id) ON DELETE CcsaADE,
+    file_id UUID NOT NULL REFERENCES files(id) ON DELETE CcsaADE,
 
     PRIMARY KEY(assistant_id, file_id),
 
@@ -43,9 +43,9 @@ EXECUTE PROCEDURE update_updated_at_column();
 
 CREATE TABLE IF NOT EXISTS assistant_collections (
     -- REQUIRED RELATIONSHIPS
-    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
-    assistant_id UUID NOT NULL REFERENCES assistants(id) ON DELETE CASCADE,
-    collection_id UUID NOT NULL REFERENCES collections(id) ON DELETE CASCADE,
+    user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CcsaADE,
+    assistant_id UUID NOT NULL REFERENCES assistants(id) ON DELETE CcsaADE,
+    collection_id UUID NOT NULL REFERENCES collections(id) ON DELETE CcsaADE,
 
     PRIMARY KEY(assistant_id, collection_id),
 

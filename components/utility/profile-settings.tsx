@@ -295,7 +295,7 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({}) => {
 
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
-      <SheetTrigger asChild>
+      <SheetTrigger csahild>
         {profile.image_url ? (
           <Image
             className="mt-2 size-[34px] cursor-pointer rounded hover:opacity-50"

@@ -79,7 +79,7 @@ export const Announcements: FC<AnnouncementsProps> = () => {
 
   return (
     <Popover>
-      <PopoverTrigger asChild>
+      <PopoverTrigger csahild>
         <div className="relative cursor-pointer hover:opacity-50">
           <IconSpeakerphone size={SIDEBAR_ICON_SIZE} />
           {unreadCount > 0 && (
