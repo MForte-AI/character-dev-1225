@@ -6,10 +6,7 @@ import {
   getHomeWorkspaceByUserId,
   getWorkspacesByUserId
 } from "@/db/workspaces"
-import {
-  fetchHostedModels,
-  fetchOpenRouterModels
-} from "@/lib/models/fetch-models"
+import { fetchHostedModels } from "@/lib/models/fetch-models"
 import { supabase } from "@/lib/supabase/browser-client"
 import { TablesUpdate } from "@/supabase/types"
 import { useRouter } from "next/navigation"
@@ -29,8 +26,7 @@ export default function SetupPage() {
     setWorkspaces,
     setSelectedWorkspace,
     setEnvKeyMap,
-    setAvailableHostedModels,
-    setAvailableOpenRouterModels
+    setAvailableHostedModels
   } = useContext(ChatbotUIContext)
 
   const router = useRouter()
@@ -55,11 +51,6 @@ export default function SetupPage() {
   const [azureOpenai45VisionID, setAzureOpenai45VisionID] = useState("")
   const [azureOpenaiEmbeddingsID, setAzureOpenaiEmbeddingsID] = useState("")
   const [anthropicAPIKey, setAnthropicAPIKey] = useState("")
-  const [googleGeminiAPIKey, setGoogleGeminiAPIKey] = useState("")
-  const [mistralAPIKey, setMistralAPIKey] = useState("")
-  const [groqAPIKey, setGroqAPIKey] = useState("")
-  const [perplexityAPIKey, setPerplexityAPIKey] = useState("")
-  const [openrouterAPIKey, setOpenrouterAPIKey] = useState("")
 
   useEffect(() => {
     ;(async () => {
@@ -83,12 +74,6 @@ export default function SetupPage() {
 
           setEnvKeyMap(data.envKeyMap)
           setAvailableHostedModels(data.hostedModels)
-
-          if (profile["openrouter_api_key"] || data.envKeyMap["openrouter"]) {
-            const openRouterModels = await fetchOpenRouterModels()
-            if (!openRouterModels) return
-            setAvailableOpenRouterModels(openRouterModels)
-          }
 
           const homeWorkspaceId = await getHomeWorkspaceByUserId(
             session.user.id
@@ -128,11 +113,6 @@ export default function SetupPage() {
       openai_api_key: openaiAPIKey,
       openai_organization_id: openaiOrgID,
       anthropic_api_key: anthropicAPIKey,
-      google_gemini_api_key: googleGeminiAPIKey,
-      mistral_api_key: mistralAPIKey,
-      groq_api_key: groqAPIKey,
-      perplexity_api_key: perplexityAPIKey,
-      openrouter_api_key: openrouterAPIKey,
       use_azure_openai: useAzureOpenai,
       azure_openai_api_key: azureOpenaiAPIKey,
       azure_openai_endpoint: azureOpenaiEndpoint,
@@ -200,10 +180,6 @@ export default function SetupPage() {
               azureOpenai45VisionID={azureOpenai45VisionID}
               azureOpenaiEmbeddingsID={azureOpenaiEmbeddingsID}
               anthropicAPIKey={anthropicAPIKey}
-              googleGeminiAPIKey={googleGeminiAPIKey}
-              mistralAPIKey={mistralAPIKey}
-              groqAPIKey={groqAPIKey}
-              perplexityAPIKey={perplexityAPIKey}
               useAzureOpenai={useAzureOpenai}
               onOpenaiAPIKeyChange={setOpenaiAPIKey}
               onOpenaiOrgIDChange={setOpenaiOrgID}
@@ -214,13 +190,7 @@ export default function SetupPage() {
               onAzureOpenai45VisionIDChange={setAzureOpenai45VisionID}
               onAzureOpenaiEmbeddingsIDChange={setAzureOpenaiEmbeddingsID}
               onAnthropicAPIKeyChange={setAnthropicAPIKey}
-              onGoogleGeminiAPIKeyChange={setGoogleGeminiAPIKey}
-              onMistralAPIKeyChange={setMistralAPIKey}
-              onGroqAPIKeyChange={setGroqAPIKey}
-              onPerplexityAPIKeyChange={setPerplexityAPIKey}
               onUseAzureOpenaiChange={setUseAzureOpenai}
-              openrouterAPIKey={openrouterAPIKey}
-              onOpenrouterAPIKeyChange={setOpenrouterAPIKey}
             />
           </StepContainer>
         )
