@@ -22,13 +22,8 @@ export const ModelSelect: FC<ModelSelectProps> = ({
   selectedModelId,
   onSelectModel
 }) => {
-  const {
-    profile,
-    models,
-    availableHostedModels,
-    availableLocalModels,
-    availableOpenRouterModels
-  } = useContext(ChatbotUIContext)
+  const { profile, models, availableHostedModels, availableLocalModels } =
+    useContext(ChatbotUIContext)
 
   const inputRef = useRef<HTMLInputElement>(null)
   const triggerRef = useRef<HTMLButtonElement>(null)
@@ -60,8 +55,7 @@ export const ModelSelect: FC<ModelSelectProps> = ({
       imageInput: false
     })),
     ...availableHostedModels,
-    ...availableLocalModels,
-    ...availableOpenRouterModels
+    ...availableLocalModels
   ]
 
   const groupedModels = allModels.reduce<Record<string, LLM[]>>(

@@ -40,7 +40,6 @@ export const useChatHandler = () => {
     setChats,
     setSelectedTools,
     availableLocalModels,
-    availableOpenRouterModels,
     abortController,
     setAbortController,
     chatSettings,
@@ -215,8 +214,7 @@ export const useChatHandler = () => {
           imageInput: false
         })),
         ...LLM_LIST,
-        ...availableLocalModels,
-        ...availableOpenRouterModels
+        ...availableLocalModels
       ].find(llm => llm.modelId === chatSettings?.model)
 
       validateChatSettings(

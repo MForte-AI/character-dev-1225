@@ -18,8 +18,7 @@ export const ChatSettings: FC<ChatSettingsProps> = ({}) => {
     setChatSettings,
     models,
     availableHostedModels,
-    availableLocalModels,
-    availableOpenRouterModels
+    availableLocalModels
   } = useContext(ChatbotUIContext)
 
   const buttonRef = useRef<HTMLButtonElement>(null)
@@ -58,8 +57,7 @@ export const ChatSettings: FC<ChatSettingsProps> = ({}) => {
       imageInput: false
     })),
     ...availableHostedModels,
-    ...availableLocalModels,
-    ...availableOpenRouterModels
+    ...availableLocalModels
   ]
 
   const fullModel = allModels.find(llm => llm.modelId === chatSettings.model)
