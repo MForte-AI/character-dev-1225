@@ -40,66 +40,6 @@ export const CHAT_SETTING_LIMITS: Record<LLMID, ChatSettingLimits> = {
     MAX_CONTEXT_LENGTH: 200000
   },
 
-  // GOOGLE MODELS
-  "gemini-pro": {
-    MIN_TEMPERATURE: 0.0,
-    MAX_TEMPERATURE: 1.0,
-    MAX_TOKEN_OUTPUT_LENGTH: 2048,
-    MAX_CONTEXT_LENGTH: 30720
-  },
-  "gemini-pro-vision": {
-    MIN_TEMPERATURE: 0.0,
-    MAX_TEMPERATURE: 1.0,
-    MAX_TOKEN_OUTPUT_LENGTH: 4096,
-    MAX_CONTEXT_LENGTH: 12288
-  },
-
-  // MISTRAL MODELS
-  "mistral-tiny": {
-    MIN_TEMPERATURE: 0.0,
-    MAX_TEMPERATURE: 1.0,
-    MAX_TOKEN_OUTPUT_LENGTH: 2000,
-    MAX_CONTEXT_LENGTH: 8000
-  },
-  "mistral-small-latest": {
-    MIN_TEMPERATURE: 0.0,
-    MAX_TEMPERATURE: 1.0,
-    MAX_TOKEN_OUTPUT_LENGTH: 2000,
-    MAX_CONTEXT_LENGTH: 32000
-  },
-  "mistral-medium-latest": {
-    MIN_TEMPERATURE: 0.0,
-    MAX_TEMPERATURE: 1.0,
-    MAX_TOKEN_OUTPUT_LENGTH: 2000,
-    MAX_CONTEXT_LENGTH: 32000
-  },
-  "mistral-large-latest": {
-    MIN_TEMPERATURE: 0.0,
-    MAX_TEMPERATURE: 1.0,
-    MAX_TOKEN_OUTPUT_LENGTH: 2000,
-    MAX_CONTEXT_LENGTH: 32000
-  },
-
-  // GROQ MODELS
-  "llama3-8b-8192": {
-    MIN_TEMPERATURE: 0.0,
-    MAX_TEMPERATURE: 1.0,
-    MAX_TOKEN_OUTPUT_LENGTH: 8192,
-    MAX_CONTEXT_LENGTH: 8192
-  },
-  "llama3-70b-8192": {
-    MIN_TEMPERATURE: 0.0,
-    MAX_TEMPERATURE: 1.0,
-    MAX_TOKEN_OUTPUT_LENGTH: 8192,
-    MAX_CONTEXT_LENGTH: 8192
-  },
-  "mixtral-8x7b-32768": {
-    MIN_TEMPERATURE: 0.0,
-    MAX_TEMPERATURE: 1.0,
-    MAX_TOKEN_OUTPUT_LENGTH: 4096,
-    MAX_CONTEXT_LENGTH: 32768
-  },
-
   // OPENAI MODELS
   "gpt-3.5-turbo": {
     MIN_TEMPERATURE: 0.0,
@@ -131,85 +71,29 @@ export const CHAT_SETTING_LIMITS: Record<LLMID, ChatSettingLimits> = {
     MAX_TEMPERATURE: 2.0,
     MAX_TOKEN_OUTPUT_LENGTH: 4096,
     MAX_CONTEXT_LENGTH: 128000
-  },
-
-  // PERPLEXITY MODELS
-  "pplx-7b-online": {
-    MIN_TEMPERATURE: 0.0,
-    MAX_TEMPERATURE: 1.99,
-    MAX_TOKEN_OUTPUT_LENGTH: 4096,
-    MAX_CONTEXT_LENGTH: 4096
-  },
-  "pplx-70b-online": {
-    MIN_TEMPERATURE: 0.0,
-    MAX_TEMPERATURE: 1.99,
-    MAX_TOKEN_OUTPUT_LENGTH: 4096,
-    MAX_CONTEXT_LENGTH: 4096
-  },
-  "pplx-7b-chat": {
-    MIN_TEMPERATURE: 0.0,
-    MAX_TEMPERATURE: 1.0,
-    MAX_TOKEN_OUTPUT_LENGTH: 4096,
-    MAX_CONTEXT_LENGTH: 8192
-  },
-  "pplx-70b-chat": {
-    MIN_TEMPERATURE: 0.0,
-    MAX_TEMPERATURE: 1.0,
-    MAX_TOKEN_OUTPUT_LENGTH: 4096,
-    MAX_CONTEXT_LENGTH: 4096
-  },
-  "mixtral-8x7b-instruct": {
-    MIN_TEMPERATURE: 0.0,
-    MAX_TEMPERATURE: 1.0,
-    MAX_TOKEN_OUTPUT_LENGTH: 16384,
-    MAX_CONTEXT_LENGTH: 16384
-  },
-  "mistral-7b-instruct": {
-    MIN_TEMPERATURE: 0.0,
-    MAX_TEMPERATURE: 1.0,
-    MAX_TOKEN_OUTPUT_LENGTH: 16384,
-    MAX_CONTEXT_LENGTH: 16384
-  },
-  "llama-2-70b-chat": {
-    MIN_TEMPERATURE: 0.0,
-    MAX_TEMPERATURE: 2.0,
-    MAX_TOKEN_OUTPUT_LENGTH: 4096,
-    MAX_CONTEXT_LENGTH: 4096
-  },
-  "codellama-34b-instruct": {
-    MIN_TEMPERATURE: 0.0,
-    MAX_TEMPERATURE: 1.0,
-    MAX_TOKEN_OUTPUT_LENGTH: 4096,
-    MAX_CONTEXT_LENGTH: 16384
-  },
-  "codellama-70b-instruct": {
-    MIN_TEMPERATURE: 0.0,
-    MAX_TEMPERATURE: 1.0,
-    MAX_TOKEN_OUTPUT_LENGTH: 16384,
-    MAX_CONTEXT_LENGTH: 16384
-  },
-  "sonar-small-chat": {
-    MIN_TEMPERATURE: 0.0,
-    MAX_TEMPERATURE: 1.0,
-    MAX_TOKEN_OUTPUT_LENGTH: 16384,
-    MAX_CONTEXT_LENGTH: 16384
-  },
-  "sonar-small-online": {
-    MIN_TEMPERATURE: 0.0,
-    MAX_TEMPERATURE: 1.0,
-    MAX_TOKEN_OUTPUT_LENGTH: 12000,
-    MAX_CONTEXT_LENGTH: 12000
-  },
-  "sonar-medium-chat": {
-    MIN_TEMPERATURE: 0.0,
-    MAX_TEMPERATURE: 1.0,
-    MAX_TOKEN_OUTPUT_LENGTH: 16384,
-    MAX_CONTEXT_LENGTH: 16384
-  },
-  "sonar-medium-online": {
-    MIN_TEMPERATURE: 0.0,
-    MAX_TEMPERATURE: 1.0,
-    MAX_TOKEN_OUTPUT_LENGTH: 12000,
-    MAX_CONTEXT_LENGTH: 12000
   }
+}
+
+export const MAX_CONTEXT_LIMITS_MAP: Record<LLMID, number> = {
+  // ANTHROPIC MODELS
+  "claude-2.1": 200000,
+  "claude-instant-1.2": 100000,
+  "claude-3-haiku-20240307": 200000,
+  "claude-3-sonnet-20240229": 200000,
+  "claude-3-opus-20240229": 200000,
+
+  // OPENAI MODELS
+  "gpt-3.5-turbo": 4096,
+  "gpt-4-turbo-preview": 128000,
+  "gpt-4-vision-preview": 128000,
+  "gpt-4": 8192,
+  "gpt-4o": 128000
+}
+
+export const getMaxContextLength = (model: LLMID) => {
+  return MAX_CONTEXT_LIMITS_MAP[model] || 4096
+}
+
+export const getMaxOutputLength = (model: LLMID) => {
+  return CHAT_SETTING_LIMITS[model]?.MAX_TOKEN_OUTPUT_LENGTH || 4096
 }
