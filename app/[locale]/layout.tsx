@@ -72,6 +72,23 @@ export default async function RootLayout({
   params: { locale }
 }: RootLayoutProps) {
   const cookieStore = cookies()
+
+  // Check for required environment variables
+  if (
+    !process.env.NEXT_PUBLIC_SUPABASE_URL ||
+    !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+  ) {
+    console.error("Missing required environment variables:")
+    console.error(
+      "NEXT_PUBLIC_SUPABASE_URL:",
+      !!process.env.NEXT_PUBLIC_SUPABASE_URL
+    )
+    console.error(
+      "NEXT_PUBLIC_SUPABASE_ANON_KEY:",
+      !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+    )
+  }
+
   const supabase = createServerClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -83,7 +100,13 @@ export default async function RootLayout({
       }
     }
   )
-  const session = (await supabase.auth.getSession()).data.session
+
+  let session = null
+  try {
+    session = (await supabase.auth.getSession()).data.session
+  } catch (error) {
+    console.error("Error getting session:", error)
+  }
 
   const { t, resources } = await initTranslations(locale, i18nNamespaces)
 
