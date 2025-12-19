@@ -1,6 +1,6 @@
 import { openapiToFunctions } from "@/lib/openapi-conversion"
 import { checkApiKey, getServerProfile } from "@/lib/server/server-chat-helpers"
-import { Tables } from "@/supabase/types"
+import { Database } from "@/supabase/types"
 import { ChatSettings } from "@/types"
 import { OpenAIStream, StreamingTextResponse } from "ai"
 import OpenAI from "openai"
@@ -11,7 +11,7 @@ export async function POST(request: Request) {
   const { chatSettings, messages, selectedTools } = json as {
     chatSettings: ChatSettings
     messages: any[]
-    selectedTools: Tables<"tools">[]
+    selectedTools: Database["public"]["Tables"]["tools"]["Row"][]
   }
 
   try {
