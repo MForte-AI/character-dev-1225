@@ -20,9 +20,9 @@ const APP_DESCRIPTION =
 
 interface RootLayoutProps {
   children: ReactNode
-  params: {
+  params: Promise<{
     locale: string
-  }
+  }>
 }
 
 export const metadata: Metadata = {
@@ -69,9 +69,10 @@ const i18nNamespaces = ["translation"]
 
 export default async function RootLayout({
   children,
-  params: { locale }
+  params
 }: RootLayoutProps) {
-  const cookieStore = cookies()
+  const { locale } = await params
+  const cookieStore = await cookies()
 
   // Check for required environment variables
   if (
