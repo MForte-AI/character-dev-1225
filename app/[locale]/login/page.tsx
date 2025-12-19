@@ -14,11 +14,11 @@ export const metadata: Metadata = {
   title: "Login"
 }
 
-export default async function Login({
-  searchParams
-}: {
-  searchParams: Promise<{ message: string }>
-}) {
+interface LoginProps {
+  searchParams: Promise<{ message?: string }>
+}
+
+export default async function Login({ searchParams }: LoginProps) {
   const params = await searchParams
   const cookieStore = await cookies()
   const supabase = createServerClient<Database>(
