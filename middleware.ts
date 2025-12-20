@@ -14,25 +14,33 @@ export async function middleware(request: NextRequest) {
 
     const redirectToChat = session && request.nextUrl.pathname === "/"
 
-    if (redirectToChat) {
-      const { data: homeWorkspace, error } = await supabase
-        .from("workspaces")
-        .select("*")
-        .eq("user_id", session.data.session?.user.id)
-        .eq("is_home", true)
-        .single()
+    if (redirectToChat && session.data.session) {
+      try {
+        const { data: homeWorkspace, error } = await supabase
+          .from("workspaces")
+          .select("*")
+          .eq("user_id", session.data.session.user.id)
+          .eq("is_home", true)
+          .single()
 
-      if (!homeWorkspace) {
-        throw new Error(error?.message)
+        if (homeWorkspace && !error) {
+          return NextResponse.redirect(
+            new URL(`/${homeWorkspace.id}/chat`, request.url)
+          )
+        } else {
+          // No home workspace found, redirect to setup
+          console.warn('No home workspace found for user:', session.data.session.user.id)
+          return NextResponse.redirect(new URL("/setup", request.url))
+        }
+      } catch (workspaceError) {
+        console.error('Error fetching workspace in middleware:', workspaceError)
+        return NextResponse.redirect(new URL("/setup", request.url))
       }
-
-      return NextResponse.redirect(
-        new URL(`/${homeWorkspace.id}/chat`, request.url)
-      )
     }
 
     return response
   } catch (e) {
+    console.warn('Middleware error:', e)
     return NextResponse.next({
       request: {
         headers: request.headers

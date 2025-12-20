@@ -116,67 +116,125 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
   const [toolInUse, setToolInUse] = useState<string>("none")
 
   useEffect(() => {
-    ;(async () => {
-      const profile = await fetchStartingData()
+    let timeoutId: NodeJS.Timeout
 
-      if (profile) {
-        const hostedModelRes = await fetchHostedModels(profile)
-        if (!hostedModelRes) return
+    const initializeApp = async () => {
+      try {
+        const profile = await fetchStartingData()
 
-        setEnvKeyMap(hostedModelRes.envKeyMap)
-        setAvailableHostedModels(hostedModelRes.hostedModels)
+        if (profile) {
+          const hostedModelRes = await fetchHostedModels(profile)
+          if (hostedModelRes) {
+            setEnvKeyMap(hostedModelRes.envKeyMap)
+            setAvailableHostedModels(hostedModelRes.hostedModels)
+          }
+        }
+
+        if (process.env.NEXT_PUBLIC_OLLAMA_URL) {
+          try {
+            const localModels = await fetchOllamaModels()
+            if (localModels) {
+              setAvailableLocalModels(localModels)
+            }
+          } catch (ollamaError) {
+            console.warn("Failed to load Ollama models:", ollamaError)
+            // Continue without local models
+          }
+        }
+      } catch (error) {
+        console.error("Failed to initialize app:", error)
+        router.push("/login")
       }
+    }
 
-      if (process.env.NEXT_PUBLIC_OLLAMA_URL) {
-        const localModels = await fetchOllamaModels()
-        if (!localModels) return
-        setAvailableLocalModels(localModels)
+    // Set up a timeout to prevent infinite loading
+    timeoutId = setTimeout(() => {
+      console.error("App initialization timed out")
+      router.push("/login")
+    }, 30000) // 30 second timeout
+
+    initializeApp().finally(() => {
+      clearTimeout(timeoutId)
+    })
+
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId)
       }
-    })()
+    }
   }, [])
 
   const fetchStartingData = async () => {
-    const session = (await supabase.auth.getSession()).data.session
+    try {
+      const session = (await supabase.auth.getSession()).data.session
 
-    if (session) {
-      const user = session.user
+      if (session) {
+        const user = session.user
 
-      const profile = await getProfileByUserId(user.id)
-      setProfile(profile)
+        try {
+          const profile = await getProfileByUserId(user.id)
+          setProfile(profile)
 
-      if (!profile.has_onboarded) {
-        return router.push("/setup")
-      }
+          if (!profile.has_onboarded) {
+            return router.push("/setup")
+          }
 
-      const workspaces = await getWorkspacesByUserId(user.id)
-      setWorkspaces(workspaces)
+          const workspaces = await getWorkspacesByUserId(user.id)
+          setWorkspaces(workspaces)
 
-      for (const workspace of workspaces) {
-        let workspaceImageUrl = ""
+          // Process workspace images with error handling
+          for (const workspace of workspaces) {
+            try {
+              let workspaceImageUrl = ""
 
-        if (workspace.image_path) {
-          workspaceImageUrl =
-            (await getWorkspaceImageFromStorage(workspace.image_path)) || ""
-        }
+              if (workspace.image_path) {
+                workspaceImageUrl =
+                  (await getWorkspaceImageFromStorage(workspace.image_path)) ||
+                  ""
+              }
 
-        if (workspaceImageUrl) {
-          const response = await fetch(workspaceImageUrl)
-          const blob = await response.blob()
-          const base64 = await convertBlobToBase64(blob)
+              if (workspaceImageUrl) {
+                const response = await fetch(workspaceImageUrl)
+                if (response.ok) {
+                  const blob = await response.blob()
+                  const base64 = await convertBlobToBase64(blob)
 
-          setWorkspaceImages(prev => [
-            ...prev,
-            {
-              workspaceId: workspace.id,
-              path: workspace.image_path,
-              base64: base64,
-              url: workspaceImageUrl
+                  setWorkspaceImages(prev => [
+                    ...prev,
+                    {
+                      workspaceId: workspace.id,
+                      path: workspace.image_path,
+                      base64: base64,
+                      url: workspaceImageUrl
+                    }
+                  ])
+                }
+              }
+            } catch (imageError) {
+              console.warn(
+                `Failed to load image for workspace ${workspace.id}:`,
+                imageError
+              )
+              // Continue processing other workspaces
             }
-          ])
-        }
-      }
+          }
 
-      return profile
+          return profile
+        } catch (profileError) {
+          console.error("Error fetching profile or workspaces:", profileError)
+          // If profile doesn't exist, redirect to setup
+          router.push("/setup")
+          return null
+        }
+      } else {
+        // No session, redirect to login
+        router.push("/login")
+        return null
+      }
+    } catch (error) {
+      console.error("Unexpected error in fetchStartingData:", error)
+      router.push("/login")
+      return null
     }
   }
 
