@@ -34,8 +34,25 @@ export const getAssistantWorkspacesByWorkspaceId = async (
     throw new Error(error.message)
   }
 
-  return workspace
+  // Also fetch system assistants (available to all users)
+  const { data: systemAssistants, error: systemError } = await supabase
+    .from("assistants")
+    .select("*")
+    .eq("is_system", true)
+
+  if (systemError) {
+    throw new Error(systemError.message)
+  }
+
+  // Combine workspace assistants with system assistants
+  const allAssistants = [
+    ...(systemAssistants || []),
+    ...(workspace.assistants || [])
+  ]
+
+  return { ...workspace, assistants: allAssistants }
 }
+
 
 export const getAssistantWorkspacesByAssistantId = async (
   assistantId: string

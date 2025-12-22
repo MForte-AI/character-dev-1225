@@ -104,33 +104,34 @@ export const CreateAssistant: FC<CreateAssistantProps> = ({
   if (!profile) return null
   if (!selectedWorkspace) return null
 
-  return (
-    <SidebarCreateItem
-      contentType="assistants"
-      createState={
-        {
-          image: selectedImage,
-          user_id: profile.user_id,
-          name,
-          description,
-          include_profile_context: assistantChatSettings.includeProfileContext,
-          include_workspace_instructions:
-            assistantChatSettings.includeWorkspaceInstructions,
-          context_length: assistantChatSettings.contextLength,
-          model: assistantChatSettings.model,
-          image_path: "",
-          prompt: assistantChatSettings.prompt,
-          temperature: assistantChatSettings.temperature,
-          embeddings_provider: assistantChatSettings.embeddingsProvider,
-          files: selectedAssistantRetrievalItems.filter(item =>
-            item.hasOwnProperty("type")
-          ) as Tables<"files">[],
-          collections: selectedAssistantRetrievalItems.filter(
-            item => !item.hasOwnProperty("type")
-          ) as Tables<"collections">[],
-          tools: selectedAssistantToolItems
-        } as TablesInsert<"assistants">
-      }
+  return null
+  // return (
+  //   <SidebarCreateItem
+  //     contentType="assistants"
+  //     createState={
+  //       {
+  //         image: selectedImage,
+  //         user_id: profile.user_id,
+  //         name,
+  //         description,
+  //         include_profile_context: assistantChatSettings.includeProfileContext,
+  //         include_workspace_instructions:
+  //           assistantChatSettings.includeWorkspaceInstructions,
+  //         context_length: assistantChatSettings.contextLength,
+  //         model: assistantChatSettings.model,
+  //         image_path: "",
+  //         prompt: assistantChatSettings.prompt,
+  //         temperature: assistantChatSettings.temperature,
+  //         embeddings_provider: assistantChatSettings.embeddingsProvider,
+  //         files: selectedAssistantRetrievalItems.filter(item =>
+  //           item.hasOwnProperty("type")
+  //         ) as Tables<"files">[],
+  //         collections: selectedAssistantRetrievalItems.filter(
+  //           item => !item.hasOwnProperty("type")
+  //         ) as Tables<"collections">[],
+  //         tools: selectedAssistantToolItems
+  //       } as TablesInsert<"assistants">
+  //     }
       isOpen={isOpen}
       isTyping={isTyping}
       renderInputs={() => (
