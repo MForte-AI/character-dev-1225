@@ -104,109 +104,109 @@ export const CreateAssistant: FC<CreateAssistantProps> = ({
   if (!profile) return null
   if (!selectedWorkspace) return null
 
-  return null
-  // return (
-  //   <SidebarCreateItem
-  //     contentType="assistants"
-  //     createState={
-  //       {
-  //         image: selectedImage,
-  //         user_id: profile.user_id,
-  //         name,
-  //         description,
-  //         include_profile_context: assistantChatSettings.includeProfileContext,
-  //         include_workspace_instructions:
-  //           assistantChatSettings.includeWorkspaceInstructions,
-  //         context_length: assistantChatSettings.contextLength,
-  //         model: assistantChatSettings.model,
-  //         image_path: "",
-  //         prompt: assistantChatSettings.prompt,
-  //         temperature: assistantChatSettings.temperature,
-  //         embeddings_provider: assistantChatSettings.embeddingsProvider,
-  //         files: selectedAssistantRetrievalItems.filter(item =>
-  //           item.hasOwnProperty("type")
-  //         ) as Tables<"files">[],
-  //         collections: selectedAssistantRetrievalItems.filter(
-  //           item => !item.hasOwnProperty("type")
-  //         ) as Tables<"collections">[],
-  //         tools: selectedAssistantToolItems
-  //       } as TablesInsert<"assistants">
-  //     }
-      isOpen={isOpen}
-      isTyping={isTyping}
-      renderInputs={() => (
-        <>
-          <div className="space-y-1">
-            <Label>Name</Label>
+//   return null
+//   // return (
+//   //   <SidebarCreateItem
+//   //     contentType="assistants"
+//   //     createState={
+//   //       {
+//   //         image: selectedImage,
+//   //         user_id: profile.user_id,
+//   //         name,
+//   //         description,
+//   //         include_profile_context: assistantChatSettings.includeProfileContext,
+//   //         include_workspace_instructions:
+//   //           assistantChatSettings.includeWorkspaceInstructions,
+//   //         context_length: assistantChatSettings.contextLength,
+//   //         model: assistantChatSettings.model,
+//   //         image_path: "",
+//   //         prompt: assistantChatSettings.prompt,
+//   //         temperature: assistantChatSettings.temperature,
+//   //         embeddings_provider: assistantChatSettings.embeddingsProvider,
+//   //         files: selectedAssistantRetrievalItems.filter(item =>
+//   //           item.hasOwnProperty("type")
+//   //         ) as Tables<"files">[],
+//   //         collections: selectedAssistantRetrievalItems.filter(
+//   //           item => !item.hasOwnProperty("type")
+//   //         ) as Tables<"collections">[],
+//   //         tools: selectedAssistantToolItems
+//   //       } as TablesInsert<"assistants">
+//   //     }
+//       isOpen={isOpen}
+//       isTyping={isTyping}
+//       renderInputs={() => (
+//         <>
+//           <div className="space-y-1">
+//             <Label>Name</Label>
 
-            <Input
-              placeholder="Assistant name..."
-              value={name}
-              onChange={e => setName(e.target.value)}
-              maxLength={ASSISTANT_NAME_MAX}
-            />
-          </div>
+//             <Input
+//               placeholder="Assistant name..."
+//               value={name}
+//               onChange={e => setName(e.target.value)}
+//               maxLength={ASSISTANT_NAME_MAX}
+//             />
+//           </div>
 
-          <div className="space-y-1 pt-2">
-            <Label>Description</Label>
+//           <div className="space-y-1 pt-2">
+//             <Label>Description</Label>
 
-            <Input
-              placeholder="Assistant description..."
-              value={description}
-              onChange={e => setDescription(e.target.value)}
-              maxLength={ASSISTANT_DESCRIPTION_MAX}
-            />
-          </div>
+//             <Input
+//               placeholder="Assistant description..."
+//               value={description}
+//               onChange={e => setDescription(e.target.value)}
+//               maxLength={ASSISTANT_DESCRIPTION_MAX}
+//             />
+//           </div>
 
-          <div className="space-y-1 pt-2">
-            <Label className="flex space-x-1">
-              <div>Image</div>
+//           <div className="space-y-1 pt-2">
+//             <Label className="flex space-x-1">
+//               <div>Image</div>
 
-              <div className="text-xs">(optional)</div>
-            </Label>
+//               <div className="text-xs">(optional)</div>
+//             </Label>
 
-            <ImagePicker
-              src={imageLink}
-              image={selectedImage}
-              onSrcChange={setImageLink}
-              onImageChange={setSelectedImage}
-              width={100}
-              height={100}
-            />
-          </div>
+//             <ImagePicker
+//               src={imageLink}
+//               image={selectedImage}
+//               onSrcChange={setImageLink}
+//               onImageChange={setSelectedImage}
+//               width={100}
+//               height={100}
+//             />
+//           </div>
 
-          <ChatSettingsForm
-            chatSettings={assistantChatSettings as any}
-            onChangeChatSettings={setAssistantChatSettings}
-            useAdvancedDropdown={true}
-          />
+//           <ChatSettingsForm
+//             chatSettings={assistantChatSettings as any}
+//             onChangeChatSettings={setAssistantChatSettings}
+//             useAdvancedDropdown={true}
+//           />
 
-          <div className="space-y-1 pt-2">
-            <Label>Files & Collections</Label>
+//           <div className="space-y-1 pt-2">
+//             <Label>Files & Collections</Label>
 
-            <AssistantRetrievalSelect
-              selectedAssistantRetrievalItems={selectedAssistantRetrievalItems}
-              onAssistantRetrievalItemsSelect={handleRetrievalItemSelect}
-            />
-          </div>
+//             <AssistantRetrievalSelect
+//               selectedAssistantRetrievalItems={selectedAssistantRetrievalItems}
+//               onAssistantRetrievalItemsSelect={handleRetrievalItemSelect}
+//             />
+//           </div>
 
-          {checkIfModelIsToolCompatible() ? (
-            <div className="space-y-1">
-              <Label>Tools</Label>
+//           {checkIfModelIsToolCompatible() ? (
+//             <div className="space-y-1">
+//               <Label>Tools</Label>
 
-              <AssistantToolSelect
-                selectedAssistantTools={selectedAssistantToolItems}
-                onAssistantToolsSelect={handleToolSelect}
-              />
-            </div>
-          ) : (
-            <div className="pt-1 font-semibold">
-              Model is not compatible with tools.
-            </div>
-          )}
-        </>
-      )}
-      onOpenChange={onOpenChange}
-    />
-  )
-}
+//               <AssistantToolSelect
+//                 selectedAssistantTools={selectedAssistantToolItems}
+//                 onAssistantToolsSelect={handleToolSelect}
+//               />
+//             </div>
+//           ) : (
+//             <div className="pt-1 font-semibold">
+//               Model is not compatible with tools.
+//             </div>
+//           )}
+//         </>
+//       )}
+//       onOpenChange={onOpenChange}
+//     />
+//   )
+// }
