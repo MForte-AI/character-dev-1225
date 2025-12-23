@@ -30,7 +30,8 @@ export const getAssistantWorkspacesByWorkspaceId = async (
     .eq("id", workspaceId)
     .single()
 
-  if (!workspace) {
+    console.log("Workspace assistants:", workspace.assistants)
+    if (!workspace) {
     throw new Error(error.message)
   }
 
@@ -40,6 +41,7 @@ export const getAssistantWorkspacesByWorkspaceId = async (
     .select("*")
     .eq("is_system", true)
 
+console.log("System assistants:", systemAssistants)
   if (systemError) {
     throw new Error(systemError.message)
   }
@@ -49,10 +51,11 @@ export const getAssistantWorkspacesByWorkspaceId = async (
     ...(systemAssistants || []),
     ...(workspace.assistants || [])
   ]
+  
+  console.log("All assistants combined:", allAssistants)
 
   return { ...workspace, assistants: allAssistants }
 }
-
 
 export const getAssistantWorkspacesByAssistantId = async (
   assistantId: string
