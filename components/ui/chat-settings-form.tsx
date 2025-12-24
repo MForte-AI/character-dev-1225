@@ -39,17 +39,7 @@ export const ChatSettingsForm: FC<ChatSettingsFormProps> = ({
 
   return (
     <div className="space-y-3">
-      <div className="space-y-1">
-        <Label>Model</Label>
-
-        <ModelSelect
-          selectedModelId={chatSettings.model}
-          onSelectModel={model => {
-            onChangeChatSettings({ ...chatSettings, model })
-          }}
-        />
-      </div>
-
+ {/* Model selector hidden - using assistant's default model */}
       <div className="space-y-1">
         <Label>Prompt</Label>
 

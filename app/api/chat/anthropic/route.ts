@@ -16,9 +16,12 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const profile = await getServerProfile()
+  const profile = await getServerProfile()
 
-    checkApiKey(profile.anthropic_api_key, "Anthropic")
+// Use server-side API key instead of user's key
+const apiKey = process.env.ANTHROPIC_API_KEY || profile.anthropic_api_key
+
+checkApiKey(apiKey, "Anthropic")
 
     let ANTHROPIC_FORMATTED_MESSAGES: any = messages.slice(1)
 
@@ -56,8 +59,8 @@ export async function POST(request: NextRequest) {
     )
 
     const anthropic = new Anthropic({
-      apiKey: profile.anthropic_api_key || ""
-    })
+  apiKey: apiKey
+})
 
     try {
       const response = await anthropic.messages.create({
