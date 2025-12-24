@@ -83,7 +83,7 @@ export const SidebarItem: FC<SidebarItemProps> = ({
   //   await action(item as any)
   // }
 
-  // Check if this is a system assistant
+// Check if this is a system assistant
 const isSystemAssistant = 'is_system' in item && item.is_system === true
 
 // For system assistants, clicking should start a chat
@@ -94,6 +94,30 @@ const handleClick = async () => {
   }
 }
 
+// System assistants just render the display without edit functionality
+if (isSystemAssistant) {
+  return (
+    <div
+      ref={itemRef}
+      className={cn(
+        "hover:bg-accent flex w-full cursor-pointer items-center rounded p-2 hover:opacity-50 focus:outline-none"
+      )}
+      tabIndex={0}
+      onKeyDown={handleKeyDown}
+      onClick={handleClick}
+      onMouseEnter={() => setIsHovering(true)}
+      onMouseLeave={() => setIsHovering(false)}
+    >
+      {icon}
+
+      <div className="ml-3 flex-1 truncate text-sm font-semibold">
+        {item.name}
+      </div>
+    </div>
+  )
+}
+
+// Regular items use SidebarUpdateItem for editing
 return (
   <SidebarUpdateItem
     item={item}
@@ -109,7 +133,6 @@ return (
       )}
       tabIndex={0}
       onKeyDown={handleKeyDown}
-      onClick={isSystemAssistant ? handleClick : undefined}
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
     >
