@@ -18,7 +18,7 @@ export const getAssistantById = async (assistantId: string) => {
 export const getAssistantWorkspacesByWorkspaceId = async (
   workspaceId: string
 ) => {
-const { data: workspace, error } = await supabase
+  const { data: workspace, error } = await supabase
     .from("workspaces")
     .select(
       `
@@ -29,21 +29,17 @@ const { data: workspace, error } = await supabase
     )
     .eq("id", workspaceId)
     .single()
-const { data: workspace, error } = await supabase
-    .from("workspaces")
-    .select(
-      `
-    if (!workspace) {
+
+  if (!workspace) {
     throw new Error(error.message)
   }
- console.log("Workspace assistants:", workspace.assistants)
 
-// Also fetch system assistants (available to all users)
-const { data: systemAssistants, error: systemError } = await supabase
-  .from("assistants")
-  .select("*")
-  .eq("is_system", true)
-console.log("System assistants:", systemAssistants)
+  // Also fetch system assistants (available to all users)
+  const { data: systemAssistants, error: systemError } = await supabase
+    .from("assistants")
+    .select("*")
+    .eq("is_system", true)
+
   if (systemError) {
     throw new Error(systemError.message)
   }
@@ -53,8 +49,6 @@ console.log("System assistants:", systemAssistants)
     ...(systemAssistants || []),
     ...(workspace.assistants || [])
   ]
-
-  console.log("All assistants combined:", allAssistants)
 
   return { ...workspace, assistants: allAssistants }
 }
