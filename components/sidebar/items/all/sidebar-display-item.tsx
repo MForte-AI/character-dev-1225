@@ -83,45 +83,42 @@ export const SidebarItem: FC<SidebarItemProps> = ({
   //   await action(item as any)
   // }
 
-  return (
-    <SidebarUpdateItem
-      item={item}
-      isTyping={isTyping}
-      contentType={contentType}
-      updateState={updateState}
-      renderInputs={renderInputs}
+  // Check if this is a system assistant
+const isSystemAssistant = 'is_system' in item && item.is_system === true
+
+// For system assistants, clicking should start a chat
+const handleClick = async () => {
+  if (isSystemAssistant && contentType === 'assistants') {
+    const action = actionMap[contentType]
+    await action(item as any)
+  }
+}
+
+return (
+  <SidebarUpdateItem
+    item={item}
+    isTyping={isTyping}
+    contentType={contentType}
+    updateState={updateState}
+    renderInputs={renderInputs}
+  >
+    <div
+      ref={itemRef}
+      className={cn(
+        "hover:bg-accent flex w-full cursor-pointer items-center rounded p-2 hover:opacity-50 focus:outline-none"
+      )}
+      tabIndex={0}
+      onKeyDown={handleKeyDown}
+      onClick={isSystemAssistant ? handleClick : undefined}
+      onMouseEnter={() => setIsHovering(true)}
+      onMouseLeave={() => setIsHovering(false)}
     >
-      <div
-        ref={itemRef}
-        className={cn(
-          "hover:bg-accent flex w-full cursor-pointer items-center rounded p-2 hover:opacity-50 focus:outline-none"
-        )}
-        tabIndex={0}
-        onKeyDown={handleKeyDown}
-        onMouseEnter={() => setIsHovering(true)}
-        onMouseLeave={() => setIsHovering(false)}
-      >
-        {icon}
+      {icon}
 
-        <div className="ml-3 flex-1 truncate text-sm font-semibold">
-          {item.name}
-        </div>
-
-        {/* TODO */}
-        {/* {isHovering && (
-          <WithTooltip
-            delayDuration={1000}
-            display={<div>Start chat with {contentType.slice(0, -1)}</div>}
-            trigger={
-              <IconSquarePlus
-                className="cursor-pointer hover:text-blue-500"
-                size={20}
-                onClick={handleClickAction}
-              />
-            }
-          />
-        )} */}
+      <div className="ml-3 flex-1 truncate text-sm font-semibold">
+        {item.name}
       </div>
-    </SidebarUpdateItem>
-  )
+    </div>
+  </SidebarUpdateItem>
+)
 }
