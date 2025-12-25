@@ -88,9 +88,16 @@ const isSystemAssistant = 'is_system' in item && item.is_system === true
 
 // For system assistants, clicking should start a chat
 const handleClick = async () => {
+  console.log("handleClick called", { isSystemAssistant, contentType, item })
   if (isSystemAssistant && contentType === 'assistants') {
+    console.log("About to call action")
     const action = actionMap[contentType]
-    await action(item as any)
+    try {
+      await action(item as any)
+      console.log("Action completed successfully")
+    } catch (error) {
+      console.error("Error in action:", error)
+    }
   }
 }
 
