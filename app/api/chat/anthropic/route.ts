@@ -15,6 +15,7 @@ export async function POST(request: NextRequest) {
     messages: any[]
   }
 
+  try {
 const profile = await getServerProfile()
 
 // Use server-side API key instead of user's key
