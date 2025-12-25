@@ -15,11 +15,14 @@ export async function POST(request: NextRequest) {
     messages: any[]
   }
 
-  try {
-  const profile = await getServerProfile()
+const profile = await getServerProfile()
 
 // Use server-side API key instead of user's key
 const apiKey = process.env.ANTHROPIC_API_KEY || profile.anthropic_api_key
+
+console.log("Server API Key exists:", !!process.env.ANTHROPIC_API_KEY)
+console.log("Profile API Key exists:", !!profile.anthropic_api_key)
+console.log("Final apiKey exists:", !!apiKey)
 
 checkApiKey(apiKey, "Anthropic")
 
