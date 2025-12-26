@@ -10,6 +10,7 @@ import { Tables } from "@/supabase/types"
 import { ChatMessage, ChatPayload, LLMID, ModelProvider } from "@/types"
 import { useRouter } from "next/navigation"
 import { useContext, useEffect, useRef } from "react"
+import { toast } from "sonner"
 import { LLM_LIST } from "../../../lib/models/llm/llm-list"
 import {
   createTempMessages,
@@ -75,6 +76,28 @@ export const useChatHandler = () => {
       chatInputRef.current?.focus()
     }
   }, [isPromptPickerOpen, isFilePickerOpen, isToolPickerOpen])
+
+  // Initialize chat settings if they don't exist
+  useEffect(() => {
+    if (!chatSettings && selectedWorkspace && !selectedAssistant && !selectedPreset) {
+      setChatSettings({
+        model: (selectedWorkspace.default_model ||
+          "gpt-4-1106-preview") as LLMID,
+        prompt:
+          selectedWorkspace.default_prompt ||
+          "You are a friendly, helpful AI assistant.",
+        temperature: selectedWorkspace.default_temperature || 0.5,
+        contextLength: selectedWorkspace.default_context_length || 4096,
+        includeProfileContext:
+          selectedWorkspace.include_profile_context || true,
+        includeWorkspaceInstructions:
+          selectedWorkspace.include_workspace_instructions || true,
+        embeddingsProvider:
+          (selectedWorkspace.embeddings_provider as "openai" | "local") ||
+          "openai"
+      })
+    }
+  }, [chatSettings, selectedWorkspace, selectedAssistant, selectedPreset, setChatSettings])
 
   const handleNewChat = async () => {
     if (!selectedWorkspace) return
@@ -156,22 +179,22 @@ export const useChatHandler = () => {
           | "local"
       })
     } else if (selectedWorkspace) {
-      // setChatSettings({
-      //   model: (selectedWorkspace.default_model ||
-      //     "gpt-4-1106-preview") as LLMID,
-      //   prompt:
-      //     selectedWorkspace.default_prompt ||
-      //     "You are a friendly, helpful AI assistant.",
-      //   temperature: selectedWorkspace.default_temperature || 0.5,
-      //   contextLength: selectedWorkspace.default_context_length || 4096,
-      //   includeProfileContext:
-      //     selectedWorkspace.include_profile_context || true,
-      //   includeWorkspaceInstructions:
-      //     selectedWorkspace.include_workspace_instructions || true,
-      //   embeddingsProvider:
-      //     (selectedWorkspace.embeddings_provider as "openai" | "local") ||
-      //     "openai"
-      // })
+      setChatSettings({
+        model: (selectedWorkspace.default_model ||
+          "gpt-4-1106-preview") as LLMID,
+        prompt:
+          selectedWorkspace.default_prompt ||
+          "You are a friendly, helpful AI assistant.",
+        temperature: selectedWorkspace.default_temperature || 0.5,
+        contextLength: selectedWorkspace.default_context_length || 4096,
+        includeProfileContext:
+          selectedWorkspace.include_profile_context || true,
+        includeWorkspaceInstructions:
+          selectedWorkspace.include_workspace_instructions || true,
+        embeddingsProvider:
+          (selectedWorkspace.embeddings_provider as "openai" | "local") ||
+          "openai"
+      })
     }
 
     return router.push(`/${selectedWorkspace.id}/chat`)
@@ -382,9 +405,17 @@ export const useChatHandler = () => {
       setFirstTokenReceived(false)
       setUserInput("")
     } catch (error) {
+      console.error("Error in handleSendMessage:", error)
       setIsGenerating(false)
       setFirstTokenReceived(false)
       setUserInput(startingInput)
+      
+      // Show user-friendly error message
+      if (error instanceof Error) {
+        toast.error(`Failed to send message: ${error.message}`)
+      } else {
+        toast.error("Failed to send message. Please try again.")
+      }
     }
   }
 
