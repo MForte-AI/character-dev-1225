@@ -40,31 +40,35 @@ export const SidebarItem: FC<SidebarItemProps> = ({
     files: async (item: any) => {},
     collections: async (item: any) => {},
     assistants: async (assistant: Tables<"assistants">) => {
-      if (!selectedWorkspace) return
+  if (!selectedWorkspace) return
 
-      const createdChat = await createChat({
-        user_id: profile?.user_id || assistant.user_id,
-        workspace_id: selectedWorkspace.id,
-        assistant_id: assistant.id,
-        context_length: assistant.context_length,
-        include_profile_context: assistant.include_profile_context,
-        include_workspace_instructions:
-          assistant.include_workspace_instructions,
-        model: assistant.model,
-        name: `Chat with ${assistant.name}`,
-        prompt: assistant.prompt,
-        temperature: assistant.temperature,
-        embeddings_provider: assistant.embeddings_provider
-      })
+  console.log("Creating chat for assistant:", assistant.name)
+  
+  const createdChat = await createChat({
+    user_id: profile?.user_id || assistant.user_id,
+    workspace_id: selectedWorkspace.id,
+    assistant_id: assistant.id,
+    context_length: assistant.context_length,
+    include_profile_context: assistant.include_profile_context,
+    include_workspace_instructions:
+      assistant.include_workspace_instructions,
+    model: assistant.model,
+    name: `Chat with ${assistant.name}`,
+    prompt: assistant.prompt,
+    temperature: assistant.temperature,
+    embeddings_provider: assistant.embeddings_provider
+  })
 
-      setChats(prevState => [createdChat, ...prevState])
-      setSelectedAssistant(assistant)
+  console.log("Chat created:", createdChat.id)
 
-      return router.push(`/${selectedWorkspace.id}/chat/${createdChat.id}`)
-    },
-    tools: async (item: any) => {},
-    models: async (item: any) => {}
-  }
+  setChats(prevState => [createdChat, ...prevState])
+  setSelectedAssistant(assistant)
+
+  const redirectUrl = `/${selectedWorkspace.id}/chat/${createdChat.id}`
+  console.log("Redirecting to:", redirectUrl)
+  
+  return router.push(redirectUrl)
+}
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === "Enter") {
