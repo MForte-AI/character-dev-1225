@@ -66,10 +66,12 @@ export const SidebarItem: FC<SidebarItemProps> = ({
 
   const redirectUrl = `/${selectedWorkspace.id}/chat/${createdChat.id}`
   console.log("Redirecting to:", redirectUrl)
-  
-  return router.push(redirectUrl)
-}
 
+  return router.push(redirectUrl)
+},
+tools: async (item: any) => {},
+models: async (item: any) => {}
+}
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === "Enter") {
       e.stopPropagation()
