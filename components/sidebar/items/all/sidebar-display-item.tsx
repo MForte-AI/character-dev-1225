@@ -24,8 +24,8 @@ export const SidebarItem: FC<SidebarItemProps> = ({
   icon,
   isTyping
 }) => {
- const { selectedWorkspace, setChats, setSelectedAssistant, profile } =
-  useContext(ChatbotUIContext)
+  const { selectedWorkspace, setChats, setSelectedAssistant, profile } =
+    useContext(ChatbotUIContext)
 
   const router = useRouter()
 
@@ -34,44 +34,44 @@ export const SidebarItem: FC<SidebarItemProps> = ({
   const [isHovering, setIsHovering] = useState(false)
 
   const actionMap = {
-    chats: async (item: any) => {},
-    presets: async (item: any) => {},
-    prompts: async (item: any) => {},
-    files: async (item: any) => {},
-    collections: async (item: any) => {},
+    chats: async (item: any) => { },
+    presets: async (item: any) => { },
+    prompts: async (item: any) => { },
+    files: async (item: any) => { },
+    collections: async (item: any) => { },
     assistants: async (assistant: Tables<"assistants">) => {
-  if (!selectedWorkspace) return
+      if (!selectedWorkspace) return
 
-  console.log("Creating chat for assistant:", assistant.name)
-  
-  const createdChat = await createChat({
-    user_id: profile?.user_id || assistant.user_id,
-    workspace_id: selectedWorkspace.id,
-    assistant_id: assistant.id,
-    context_length: assistant.context_length,
-    include_profile_context: assistant.include_profile_context,
-    include_workspace_instructions:
-      assistant.include_workspace_instructions,
-    model: assistant.model,
-    name: `Chat with ${assistant.name}`,
-    prompt: assistant.prompt,
-    temperature: assistant.temperature,
-    embeddings_provider: assistant.embeddings_provider
-  })
+      console.log("Creating chat for assistant:", assistant.name)
 
-  console.log("Chat created:", createdChat.id)
+      const createdChat = await createChat({
+        user_id: profile?.user_id || assistant.user_id,
+        workspace_id: selectedWorkspace.id,
+        assistant_id: assistant.id,
+        context_length: assistant.context_length,
+        include_profile_context: assistant.include_profile_context,
+        include_workspace_instructions:
+          assistant.include_workspace_instructions,
+        model: assistant.model,
+        name: `Chat with ${assistant.name}`,
+        prompt: assistant.prompt,
+        temperature: assistant.temperature,
+        embeddings_provider: assistant.embeddings_provider
+      })
 
-  setChats(prevState => [createdChat, ...prevState])
-  setSelectedAssistant(assistant)
+      console.log("Chat created:", createdChat.id)
 
-  const redirectUrl = `/${selectedWorkspace.id}/chat/${createdChat.id}`
-  console.log("Redirecting to:", redirectUrl)
+      setChats(prevState => [createdChat, ...prevState])
+      setSelectedAssistant(assistant)
 
-  return router.push(redirectUrl)
-},
-tools: async (item: any) => {},
-models: async (item: any) => {}
-}
+      const redirectUrl = `/${selectedWorkspace.id}/chat/${createdChat.id}`
+      console.log("Redirecting to:", redirectUrl)
+
+      return router.push(redirectUrl)
+    },
+    tools: async (item: any) => { },
+    models: async (item: any) => { }
+  }
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === "Enter") {
       e.stopPropagation()
@@ -89,72 +89,72 @@ models: async (item: any) => {}
   //   await action(item as any)
   // }
 
-// Check if this is a system assistant
-const isSystemAssistant = 'is_system' in item && item.is_system === true
+  // Check if this is a system assistant
+  const isSystemAssistant = 'is_system' in item && item.is_system === true
 
-// For system assistants, clicking should start a chat
-const handleClick = async () => {
-  console.log("handleClick called", { isSystemAssistant, contentType, item })
-  if (isSystemAssistant && contentType === 'assistants') {
-    console.log("About to call action")
-    const action = actionMap[contentType]
-    try {
-      await action(item as any)
-      console.log("Action completed successfully")
-    } catch (error) {
-      console.error("Error in action:", error)
+  // For system assistants, clicking should start a chat
+  const handleClick = async () => {
+    console.log("handleClick called", { isSystemAssistant, contentType, item })
+    if (isSystemAssistant && contentType === 'assistants') {
+      console.log("About to call action")
+      const action = actionMap[contentType]
+      try {
+        await action(item as any)
+        console.log("Action completed successfully")
+      } catch (error) {
+        console.error("Error in action:", error)
+      }
     }
   }
-}
 
-// System assistants just render the display without edit functionality
-if (isSystemAssistant) {
+  // System assistants just render the display without edit functionality
+  if (isSystemAssistant) {
+    return (
+      <div
+        ref={itemRef}
+        className={cn(
+          "hover:bg-accent flex w-full cursor-pointer items-center rounded p-2 hover:opacity-50 focus:outline-none"
+        )}
+        tabIndex={0}
+        onKeyDown={handleKeyDown}
+        onClick={handleClick}
+        onMouseEnter={() => setIsHovering(true)}
+        onMouseLeave={() => setIsHovering(false)}
+      >
+        {icon}
+
+        <div className="ml-3 flex-1 truncate text-sm font-semibold">
+          {item.name}
+        </div>
+      </div>
+    )
+  }
+
+  // Regular items use SidebarUpdateItem for editing
   return (
-    <div
-      ref={itemRef}
-      className={cn(
-        "hover:bg-accent flex w-full cursor-pointer items-center rounded p-2 hover:opacity-50 focus:outline-none"
-      )}
-      tabIndex={0}
-      onKeyDown={handleKeyDown}
-      onClick={handleClick}
-      onMouseEnter={() => setIsHovering(true)}
-      onMouseLeave={() => setIsHovering(false)}
+    <SidebarUpdateItem
+      item={item}
+      isTyping={isTyping}
+      contentType={contentType}
+      updateState={updateState}
+      renderInputs={renderInputs}
     >
-      {icon}
+      <div
+        ref={itemRef}
+        className={cn(
+          "hover:bg-accent flex w-full cursor-pointer items-center rounded p-2 hover:opacity-50 focus:outline-none"
+        )}
+        tabIndex={0}
+        onKeyDown={handleKeyDown}
+        onMouseEnter={() => setIsHovering(true)}
+        onMouseLeave={() => setIsHovering(false)}
+      >
+        {icon}
 
-      <div className="ml-3 flex-1 truncate text-sm font-semibold">
-        {item.name}
+        <div className="ml-3 flex-1 truncate text-sm font-semibold">
+          {item.name}
+        </div>
       </div>
-    </div>
+    </SidebarUpdateItem>
   )
-}
-
-// Regular items use SidebarUpdateItem for editing
-return (
-  <SidebarUpdateItem
-    item={item}
-    isTyping={isTyping}
-    contentType={contentType}
-    updateState={updateState}
-    renderInputs={renderInputs}
-  >
-    <div
-      ref={itemRef}
-      className={cn(
-        "hover:bg-accent flex w-full cursor-pointer items-center rounded p-2 hover:opacity-50 focus:outline-none"
-      )}
-      tabIndex={0}
-      onKeyDown={handleKeyDown}
-      onMouseEnter={() => setIsHovering(true)}
-      onMouseLeave={() => setIsHovering(false)}
-    >
-      {icon}
-
-      <div className="ml-3 flex-1 truncate text-sm font-semibold">
-        {item.name}
-      </div>
-    </div>
-  </SidebarUpdateItem>
-)
 }

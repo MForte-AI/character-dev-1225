@@ -3,7 +3,7 @@
 import { ChatHelp } from "@/components/chat/chat-help"
 import { useChatHandler } from "@/components/chat/chat-hooks/use-chat-handler"
 import { ChatInput } from "@/components/chat/chat-input"
-import { ChatSettings } from "@/components/chat/chat-settings"
+// import { ChatSettings } from "@/components/chat/chat-settings" // Removed to hide LLM selection
 import { ChatUI } from "@/components/chat/chat-ui"
 import { QuickSettings } from "@/components/chat/quick-settings"
 import { Brand } from "@/components/ui/brand"
@@ -36,9 +36,7 @@ export default function ChatPage() {
   <QuickSettings />
 </div>
 
-          <div className="absolute right-2 top-2">
-            <ChatSettings />
-          </div>
+          {/* ChatSettings component removed to hide LLM selection */}
 
           <div className="flex grow flex-col items-center justify-center" />
 

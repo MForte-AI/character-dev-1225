@@ -82,7 +82,7 @@ export const useChatHandler = () => {
     if (!chatSettings && selectedWorkspace && !selectedAssistant && !selectedPreset) {
       setChatSettings({
         model: (selectedWorkspace.default_model ||
-          "gpt-4-1106-preview") as LLMID,
+          "claude-3-sonnet-20240229") as LLMID,
         prompt:
           selectedWorkspace.default_prompt ||
           "You are a friendly, helpful AI assistant.",
@@ -181,7 +181,7 @@ export const useChatHandler = () => {
     } else if (selectedWorkspace) {
       setChatSettings({
         model: (selectedWorkspace.default_model ||
-          "gpt-4-1106-preview") as LLMID,
+          "claude-3-sonnet-20240229") as LLMID,
         prompt:
           selectedWorkspace.default_prompt ||
           "You are a friendly, helpful AI assistant.",
