@@ -9,7 +9,15 @@ import { updateTool } from "@/db/tools"
 import { cn } from "@/lib/utils"
 import { Tables } from "@/supabase/types"
 import { ContentType, DataItemType, DataListType } from "@/types"
-import { FC, useContext, useEffect, useRef, useState } from "react"
+import {
+  Dispatch,
+  FC,
+  SetStateAction,
+  useContext,
+  useEffect,
+  useRef,
+  useState
+} from "react"
 import { Separator } from "../ui/separator"
 import { AssistantItem } from "./items/assistants/assistant-item"
 import { ChatItem } from "./items/chat/chat-item"
@@ -126,7 +134,9 @@ export const SidebarDataList: FC<SidebarDataListProps> = ({
       )
   }
 
-  const updateFunctions = {
+  const updateFunctions: Partial<
+    Record<ContentType, (id: string, update: any) => Promise<any>>
+  > = {
     chats: updateChat,
     presets: updatePreset,
     prompts: updatePrompt,
@@ -136,7 +146,9 @@ export const SidebarDataList: FC<SidebarDataListProps> = ({
     tools: updateTool
   }
 
-  const stateUpdateFunctions = {
+  const stateUpdateFunctions: Partial<
+    Record<ContentType, Dispatch<SetStateAction<any[]>>>
+  > = {
     chats: setChats,
     presets: setPresets,
     prompts: setPrompts,
