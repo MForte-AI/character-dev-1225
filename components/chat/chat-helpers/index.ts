@@ -276,6 +276,8 @@ export const fetchChatResponse = async (
 
     setIsGenerating(false)
     setChatMessages(prevMessages => prevMessages.slice(0, -2))
+
+    throw new Error(errorData.message || "Request failed")
   }
 
   return response
