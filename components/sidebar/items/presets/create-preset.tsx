@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { ChatbotUIContext } from "@/context/context"
 import { PRESET_NAME_MAX } from "@/db/limits"
+import { resolveClaudeModelId } from "@/lib/models/llm/llm-list"
 import { TablesInsert } from "@/supabase/types"
 import { FC, useContext, useState } from "react"
 
@@ -22,14 +23,14 @@ export const CreatePreset: FC<CreatePresetProps> = ({
   const [isTyping, setIsTyping] = useState(false)
   const [description, setDescription] = useState("")
   const [presetChatSettings, setPresetChatSettings] = useState({
-    model: selectedWorkspace?.default_model,
+    model: resolveClaudeModelId(selectedWorkspace?.default_model),
     prompt: selectedWorkspace?.default_prompt,
     temperature: selectedWorkspace?.default_temperature,
     contextLength: selectedWorkspace?.default_context_length,
     includeProfileContext: selectedWorkspace?.include_profile_context,
     includeWorkspaceInstructions:
       selectedWorkspace?.include_workspace_instructions,
-    embeddingsProvider: selectedWorkspace?.embeddings_provider
+    embeddingsProvider: "openai"
   })
 
   if (!profile) return null

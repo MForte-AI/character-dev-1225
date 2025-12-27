@@ -11,7 +11,10 @@ import { ChatMessage, ChatPayload, LLMID, ModelProvider } from "@/types"
 import { useRouter } from "next/navigation"
 import { useContext, useEffect, useRef } from "react"
 import { toast } from "sonner"
-import { LLM_LIST } from "../../../lib/models/llm/llm-list"
+import {
+  LLM_LIST,
+  resolveClaudeModelId
+} from "../../../lib/models/llm/llm-list"
 import {
   createTempMessages,
   handleCreateChat,
@@ -81,8 +84,7 @@ export const useChatHandler = () => {
   useEffect(() => {
     if (!chatSettings && selectedWorkspace && !selectedAssistant && !selectedPreset) {
       setChatSettings({
-        model: (selectedWorkspace.default_model ||
-          "claude-3-sonnet-20240229") as LLMID,
+        model: resolveClaudeModelId(selectedWorkspace.default_model) as LLMID,
         prompt:
           selectedWorkspace.default_prompt ||
           "You are a friendly, helpful AI assistant.",
@@ -92,9 +94,7 @@ export const useChatHandler = () => {
           selectedWorkspace.include_profile_context || true,
         includeWorkspaceInstructions:
           selectedWorkspace.include_workspace_instructions || true,
-        embeddingsProvider:
-          (selectedWorkspace.embeddings_provider as "openai" | "local") ||
-          "openai"
+        embeddingsProvider: "openai"
       })
     }
   }, [chatSettings, selectedWorkspace, selectedAssistant, selectedPreset, setChatSettings])
@@ -123,16 +123,14 @@ export const useChatHandler = () => {
 
     if (selectedAssistant) {
       setChatSettings({
-        model: selectedAssistant.model as LLMID,
+        model: resolveClaudeModelId(selectedAssistant.model) as LLMID,
         prompt: selectedAssistant.prompt,
         temperature: selectedAssistant.temperature,
         contextLength: selectedAssistant.context_length,
         includeProfileContext: selectedAssistant.include_profile_context,
         includeWorkspaceInstructions:
           selectedAssistant.include_workspace_instructions,
-        embeddingsProvider: selectedAssistant.embeddings_provider as
-          | "openai"
-          | "local"
+        embeddingsProvider: "openai"
       })
 
       let allFiles = []
@@ -167,21 +165,18 @@ export const useChatHandler = () => {
       if (allFiles.length > 0) setShowFilesDisplay(true)
     } else if (selectedPreset) {
       setChatSettings({
-        model: selectedPreset.model as LLMID,
+        model: resolveClaudeModelId(selectedPreset.model) as LLMID,
         prompt: selectedPreset.prompt,
         temperature: selectedPreset.temperature,
         contextLength: selectedPreset.context_length,
         includeProfileContext: selectedPreset.include_profile_context,
         includeWorkspaceInstructions:
           selectedPreset.include_workspace_instructions,
-        embeddingsProvider: selectedPreset.embeddings_provider as
-          | "openai"
-          | "local"
+        embeddingsProvider: "openai"
       })
     } else if (selectedWorkspace) {
       setChatSettings({
-        model: (selectedWorkspace.default_model ||
-          "claude-3-sonnet-20240229") as LLMID,
+        model: resolveClaudeModelId(selectedWorkspace.default_model) as LLMID,
         prompt:
           selectedWorkspace.default_prompt ||
           "You are a friendly, helpful AI assistant.",
@@ -191,9 +186,7 @@ export const useChatHandler = () => {
           selectedWorkspace.include_profile_context || true,
         includeWorkspaceInstructions:
           selectedWorkspace.include_workspace_instructions || true,
-        embeddingsProvider:
-          (selectedWorkspace.embeddings_provider as "openai" | "local") ||
-          "openai"
+        embeddingsProvider: "openai"
       })
     }
 

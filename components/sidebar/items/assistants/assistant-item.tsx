@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { ChatbotUIContext } from "@/context/context"
 import { ASSISTANT_DESCRIPTION_MAX, ASSISTANT_NAME_MAX } from "@/db/limits"
+import { resolveClaudeModelId } from "@/lib/models/llm/llm-list"
 import { Tables } from "@/supabase/types"
 import { IconRobotFace } from "@tabler/icons-react"
 import Image from "next/image"
@@ -24,7 +25,7 @@ export const AssistantItem: FC<AssistantItemProps> = ({ assistant }) => {
   const [isTyping, setIsTyping] = useState(false)
   const [description, setDescription] = useState(assistant.description)
   const [assistantChatSettings, setAssistantChatSettings] = useState({
-    model: assistant.model,
+    model: resolveClaudeModelId(assistant.model),
     prompt: assistant.prompt,
     temperature: assistant.temperature,
     contextLength: assistant.context_length,
@@ -103,9 +104,13 @@ export const AssistantItem: FC<AssistantItemProps> = ({ assistant }) => {
   if (!profile) return null
   if (!selectedWorkspace) return null
 
+  const displayAssistant = { ...assistant, is_system: true } as Tables<"assistants"> & {
+    is_system: boolean
+  }
+
   return (
     <SidebarItem
-      item={assistant}
+      item={displayAssistant}
       contentType="assistants"
       isTyping={isTyping}
       icon={

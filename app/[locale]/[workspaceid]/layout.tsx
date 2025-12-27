@@ -14,6 +14,7 @@ import { getAssistantImageFromStorage } from "@/db/storage/assistant-images"
 import { getToolWorkspacesByWorkspaceId } from "@/db/tools"
 import { getWorkspaceById } from "@/db/workspaces"
 import { convertBlobToBase64 } from "@/lib/blob-to-b64"
+import { resolveClaudeModelId } from "@/lib/models/llm/llm-list"
 import { supabase } from "@/lib/supabase/browser-client"
 import { LLMID } from "@/types"
 import { useParams, useRouter } from "next/navigation"
@@ -183,7 +184,7 @@ export default function WorkspaceLayout({ children }: WorkspaceLayoutProps) {
       setModels(modelData.models)
 
       setChatSettings({
-        model: (workspace?.default_model || "gpt-4-1106-preview") as LLMID,
+        model: resolveClaudeModelId(workspace?.default_model) as LLMID,
         prompt:
           workspace?.default_prompt ||
           "You are a friendly, helpful AI assistant.",
@@ -192,8 +193,7 @@ export default function WorkspaceLayout({ children }: WorkspaceLayoutProps) {
         includeProfileContext: workspace?.include_profile_context || true,
         includeWorkspaceInstructions:
           workspace?.include_workspace_instructions || true,
-        embeddingsProvider:
-          (workspace?.embeddings_provider as "openai" | "local") || "openai"
+        embeddingsProvider: "openai"
       })
 
       setLoading(false)

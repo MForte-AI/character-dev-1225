@@ -9,6 +9,7 @@ import { getMessagesByChatId } from "@/db/messages"
 import { getMessageImageFromStorage } from "@/db/storage/message-images"
 import { convertBlobToBase64 } from "@/lib/blob-to-b64"
 import useHotkey from "@/lib/hooks/use-hotkey"
+import { resolveClaudeModelId } from "@/lib/models/llm/llm-list"
 import { LLMID, MessageImage } from "@/types"
 import { useParams } from "next/navigation"
 import { FC, useContext, useEffect, useState } from "react"
@@ -171,13 +172,13 @@ export const ChatUI: FC<ChatUIProps> = ({}) => {
 
     setSelectedChat(chat)
     setChatSettings({
-      model: chat.model as LLMID,
+      model: resolveClaudeModelId(chat.model) as LLMID,
       prompt: chat.prompt,
       temperature: chat.temperature,
       contextLength: chat.context_length,
       includeProfileContext: chat.include_profile_context,
       includeWorkspaceInstructions: chat.include_workspace_instructions,
-      embeddingsProvider: chat.embeddings_provider as "openai" | "local"
+      embeddingsProvider: "openai"
     })
   }
 

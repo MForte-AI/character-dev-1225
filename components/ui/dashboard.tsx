@@ -26,12 +26,20 @@ export const Dashboard: FC<DashboardProps> = ({ children }) => {
   const router = useRouter()
   const searchParams = useSearchParams()
   const tabValue = searchParams.get("tab") || "chats"
+  const allowedTabs: ContentType[] = [
+    "chats",
+    "prompts",
+    "files",
+    "collections",
+    "assistants"
+  ]
+  const initialTab = allowedTabs.includes(tabValue as ContentType)
+    ? (tabValue as ContentType)
+    : "chats"
 
   const { handleSelectDeviceFile } = useSelectFileHandler()
 
-  const [contentType, setContentType] = useState<ContentType>(
-    tabValue as ContentType
-  )
+  const [contentType, setContentType] = useState<ContentType>(initialTab)
   const [showSidebar, setShowSidebar] = useState(
     localStorage.getItem("showSidebar") === "true"
   )

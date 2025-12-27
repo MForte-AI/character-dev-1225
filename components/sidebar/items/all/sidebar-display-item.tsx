@@ -1,5 +1,6 @@
 import { ChatbotUIContext } from "@/context/context"
 import { createChat } from "@/db/chats"
+import { resolveClaudeModelId } from "@/lib/models/llm/llm-list"
 import { cn } from "@/lib/utils"
 import { Tables } from "@/supabase/types"
 import { ContentType, DataItemType } from "@/types"
@@ -52,11 +53,11 @@ export const SidebarItem: FC<SidebarItemProps> = ({
         include_profile_context: assistant.include_profile_context,
         include_workspace_instructions:
           assistant.include_workspace_instructions,
-        model: assistant.model,
+        model: resolveClaudeModelId(assistant.model),
         name: `Chat with ${assistant.name}`,
         prompt: assistant.prompt,
         temperature: assistant.temperature,
-        embeddings_provider: assistant.embeddings_provider
+        embeddings_provider: "openai"
       })
 
       console.log("Chat created:", createdChat.id)

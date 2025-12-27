@@ -5,17 +5,9 @@ import { CHAT_SETTING_LIMITS } from "@/lib/chat-setting-limits"
 import { ChatSettings } from "@/types"
 import { IconInfoCircle } from "@tabler/icons-react"
 import { FC, useContext } from "react"
-import { ModelSelect } from "../models/model-select"
 import { AdvancedSettings } from "./advanced-settings"
 import { Checkbox } from "./checkbox"
 import { Label } from "./label"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from "./select"
 import { Slider } from "./slider"
 import { TextareaAutosize } from "./textarea-autosize"
 import { WithTooltip } from "./with-tooltip"
@@ -33,7 +25,7 @@ export const ChatSettingsForm: FC<ChatSettingsFormProps> = ({
   useAdvancedDropdown = true,
   showTooltip = true
 }) => {
-  const { profile, models } = useContext(ChatbotUIContext)
+  const { profile, models, selectedAssistant } = useContext(ChatbotUIContext)
 
   if (!profile) return null
 
@@ -52,6 +44,7 @@ export const ChatSettingsForm: FC<ChatSettingsFormProps> = ({
           value={chatSettings.prompt}
           minRows={3}
           maxRows={6}
+          readOnly={!!selectedAssistant}
         />
       </div>
 
@@ -207,30 +200,9 @@ const AdvancedContent: FC<AdvancedContentProps> = ({
 
       <div className="mt-5">
         <Label>Embeddings Provider</Label>
-
-        <Select
-          value={chatSettings.embeddingsProvider}
-          onValueChange={(embeddingsProvider: "openai" | "local") => {
-            onChangeChatSettings({
-              ...chatSettings,
-              embeddingsProvider
-            })
-          }}
-        >
-          <SelectTrigger>
-            <SelectValue defaultValue="openai" />
-          </SelectTrigger>
-
-          <SelectContent>
-            <SelectItem value="openai">
-              {profile?.use_azure_openai ? "Azure OpenAI" : "OpenAI"}
-            </SelectItem>
-
-            {window.location.hostname === "localhost" && (
-              <SelectItem value="local">Local</SelectItem>
-            )}
-          </SelectContent>
-        </Select>
+        <div className="text-sm opacity-80">
+          {profile?.use_azure_openai ? "Azure OpenAI" : "OpenAI"}
+        </div>
       </div>
     </div>
   )
