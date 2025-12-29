@@ -7,7 +7,7 @@ type ChatSettingLimits = {
   MAX_CONTEXT_LENGTH: number
 }
 
-export const CHAT_SETTING_LIMITS: Record<LLMID, ChatSettingLimits> = {
+export const CHAT_SETTING_LIMITS: Partial<Record<LLMID, ChatSettingLimits>> = {
   // ANTHROPIC MODELS
   "claude-2.1": {
     MIN_TEMPERATURE: 0.0,
@@ -158,7 +158,7 @@ export const CHAT_SETTING_LIMITS: Record<LLMID, ChatSettingLimits> = {
   }
 }
 
-export const MAX_CONTEXT_LIMITS_MAP: Record<LLMID, number> = {
+export const MAX_CONTEXT_LIMITS_MAP: Partial<Record<LLMID, number>> = {
   // ANTHROPIC MODELS
   "claude-2.1": 200000,
   "claude-instant-1.2": 100000,
