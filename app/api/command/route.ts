@@ -31,7 +31,8 @@ export async function POST(request: Request) {
       system: "Respond to the user.",
       temperature: 0,
       max_tokens:
-        CHAT_SETTING_LIMITS[DEFAULT_CLAUDE_MODEL_ID].MAX_TOKEN_OUTPUT_LENGTH
+        CHAT_SETTING_LIMITS[DEFAULT_CLAUDE_MODEL_ID]
+          ?.MAX_TOKEN_OUTPUT_LENGTH || 4096
     })
 
     const content = response.content[0]?.text || ""
