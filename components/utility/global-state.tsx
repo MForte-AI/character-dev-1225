@@ -7,11 +7,8 @@ import { getProfileByUserId } from "@/db/profile"
 import { getWorkspaceImageFromStorage } from "@/db/storage/workspace-images"
 import { getWorkspacesByUserId } from "@/db/workspaces"
 import { convertBlobToBase64 } from "@/lib/blob-to-b64"
-import {
-  fetchHostedModels,
-  fetchOllamaModels,
-  fetchOpenRouterModels
-} from "@/lib/models/fetch-models"
+import { fetchHostedModels, fetchOllamaModels } from "@/lib/models/fetch-models"
+import { DEFAULT_CLAUDE_MODEL_ID } from "@/lib/models/llm/llm-list"
 import { supabase } from "@/lib/supabase/browser-client"
 import { Tables } from "@/supabase/types"
 import {
@@ -20,7 +17,6 @@ import {
   ChatSettings,
   LLM,
   MessageImage,
-  OpenRouterLLM,
   WorkspaceImage
 } from "@/types"
 import { AssistantImage } from "@/types/images/assistant-image"
@@ -54,9 +50,6 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
   const [envKeyMap, setEnvKeyMap] = useState<Record<string, VALID_ENV_KEYS>>({})
   const [availableHostedModels, setAvailableHostedModels] = useState<LLM[]>([])
   const [availableLocalModels, setAvailableLocalModels] = useState<LLM[]>([])
-  const [availableOpenRouterModels, setAvailableOpenRouterModels] = useState<
-    OpenRouterLLM[]
-  >([])
 
   // WORKSPACE STORE
   const [selectedWorkspace, setSelectedWorkspace] =
@@ -77,7 +70,7 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
   const [userInput, setUserInput] = useState<string>("")
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([])
   const [chatSettings, setChatSettings] = useState<ChatSettings>({
-    model: "gpt-4-turbo-preview",
+    model: DEFAULT_CLAUDE_MODEL_ID,
     prompt: "You are a helpful AI assistant.",
     temperature: 0.5,
     contextLength: 4000,
@@ -124,76 +117,125 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
   const [toolInUse, setToolInUse] = useState<string>("none")
 
   useEffect(() => {
-    ;(async () => {
-      const profile = await fetchStartingData()
+    let timeoutId: NodeJS.Timeout
 
-      if (profile) {
-        const hostedModelRes = await fetchHostedModels(profile)
-        if (!hostedModelRes) return
+    const initializeApp = async () => {
+      try {
+        const profile = await fetchStartingData()
 
-        setEnvKeyMap(hostedModelRes.envKeyMap)
-        setAvailableHostedModels(hostedModelRes.hostedModels)
-
-        if (
-          profile["openrouter_api_key"] ||
-          hostedModelRes.envKeyMap["openrouter"]
-        ) {
-          const openRouterModels = await fetchOpenRouterModels()
-          if (!openRouterModels) return
-          setAvailableOpenRouterModels(openRouterModels)
+        if (profile) {
+          const hostedModelRes = await fetchHostedModels(profile)
+          if (hostedModelRes) {
+            setEnvKeyMap(hostedModelRes.envKeyMap)
+            setAvailableHostedModels(hostedModelRes.hostedModels)
+          }
         }
-      }
 
-      if (process.env.NEXT_PUBLIC_OLLAMA_URL) {
-        const localModels = await fetchOllamaModels()
-        if (!localModels) return
-        setAvailableLocalModels(localModels)
+        if (process.env.NEXT_PUBLIC_OLLAMA_URL) {
+          try {
+            const localModels = await fetchOllamaModels()
+            if (localModels) {
+              setAvailableLocalModels(localModels)
+            }
+          } catch (ollamaError) {
+            console.warn("Failed to load Ollama models:", ollamaError)
+            // Continue without local models
+          }
+        }
+      } catch (error) {
+        console.error("Failed to initialize app:", error)
+        router.push("/login")
       }
-    })()
+    }
+
+    // Set up a timeout to prevent infinite loading
+    timeoutId = setTimeout(() => {
+      console.error("App initialization timed out")
+      router.push("/login")
+    }, 30000) // 30 second timeout
+
+    initializeApp().finally(() => {
+      clearTimeout(timeoutId)
+    })
+
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId)
+      }
+    }
   }, [])
 
   const fetchStartingData = async () => {
-    const session = (await supabase.auth.getSession()).data.session
+    try {
+      const session = (await supabase.auth.getSession()).data.session
 
-    if (session) {
-      const user = session.user
+      if (session) {
+        const user = session.user
 
-      const profile = await getProfileByUserId(user.id)
-      setProfile(profile)
+        try {
+          const profile = await getProfileByUserId(user.id)
+          setProfile(profile)
 
-      if (!profile.has_onboarded) {
-        return router.push("/setup")
-      }
+          if (!profile.has_onboarded) {
+            return router.push("/setup")
+          }
 
-      const workspaces = await getWorkspacesByUserId(user.id)
-      setWorkspaces(workspaces)
+          const workspaces = await getWorkspacesByUserId(user.id)
+          setWorkspaces(workspaces)
 
-      for (const workspace of workspaces) {
-        let workspaceImageUrl = ""
+          // Process workspace images with error handling
+          for (const workspace of workspaces) {
+            try {
+              let workspaceImageUrl = ""
 
-        if (workspace.image_path) {
-          workspaceImageUrl =
-            (await getWorkspaceImageFromStorage(workspace.image_path)) || ""
-        }
+              if (workspace.image_path) {
+                workspaceImageUrl =
+                  (await getWorkspaceImageFromStorage(workspace.image_path)) ||
+                  ""
+              }
 
-        if (workspaceImageUrl) {
-          const response = await fetch(workspaceImageUrl)
-          const blob = await response.blob()
-          const base64 = await convertBlobToBase64(blob)
+              if (workspaceImageUrl) {
+                const response = await fetch(workspaceImageUrl)
+                if (response.ok) {
+                  const blob = await response.blob()
+                  const base64 = await convertBlobToBase64(blob)
 
-          setWorkspaceImages(prev => [
-            ...prev,
-            {
-              workspaceId: workspace.id,
-              path: workspace.image_path,
-              base64: base64,
-              url: workspaceImageUrl
+                  setWorkspaceImages(prev => [
+                    ...prev,
+                    {
+                      workspaceId: workspace.id,
+                      path: workspace.image_path,
+                      base64: base64,
+                      url: workspaceImageUrl
+                    }
+                  ])
+                }
+              }
+            } catch (imageError) {
+              console.warn(
+                `Failed to load image for workspace ${workspace.id}:`,
+                imageError
+              )
+              // Continue processing other workspaces
             }
-          ])
-        }
-      }
+          }
 
-      return profile
+          return profile
+        } catch (profileError) {
+          console.error("Error fetching profile or workspaces:", profileError)
+          // If profile doesn't exist, redirect to setup
+          router.push("/setup")
+          return null
+        }
+      } else {
+        // No session, redirect to login
+        router.push("/login")
+        return null
+      }
+    } catch (error) {
+      console.error("Unexpected error in fetchStartingData:", error)
+      router.push("/login")
+      return null
     }
   }
 
@@ -233,8 +275,6 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
         setAvailableHostedModels,
         availableLocalModels,
         setAvailableLocalModels,
-        availableOpenRouterModels,
-        setAvailableOpenRouterModels,
 
         // WORKSPACE STORE
         selectedWorkspace,

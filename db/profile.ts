@@ -8,8 +8,16 @@ export const getProfileByUserId = async (userId: string) => {
     .eq("user_id", userId)
     .single()
 
-  if (!profile) {
+  if (error) {
+    if (error.code === "PGRST116") {
+      // No rows returned - profile doesn't exist yet
+      throw new Error("Profile not found. Please complete setup.")
+    }
     throw new Error(error.message)
+  }
+
+  if (!profile) {
+    throw new Error("Profile not found. Please complete setup.")
   }
 
   return profile

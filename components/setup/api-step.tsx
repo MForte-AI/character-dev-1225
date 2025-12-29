@@ -13,13 +13,7 @@ interface APIStepProps {
   azureOpenai45VisionID: string
   azureOpenaiEmbeddingsID: string
   anthropicAPIKey: string
-  googleGeminiAPIKey: string
-  mistralAPIKey: string
-  groqAPIKey: string
-  perplexityAPIKey: string
   useAzureOpenai: boolean
-  openrouterAPIKey: string
-  onOpenrouterAPIKeyChange: (value: string) => void
   onOpenaiAPIKeyChange: (value: string) => void
   onOpenaiOrgIDChange: (value: string) => void
   onAzureOpenaiAPIKeyChange: (value: string) => void
@@ -29,10 +23,6 @@ interface APIStepProps {
   onAzureOpenai45VisionIDChange: (value: string) => void
   onAzureOpenaiEmbeddingsIDChange: (value: string) => void
   onAnthropicAPIKeyChange: (value: string) => void
-  onGoogleGeminiAPIKeyChange: (value: string) => void
-  onMistralAPIKeyChange: (value: string) => void
-  onGroqAPIKeyChange: (value: string) => void
-  onPerplexityAPIKeyChange: (value: string) => void
   onUseAzureOpenaiChange: (value: boolean) => void
 }
 
@@ -46,11 +36,6 @@ export const APIStep: FC<APIStepProps> = ({
   azureOpenai45VisionID,
   azureOpenaiEmbeddingsID,
   anthropicAPIKey,
-  googleGeminiAPIKey,
-  mistralAPIKey,
-  groqAPIKey,
-  perplexityAPIKey,
-  openrouterAPIKey,
   useAzureOpenai,
   onOpenaiAPIKeyChange,
   onOpenaiOrgIDChange,
@@ -61,12 +46,7 @@ export const APIStep: FC<APIStepProps> = ({
   onAzureOpenai45VisionIDChange,
   onAzureOpenaiEmbeddingsIDChange,
   onAnthropicAPIKeyChange,
-  onGoogleGeminiAPIKeyChange,
-  onMistralAPIKeyChange,
-  onGroqAPIKeyChange,
-  onPerplexityAPIKeyChange,
-  onUseAzureOpenaiChange,
-  onOpenrouterAPIKeyChange
+  onUseAzureOpenaiChange
 }) => {
   return (
     <>
@@ -161,7 +141,7 @@ export const APIStep: FC<APIStepProps> = ({
         ) : (
           <>
             <div className="space-y-1">
-              <Label>OpenAI Organization ID</Label>
+              <Label>OpenAI Organization ID (optional)</Label>
 
               <Input
                 placeholder="OpenAI Organization ID (optional)"
@@ -182,60 +162,6 @@ export const APIStep: FC<APIStepProps> = ({
           type="password"
           value={anthropicAPIKey}
           onChange={e => onAnthropicAPIKeyChange(e.target.value)}
-        />
-      </div>
-
-      <div className="space-y-1">
-        <Label>Google Gemini API Key</Label>
-
-        <Input
-          placeholder="Google Gemini API Key"
-          type="password"
-          value={googleGeminiAPIKey}
-          onChange={e => onGoogleGeminiAPIKeyChange(e.target.value)}
-        />
-      </div>
-
-      <div className="space-y-1">
-        <Label>Mistral API Key</Label>
-
-        <Input
-          placeholder="Mistral API Key"
-          type="password"
-          value={mistralAPIKey}
-          onChange={e => onMistralAPIKeyChange(e.target.value)}
-        />
-      </div>
-
-      <div className="space-y-1">
-        <Label>Groq API Key</Label>
-
-        <Input
-          placeholder="Groq API Key"
-          type="password"
-          value={groqAPIKey}
-          onChange={e => onGroqAPIKeyChange(e.target.value)}
-        />
-      </div>
-
-      <div className="space-y-1">
-        <Label>Perplexity API Key</Label>
-
-        <Input
-          placeholder="Perplexity API Key"
-          type="password"
-          value={perplexityAPIKey}
-          onChange={e => onPerplexityAPIKeyChange(e.target.value)}
-        />
-      </div>
-      <div className="space-y-1">
-        <Label>OpenRouter API Key</Label>
-
-        <Input
-          placeholder="OpenRouter API Key"
-          type="password"
-          value={openrouterAPIKey}
-          onChange={e => onOpenrouterAPIKeyChange(e.target.value)}
         />
       </div>
     </>

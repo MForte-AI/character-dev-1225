@@ -1,5 +1,6 @@
 import { ChatbotUIContext } from "@/context/context"
 import { createChat } from "@/db/chats"
+import { resolveClaudeModelId } from "@/lib/models/llm/llm-list"
 import { cn } from "@/lib/utils"
 import { Tables } from "@/supabase/types"
 import { ContentType, DataItemType } from "@/types"
@@ -24,7 +25,7 @@ export const SidebarItem: FC<SidebarItemProps> = ({
   icon,
   isTyping
 }) => {
-  const { selectedWorkspace, setChats, setSelectedAssistant } =
+  const { selectedWorkspace, setChats, setSelectedAssistant, profile } =
     useContext(ChatbotUIContext)
 
   const router = useRouter()
@@ -34,38 +35,44 @@ export const SidebarItem: FC<SidebarItemProps> = ({
   const [isHovering, setIsHovering] = useState(false)
 
   const actionMap = {
-    chats: async (item: any) => {},
-    presets: async (item: any) => {},
-    prompts: async (item: any) => {},
-    files: async (item: any) => {},
-    collections: async (item: any) => {},
+    chats: async (item: any) => { },
+    presets: async (item: any) => { },
+    prompts: async (item: any) => { },
+    files: async (item: any) => { },
+    collections: async (item: any) => { },
     assistants: async (assistant: Tables<"assistants">) => {
       if (!selectedWorkspace) return
 
+      console.log("Creating chat for assistant:", assistant.name)
+
       const createdChat = await createChat({
-        user_id: assistant.user_id,
+        user_id: profile?.user_id || assistant.user_id,
         workspace_id: selectedWorkspace.id,
         assistant_id: assistant.id,
         context_length: assistant.context_length,
         include_profile_context: assistant.include_profile_context,
         include_workspace_instructions:
           assistant.include_workspace_instructions,
-        model: assistant.model,
+        model: resolveClaudeModelId(assistant.model),
         name: `Chat with ${assistant.name}`,
         prompt: assistant.prompt,
         temperature: assistant.temperature,
-        embeddings_provider: assistant.embeddings_provider
+        embeddings_provider: "openai"
       })
+
+      console.log("Chat created:", createdChat.id)
 
       setChats(prevState => [createdChat, ...prevState])
       setSelectedAssistant(assistant)
 
-      return router.push(`/${selectedWorkspace.id}/chat/${createdChat.id}`)
-    },
-    tools: async (item: any) => {},
-    models: async (item: any) => {}
-  }
+      const redirectUrl = `/${selectedWorkspace.id}/chat/${createdChat.id}`
+      console.log("Redirecting to:", redirectUrl)
 
+      return router.push(redirectUrl)
+    },
+    tools: async (item: any) => { },
+    models: async (item: any) => { }
+  }
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === "Enter") {
       e.stopPropagation()
@@ -83,6 +90,48 @@ export const SidebarItem: FC<SidebarItemProps> = ({
   //   await action(item as any)
   // }
 
+  // Check if this is a system assistant
+  const isSystemAssistant = 'is_system' in item && item.is_system === true
+
+  // For system assistants, clicking should start a chat
+  const handleClick = async () => {
+    console.log("handleClick called", { isSystemAssistant, contentType, item })
+    if (isSystemAssistant && contentType === 'assistants') {
+      console.log("About to call action")
+      const action = actionMap[contentType]
+      try {
+        await action(item as any)
+        console.log("Action completed successfully")
+      } catch (error) {
+        console.error("Error in action:", error)
+      }
+    }
+  }
+
+  // System assistants just render the display without edit functionality
+  if (isSystemAssistant) {
+    return (
+      <div
+        ref={itemRef}
+        className={cn(
+          "hover:bg-accent flex w-full cursor-pointer items-center rounded p-2 hover:opacity-50 focus:outline-none"
+        )}
+        tabIndex={0}
+        onKeyDown={handleKeyDown}
+        onClick={handleClick}
+        onMouseEnter={() => setIsHovering(true)}
+        onMouseLeave={() => setIsHovering(false)}
+      >
+        {icon}
+
+        <div className="ml-3 flex-1 truncate text-sm font-semibold">
+          {item.name}
+        </div>
+      </div>
+    )
+  }
+
+  // Regular items use SidebarUpdateItem for editing
   return (
     <SidebarUpdateItem
       item={item}
@@ -106,21 +155,6 @@ export const SidebarItem: FC<SidebarItemProps> = ({
         <div className="ml-3 flex-1 truncate text-sm font-semibold">
           {item.name}
         </div>
-
-        {/* TODO */}
-        {/* {isHovering && (
-          <WithTooltip
-            delayDuration={1000}
-            display={<div>Start chat with {contentType.slice(0, -1)}</div>}
-            trigger={
-              <IconSquarePlus
-                className="cursor-pointer hover:text-blue-500"
-                size={20}
-                onClick={handleClickAction}
-              />
-            }
-          />
-        )} */}
       </div>
     </SidebarUpdateItem>
   )

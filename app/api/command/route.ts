@@ -1,6 +1,7 @@
 import { CHAT_SETTING_LIMITS } from "@/lib/chat-setting-limits"
+import { DEFAULT_CLAUDE_MODEL_ID } from "@/lib/models/llm/llm-list"
 import { checkApiKey, getServerProfile } from "@/lib/server/server-chat-helpers"
-import OpenAI from "openai"
+import Anthropic from "@anthropic-ai/sdk"
 
 export const runtime = "edge"
 
@@ -13,33 +14,27 @@ export async function POST(request: Request) {
   try {
     const profile = await getServerProfile()
 
-    checkApiKey(profile.openai_api_key, "OpenAI")
+    const apiKey = process.env.ANTHROPIC_API_KEY || profile.anthropic_api_key
 
-    const openai = new OpenAI({
-      apiKey: profile.openai_api_key || "",
-      organization: profile.openai_organization_id
-    })
+    checkApiKey(apiKey, "Anthropic")
 
-    const response = await openai.chat.completions.create({
-      model: "gpt-4-1106-preview",
+    const anthropic = new Anthropic({ apiKey: apiKey || "" })
+
+    const response = await anthropic.messages.create({
+      model: DEFAULT_CLAUDE_MODEL_ID,
       messages: [
-        {
-          role: "system",
-          content: "Respond to the user."
-        },
         {
           role: "user",
           content: input
         }
       ],
+      system: "Respond to the user.",
       temperature: 0,
       max_tokens:
-        CHAT_SETTING_LIMITS["gpt-4-turbo-preview"].MAX_TOKEN_OUTPUT_LENGTH
-      //   response_format: { type: "json_object" }
-      //   stream: true
+        CHAT_SETTING_LIMITS[DEFAULT_CLAUDE_MODEL_ID].MAX_TOKEN_OUTPUT_LENGTH
     })
 
-    const content = response.choices[0].message.content
+    const content = response.content[0]?.text || ""
 
     return new Response(JSON.stringify({ content }), {
       status: 200

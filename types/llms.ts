@@ -2,8 +2,8 @@ import { ModelProvider } from "."
 
 export type LLMID =
   | OpenAILLMID
-  | GoogleLLMID
   | AnthropicLLMID
+  | GoogleLLMID
   | MistralLLMID
   | GroqLLMID
   | PerplexityLLMID
@@ -74,8 +74,4 @@ export interface LLM {
     inputCost: number
     outputCost?: number
   }
-}
-
-export interface OpenRouterLLM extends LLM {
-  maxContext: number
 }

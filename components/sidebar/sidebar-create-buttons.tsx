@@ -8,7 +8,6 @@ import { Button } from "../ui/button"
 import { CreateAssistant } from "./items/assistants/create-assistant"
 import { CreateCollection } from "./items/collections/create-collection"
 import { CreateFile } from "./items/files/create-file"
-import { CreateModel } from "./items/models/create-model"
 import { CreatePreset } from "./items/presets/create-preset"
 import { CreatePrompt } from "./items/prompts/create-prompt"
 import { CreateTool } from "./items/tools/create-tool"
@@ -32,7 +31,6 @@ export const SidebarCreateButtons: FC<SidebarCreateButtonsProps> = ({
   const [isCreatingCollection, setIsCreatingCollection] = useState(false)
   const [isCreatingAssistant, setIsCreatingAssistant] = useState(false)
   const [isCreatingTool, setIsCreatingTool] = useState(false)
-  const [isCreatingModel, setIsCreatingModel] = useState(false)
 
   const handleCreateFolder = async () => {
     if (!profile) return
@@ -85,25 +83,21 @@ export const SidebarCreateButtons: FC<SidebarCreateButtonsProps> = ({
           setIsCreatingTool(true)
         }
 
-      case "models":
-        return async () => {
-          setIsCreatingModel(true)
-        }
-
       default:
         break
     }
   }
 
-  return (
-    <div className="flex w-full space-x-2">
+ return (
+  <div className="flex w-full space-x-2">
+    {contentType !== "assistants" && (
       <Button className="flex h-[36px] grow" onClick={getCreateFunction()}>
         <IconPlus className="mr-1" size={20} />
         New{" "}
         {contentType.charAt(0).toUpperCase() +
           contentType.slice(1, contentType.length - 1)}
       </Button>
-
+    )}
       {hasData && (
         <Button className="size-[36px] p-1" onClick={handleCreateFolder}>
           <IconFolderPlus size={20} />
@@ -146,12 +140,6 @@ export const SidebarCreateButtons: FC<SidebarCreateButtonsProps> = ({
         <CreateTool isOpen={isCreatingTool} onOpenChange={setIsCreatingTool} />
       )}
 
-      {isCreatingModel && (
-        <CreateModel
-          isOpen={isCreatingModel}
-          onOpenChange={setIsCreatingModel}
-        />
-      )}
     </div>
   )
 }

@@ -184,36 +184,35 @@ function buildRetrievalText(fileItems: Tables<"file_items">[]) {
 }
 
 function adaptSingleMessageForGoogleGemini(message: any) {
-
   let adaptedParts = []
 
   let rawParts = []
-  if(!Array.isArray(message.content)) {
-    rawParts.push({type: 'text', text: message.content})
+  if (!Array.isArray(message.content)) {
+    rawParts.push({ type: "text", text: message.content })
   } else {
     rawParts = message.content
   }
 
-  for(let i = 0; i < rawParts.length; i++) {
+  for (let i = 0; i < rawParts.length; i++) {
     let rawPart = rawParts[i]
 
-    if(rawPart.type == 'text') {
-      adaptedParts.push({text: rawPart.text})
-    } else if(rawPart.type === 'image_url') {
+    if (rawPart.type == "text") {
+      adaptedParts.push({ text: rawPart.text })
+    } else if (rawPart.type === "image_url") {
       adaptedParts.push({
         inlineData: {
           data: getBase64FromDataURL(rawPart.image_url.url),
-          mimeType: getMediaTypeFromDataURL(rawPart.image_url.url),
+          mimeType: getMediaTypeFromDataURL(rawPart.image_url.url)
         }
       })
     }
   }
 
-  let role = 'user'
-  if(["user", "system"].includes(message.role)) {
-    role = 'user'
-  } else if(message.role === 'assistant') {
-    role = 'model'
+  let role = "user"
+  if (["user", "system"].includes(message.role)) {
+    role = "user"
+  } else if (message.role === "assistant") {
+    role = "model"
   }
 
   return {
@@ -257,4 +256,3 @@ export async function adaptMessagesForGoogleGemini(
   }
   return geminiMessages
 }
-

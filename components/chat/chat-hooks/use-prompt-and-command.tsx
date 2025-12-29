@@ -3,6 +3,7 @@ import { getAssistantCollectionsByAssistantId } from "@/db/assistant-collections
 import { getAssistantFilesByAssistantId } from "@/db/assistant-files"
 import { getAssistantToolsByAssistantId } from "@/db/assistant-tools"
 import { getCollectionFilesByCollectionId } from "@/db/collection-files"
+import { resolveClaudeModelId } from "@/lib/models/llm/llm-list"
 import { Tables } from "@/supabase/types"
 import { LLMID } from "@/types"
 import { useContext } from "react"
@@ -140,13 +141,13 @@ export const usePromptAndCommand = () => {
     setSelectedAssistant(assistant)
 
     setChatSettings({
-      model: assistant.model as LLMID,
+      model: resolveClaudeModelId(assistant.model) as LLMID,
       prompt: assistant.prompt,
       temperature: assistant.temperature,
       contextLength: assistant.context_length,
       includeProfileContext: assistant.include_profile_context,
       includeWorkspaceInstructions: assistant.include_workspace_instructions,
-      embeddingsProvider: assistant.embeddings_provider as "openai" | "local"
+      embeddingsProvider: "openai"
     })
 
     let allFiles = []

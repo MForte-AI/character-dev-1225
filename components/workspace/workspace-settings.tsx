@@ -6,6 +6,7 @@ import {
 } from "@/db/storage/workspace-images"
 import { updateWorkspace } from "@/db/workspaces"
 import { convertBlobToBase64 } from "@/lib/blob-to-b64"
+import { resolveClaudeModelId } from "@/lib/models/llm/llm-list"
 import { LLMID } from "@/types"
 import { IconHome, IconSettings } from "@tabler/icons-react"
 import { FC, useContext, useEffect, useRef, useState } from "react"
@@ -56,14 +57,14 @@ export const WorkspaceSettings: FC<WorkspaceSettingsProps> = ({}) => {
   )
 
   const [defaultChatSettings, setDefaultChatSettings] = useState({
-    model: selectedWorkspace?.default_model,
+    model: resolveClaudeModelId(selectedWorkspace?.default_model),
     prompt: selectedWorkspace?.default_prompt,
     temperature: selectedWorkspace?.default_temperature,
     contextLength: selectedWorkspace?.default_context_length,
     includeProfileContext: selectedWorkspace?.include_profile_context,
     includeWorkspaceInstructions:
       selectedWorkspace?.include_workspace_instructions,
-    embeddingsProvider: selectedWorkspace?.embeddings_provider
+    embeddingsProvider: "openai"
   })
 
   useEffect(() => {
@@ -128,16 +129,14 @@ export const WorkspaceSettings: FC<WorkspaceSettingsProps> = ({}) => {
       defaultChatSettings.embeddingsProvider
     ) {
       setChatSettings({
-        model: defaultChatSettings.model as LLMID,
+        model: resolveClaudeModelId(defaultChatSettings.model) as LLMID,
         prompt: defaultChatSettings.prompt,
         temperature: defaultChatSettings.temperature,
         contextLength: defaultChatSettings.contextLength,
         includeProfileContext: defaultChatSettings.includeProfileContext,
         includeWorkspaceInstructions:
           defaultChatSettings.includeWorkspaceInstructions,
-        embeddingsProvider: defaultChatSettings.embeddingsProvider as
-          | "openai"
-          | "local"
+        embeddingsProvider: "openai"
       })
     }
 

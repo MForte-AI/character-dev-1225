@@ -8,11 +8,11 @@ import {
 import { updateProfile } from "@/db/profile"
 import { uploadProfileImage } from "@/db/storage/profile-images"
 import { exportLocalStorageAsJSON } from "@/lib/export-old-data"
-import { fetchOpenRouterModels } from "@/lib/models/fetch-models"
+
 import { LLM_LIST_MAP } from "@/lib/models/llm/llm-list"
 import { supabase } from "@/lib/supabase/browser-client"
 import { cn } from "@/lib/utils"
-import { OpenRouterLLM } from "@/types"
+
 import {
   IconCircleCheckFilled,
   IconCircleXFilled,
@@ -46,14 +46,8 @@ import { ThemeSwitcher } from "./theme-switcher"
 interface ProfileSettingsProps {}
 
 export const ProfileSettings: FC<ProfileSettingsProps> = ({}) => {
-  const {
-    profile,
-    setProfile,
-    envKeyMap,
-    setAvailableHostedModels,
-    setAvailableOpenRouterModels,
-    availableOpenRouterModels
-  } = useContext(ChatbotUIContext)
+  const { profile, setProfile, envKeyMap, setAvailableHostedModels } =
+    useContext(ChatbotUIContext)
 
   const router = useRouter()
 
@@ -90,6 +84,9 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({}) => {
   )
   const [azureOpenai35TurboID, setAzureOpenai35TurboID] = useState(
     profile?.azure_openai_35_turbo_id || ""
+  )
+  const [azureOpenai45OID, setAzureOpenai45OID] = useState(
+    profile?.azure_openai_45_o_id || ""
   )
   const [azureOpenai45TurboID, setAzureOpenai45TurboID] = useState(
     profile?.azure_openai_45_turbo_id || ""
@@ -154,6 +151,7 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({}) => {
       azure_openai_api_key: azureOpenaiAPIKey,
       azure_openai_endpoint: azureOpenaiEndpoint,
       azure_openai_35_turbo_id: azureOpenai35TurboID,
+      azure_openai_45_o_id: azureOpenai45OID,
       azure_openai_45_turbo_id: azureOpenai45TurboID,
       azure_openai_45_vision_id: azureOpenai45VisionID,
       azure_openai_embeddings_id: azureEmbeddingsID,
@@ -192,34 +190,18 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({}) => {
       if (!envKeyActive) {
         const hasApiKey = !!updatedProfile[providerKey]
 
-        if (provider === "openrouter") {
-          if (hasApiKey && availableOpenRouterModels.length === 0) {
-            const openrouterModels: OpenRouterLLM[] =
-              await fetchOpenRouterModels()
-            setAvailableOpenRouterModels(prev => {
-              const newModels = openrouterModels.filter(
-                model =>
-                  !prev.some(prevModel => prevModel.modelId === model.modelId)
-              )
-              return [...prev, ...newModels]
-            })
-          } else {
-            setAvailableOpenRouterModels([])
-          }
-        } else {
-          if (hasApiKey && Array.isArray(models)) {
-            setAvailableHostedModels(prev => {
-              const newModels = models.filter(
-                model =>
-                  !prev.some(prevModel => prevModel.modelId === model.modelId)
-              )
-              return [...prev, ...newModels]
-            })
-          } else if (!hasApiKey && Array.isArray(models)) {
-            setAvailableHostedModels(prev =>
-              prev.filter(model => !models.includes(model))
+        if (hasApiKey && Array.isArray(models)) {
+          setAvailableHostedModels(prev => {
+            const newModels = models.filter(
+              model =>
+                !prev.some(prevModel => prevModel.modelId === model.modelId)
             )
-          }
+            return [...prev, ...newModels]
+          })
+        } else if (!hasApiKey && Array.isArray(models)) {
+          setAvailableHostedModels(prev =>
+            prev.filter(model => !models.includes(model))
+          )
         }
       }
     })
@@ -528,6 +510,28 @@ export const ProfileSettings: FC<ProfileSettingsProps> = ({}) => {
                               value={azureOpenai35TurboID}
                               onChange={e =>
                                 setAzureOpenai35TurboID(e.target.value)
+                              }
+                            />
+                          </>
+                        )}
+                      </div>
+                    }
+
+                    {
+                      <div className="space-y-1">
+                        {envKeyMap["azure_gpt_45_o_name"] ? (
+                          <Label className="text-xs">
+                            Azure GPT-4.5 O deployment name set by admin.
+                          </Label>
+                        ) : (
+                          <>
+                            <Label>Azure GPT-4.5 O Deployment Name</Label>
+
+                            <Input
+                              placeholder="Azure GPT-4.5 O Deployment Name"
+                              value={azureOpenai45OID}
+                              onChange={e =>
+                                setAzureOpenai45OID(e.target.value)
                               }
                             />
                           </>

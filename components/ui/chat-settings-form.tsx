@@ -5,17 +5,9 @@ import { CHAT_SETTING_LIMITS } from "@/lib/chat-setting-limits"
 import { ChatSettings } from "@/types"
 import { IconInfoCircle } from "@tabler/icons-react"
 import { FC, useContext } from "react"
-import { ModelSelect } from "../models/model-select"
 import { AdvancedSettings } from "./advanced-settings"
 import { Checkbox } from "./checkbox"
 import { Label } from "./label"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue
-} from "./select"
 import { Slider } from "./slider"
 import { TextareaAutosize } from "./textarea-autosize"
 import { WithTooltip } from "./with-tooltip"
@@ -33,23 +25,13 @@ export const ChatSettingsForm: FC<ChatSettingsFormProps> = ({
   useAdvancedDropdown = true,
   showTooltip = true
 }) => {
-  const { profile, models } = useContext(ChatbotUIContext)
+  const { profile, models, selectedAssistant } = useContext(ChatbotUIContext)
 
   if (!profile) return null
 
   return (
     <div className="space-y-3">
-      <div className="space-y-1">
-        <Label>Model</Label>
-
-        <ModelSelect
-          selectedModelId={chatSettings.model}
-          onSelectModel={model => {
-            onChangeChatSettings({ ...chatSettings, model })
-          }}
-        />
-      </div>
-
+ {/* Model selector hidden - using assistant's default model */}
       <div className="space-y-1">
         <Label>Prompt</Label>
 
@@ -62,6 +44,7 @@ export const ChatSettingsForm: FC<ChatSettingsFormProps> = ({
           value={chatSettings.prompt}
           minRows={3}
           maxRows={6}
+          readOnly={!!selectedAssistant}
         />
       </div>
 
@@ -97,22 +80,16 @@ const AdvancedContent: FC<AdvancedContentProps> = ({
   onChangeChatSettings,
   showTooltip
 }) => {
-  const { profile, selectedWorkspace, availableOpenRouterModels, models } =
-    useContext(ChatbotUIContext)
+  const { profile, selectedWorkspace, models } = useContext(ChatbotUIContext)
 
   const isCustomModel = models.some(
     model => model.model_id === chatSettings.model
   )
 
-  function findOpenRouterModel(modelId: string) {
-    return availableOpenRouterModels.find(model => model.modelId === modelId)
-  }
-
   const MODEL_LIMITS = CHAT_SETTING_LIMITS[chatSettings.model] || {
     MIN_TEMPERATURE: 0,
     MAX_TEMPERATURE: 1,
-    MAX_CONTEXT_LENGTH:
-      findOpenRouterModel(chatSettings.model)?.maxContext || 4096
+    MAX_CONTEXT_LENGTH: 4096
   }
 
   return (
@@ -223,30 +200,9 @@ const AdvancedContent: FC<AdvancedContentProps> = ({
 
       <div className="mt-5">
         <Label>Embeddings Provider</Label>
-
-        <Select
-          value={chatSettings.embeddingsProvider}
-          onValueChange={(embeddingsProvider: "openai" | "local") => {
-            onChangeChatSettings({
-              ...chatSettings,
-              embeddingsProvider
-            })
-          }}
-        >
-          <SelectTrigger>
-            <SelectValue defaultValue="openai" />
-          </SelectTrigger>
-
-          <SelectContent>
-            <SelectItem value="openai">
-              {profile?.use_azure_openai ? "Azure OpenAI" : "OpenAI"}
-            </SelectItem>
-
-            {window.location.hostname === "localhost" && (
-              <SelectItem value="local">Local</SelectItem>
-            )}
-          </SelectContent>
-        </Select>
+        <div className="text-sm opacity-80">
+          {profile?.use_azure_openai ? "Azure OpenAI" : "OpenAI"}
+        </div>
       </div>
     </div>
   )

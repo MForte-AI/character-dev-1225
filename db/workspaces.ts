@@ -23,8 +23,15 @@ export const getWorkspaceById = async (workspaceId: string) => {
     .eq("id", workspaceId)
     .single()
 
-  if (!workspace) {
+  if (error) {
+    if (error.code === "PGRST116") {
+      throw new Error("Workspace not found")
+    }
     throw new Error(error.message)
+  }
+
+  if (!workspace) {
+    throw new Error("Workspace not found")
   }
 
   return workspace
@@ -37,8 +44,12 @@ export const getWorkspacesByUserId = async (userId: string) => {
     .eq("user_id", userId)
     .order("created_at", { ascending: false })
 
-  if (!workspaces) {
+  if (error) {
     throw new Error(error.message)
+  }
+
+  if (!workspaces || workspaces.length === 0) {
+    throw new Error("No workspaces found. Please complete setup.")
   }
 
   return workspaces
