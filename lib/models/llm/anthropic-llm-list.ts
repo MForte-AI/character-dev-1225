@@ -101,28 +101,11 @@ const CLAUDE_3_5_SONNET: LLM = {
   }
 }
 
-// Claude Sonnet 4.5 (UPDATED 09/29/25)
-const CLAUDE_SONNET_4_5: LLM = {
-  modelId: "claude-sonnet-4-5-20250929",
-  modelName: "Claude Sonnet 4.5",
-  provider: "anthropic",
-  hostedId: "claude-sonnet-4-5-20250929",
-  platformLink: ANTHROPIC_PLATFORM_LINK,
-  imageInput: true,
-  pricing: {
-    currency: "USD",
-    unit: "1M tokens",
-    inputCost: 5,
-    outputCost: 25
-  }
-}
-
 export const ANTHROPIC_LLM_LIST: LLM[] = [
   CLAUDE_2,
   CLAUDE_INSTANT,
   CLAUDE_3_HAIKU,
   CLAUDE_3_SONNET,
   CLAUDE_3_OPUS,
-  CLAUDE_3_5_SONNET,
-  CLAUDE_SONNET_4_5
+  CLAUDE_3_5_SONNET
 ]

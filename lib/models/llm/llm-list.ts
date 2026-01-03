@@ -17,6 +17,18 @@ export const LLM_LIST_MAP: Record<string, LLM[]> = {
 }
 
 export const resolveClaudeModelId = (modelId?: string | null): LLMID => {
+  // First check if the provided modelId exists in our LLM list
   const match = ANTHROPIC_LLM_LIST.find(llm => llm.modelId === modelId)
-  return match ? match.modelId : DEFAULT_CLAUDE_MODEL_ID
+  if (match) {
+    return match.modelId
+  }
+  
+  // If no match found, validate the DEFAULT_CLAUDE_MODEL_ID
+  const defaultMatch = ANTHROPIC_LLM_LIST.find(llm => llm.modelId === DEFAULT_CLAUDE_MODEL_ID)
+  if (defaultMatch) {
+    return DEFAULT_CLAUDE_MODEL_ID
+  }
+  
+  // Final fallback to a known working model
+  return FALLBACK_CLAUDE_MODEL_ID
 }
