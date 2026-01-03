@@ -1,4 +1,4 @@
-import { CHAT_SETTING_LIMITS } from "@/lib/chat-setting-limits"
+import { getMaxOutputLength } from "@/lib/chat-setting-limits"
 import { DEFAULT_CLAUDE_MODEL_ID } from "@/lib/models/llm/llm-list"
 import { checkApiKey, getServerProfile } from "@/lib/server/server-chat-helpers"
 import { LLMID } from "@/types"
@@ -21,7 +21,7 @@ export async function POST(request: Request) {
 
     const anthropic = new Anthropic({ apiKey: apiKey || "" })
 
-    const modelId = DEFAULT_CLAUDE_MODEL_ID as LLMID
+    const modelId = DEFAULT_CLAUDE_MODEL_ID
 
     const response = await anthropic.messages.create({
       model: modelId,
@@ -33,7 +33,7 @@ export async function POST(request: Request) {
       ],
       system: "Respond to the user.",
       temperature: 0,
-      max_tokens: CHAT_SETTING_LIMITS[modelId]?.MAX_TOKEN_OUTPUT_LENGTH || 4096
+      max_tokens: getMaxOutputLength(modelId)
     })
 
     const content = response.content[0]?.text || ""

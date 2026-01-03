@@ -7,7 +7,7 @@ type ChatSettingLimits = {
   MAX_CONTEXT_LENGTH: number
 }
 
-export const CHAT_SETTING_LIMITS: Record<string, ChatSettingLimits> = {
+export const CHAT_SETTING_LIMITS: Partial<Record<LLMID, ChatSettingLimits>> = {
   // ANTHROPIC MODELS
   "claude-2.1": {
     MIN_TEMPERATURE: 0.0,
@@ -44,6 +44,12 @@ export const CHAT_SETTING_LIMITS: Record<string, ChatSettingLimits> = {
     MAX_TEMPERATURE: 1.0,
     MAX_TOKEN_OUTPUT_LENGTH: 4096,
     MAX_CONTEXT_LENGTH: 200000
+  },
+  "claude-sonnet-4-5-20250929": {
+    MIN_TEMPERATURE: 0.0,
+    MAX_TEMPERATURE: 1.0,
+    MAX_TOKEN_OUTPUT_LENGTH: 8192,
+    MAX_CONTEXT_LENGTH: 400000
   },
 
   // GOOGLE MODELS
@@ -158,13 +164,15 @@ export const CHAT_SETTING_LIMITS: Record<string, ChatSettingLimits> = {
   }
 }
 
-export const MAX_CONTEXT_LIMITS_MAP: Record<string, number> = {
+export const MAX_CONTEXT_LIMITS_MAP: Partial<Record<LLMID, number>> = {
   // ANTHROPIC MODELS
   "claude-2.1": 200000,
   "claude-instant-1.2": 100000,
   "claude-3-haiku-20240307": 200000,
   "claude-3-sonnet-20240229": 200000,
   "claude-3-opus-20240229": 200000,
+  "claude-3-5-sonnet-20240620": 200000,
+  "claude-sonnet-4-5-20250929": 400000,
 
   // OPENAI MODELS
   "gpt-3.5-turbo": 4096,
