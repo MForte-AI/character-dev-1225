@@ -8,7 +8,10 @@ import { getWorkspaceImageFromStorage } from "@/db/storage/workspace-images"
 import { getWorkspacesByUserId } from "@/db/workspaces"
 import { convertBlobToBase64 } from "@/lib/blob-to-b64"
 import { fetchHostedModels, fetchOllamaModels } from "@/lib/models/fetch-models"
-import { DEFAULT_CLAUDE_MODEL_ID } from "@/lib/models/llm/llm-list"
+import {
+  DEFAULT_CLAUDE_MODEL_ID,
+  resolveClaudeModelId
+} from "@/lib/models/llm/llm-list"
 import { supabase } from "@/lib/supabase/browser-client"
 import { Tables } from "@/supabase/types"
 import {
@@ -70,7 +73,7 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
   const [userInput, setUserInput] = useState<string>("")
   const [chatMessages, setChatMessages] = useState<ChatMessage[]>([])
   const [chatSettings, setChatSettings] = useState<ChatSettings>({
-    model: DEFAULT_CLAUDE_MODEL_ID,
+    model: resolveClaudeModelId(DEFAULT_CLAUDE_MODEL_ID),
     prompt: "You are a helpful AI assistant.",
     temperature: 0.5,
     contextLength: 4000,

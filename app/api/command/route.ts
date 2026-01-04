@@ -1,7 +1,9 @@
 import { getMaxOutputLength } from "@/lib/chat-setting-limits"
-import { DEFAULT_CLAUDE_MODEL_ID } from "@/lib/models/llm/llm-list"
+import {
+  DEFAULT_CLAUDE_MODEL_ID,
+  resolveClaudeModelId
+} from "@/lib/models/llm/llm-list"
 import { checkApiKey, getServerProfile } from "@/lib/server/server-chat-helpers"
-import { LLMID } from "@/types"
 import Anthropic from "@anthropic-ai/sdk"
 
 export const runtime = "edge"
@@ -21,7 +23,7 @@ export async function POST(request: Request) {
 
     const anthropic = new Anthropic({ apiKey: apiKey || "" })
 
-    const modelId = DEFAULT_CLAUDE_MODEL_ID
+    const modelId = resolveClaudeModelId(DEFAULT_CLAUDE_MODEL_ID)
 
     const response = await anthropic.messages.create({
       model: modelId,
