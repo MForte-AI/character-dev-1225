@@ -191,6 +191,8 @@ export const SidebarDataList: FC<SidebarDataListProps> = ({
 
   const handleDragStart = (e: React.DragEvent<HTMLDivElement>, id: string) => {
     e.dataTransfer.setData("text/plain", id)
+    e.dataTransfer.setData("contentType", contentType)
+    e.dataTransfer.effectAllowed = "move"
   }
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {

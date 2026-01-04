@@ -3,14 +3,17 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { ChatbotUIContext } from "@/context/context"
 import { getCollectionFilesByCollectionId } from "@/db/collection-files"
+import { updateChat } from "@/db/chats"
 import { COLLECTION_DESCRIPTION_MAX, COLLECTION_NAME_MAX } from "@/db/limits"
 import { Tables } from "@/supabase/types"
 import { CollectionFile } from "@/types"
+import { useChatHandler } from "@/components/chat/chat-hooks/use-chat-handler"
 import {
   IconBooks,
   IconChevronDown,
   IconChevronRight,
-  IconEdit
+  IconEdit,
+  IconMessagePlus
 } from "@tabler/icons-react"
 import { FC, useContext, useEffect, useRef, useState } from "react"
 import { ChatItem } from "../chat/chat-item"
@@ -24,12 +27,14 @@ interface CollectionItemProps {
 }
 
 export const CollectionItem: FC<CollectionItemProps> = ({ collection }) => {
-  const { chats, files } = useContext(ChatbotUIContext)
+  const { chats, files, setChats } = useContext(ChatbotUIContext)
+  const { handleNewChat } = useChatHandler()
 
   const itemRef = useRef<HTMLDivElement>(null)
   const [name, setName] = useState(collection.name)
   const [description, setDescription] = useState(collection.description)
   const [isExpanded, setIsExpanded] = useState(false)
+  const [isDragOver, setIsDragOver] = useState(false)
   const [isHovering, setIsHovering] = useState(false)
   const [isLoadingFiles, setIsLoadingFiles] = useState(false)
   const [collectionFiles, setCollectionFiles] = useState<CollectionFile[]>([])
@@ -56,6 +61,52 @@ export const CollectionItem: FC<CollectionItemProps> = ({ collection }) => {
   const collectionChats = chats.filter(
     chat => chat.collection_id === collection.id
   )
+
+  const handleChatDragStart = (
+    e: React.DragEvent<HTMLDivElement>,
+    chatId: string
+  ) => {
+    e.dataTransfer.setData("text/plain", chatId)
+    e.dataTransfer.setData("contentType", "chats")
+    e.dataTransfer.effectAllowed = "move"
+  }
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault()
+    const dragType = e.dataTransfer.getData("contentType")
+    setIsDragOver(dragType === "chats")
+  }
+
+  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault()
+    setIsDragOver(false)
+  }
+
+  const handleDrop = async (e: React.DragEvent<HTMLDivElement>) => {
+    const dragType = e.dataTransfer.getData("contentType")
+    if (dragType !== "chats") return
+    e.preventDefault()
+    setIsDragOver(false)
+
+    const chatId = e.dataTransfer.getData("text/plain")
+    if (!chatId) return
+
+    const chat = chats.find(item => item.id === chatId)
+    if (!chat || chat.collection_id === collection.id) return
+
+    try {
+      const updatedChat = await updateChat(chatId, {
+        collection_id: collection.id
+      })
+      setChats(prevChats =>
+        prevChats.map(prevChat =>
+          prevChat.id === updatedChat.id ? updatedChat : prevChat
+        )
+      )
+    } catch (error) {
+      toast.error(`Failed to move chat to collection. ${error}`)
+    }
+  }
 
   useEffect(() => {
     if (!isExpanded) return
@@ -106,9 +157,13 @@ export const CollectionItem: FC<CollectionItemProps> = ({ collection }) => {
       <div
         tabIndex={0}
         className={cn(
-          "hover:bg-accent focus:bg-accent flex w-full cursor-pointer items-center justify-between rounded p-2 hover:opacity-50 focus:outline-none"
+          "hover:bg-accent focus:bg-accent flex w-full cursor-pointer items-center justify-between rounded p-2 hover:opacity-50 focus:outline-none",
+          isDragOver && "bg-accent"
         )}
         onClick={() => setIsExpanded(prev => !prev)}
+        onDragOver={handleDragOver}
+        onDragLeave={handleDragLeave}
+        onDrop={handleDrop}
       >
         <div className="flex items-center space-x-2">
           {isExpanded ? (
@@ -124,11 +179,20 @@ export const CollectionItem: FC<CollectionItemProps> = ({ collection }) => {
 
         {isHovering && (
           <div
+            className="flex items-center space-x-2"
             onClick={e => {
               e.stopPropagation()
               e.preventDefault()
             }}
           >
+            <button
+              className="hover:opacity-50"
+              onClick={() => handleNewChat(collection.id)}
+              type="button"
+            >
+              <IconMessagePlus size={18} />
+            </button>
+
             <SidebarUpdateItem
               item={collection}
               isTyping={false}
@@ -243,8 +307,19 @@ export const CollectionItem: FC<CollectionItemProps> = ({ collection }) => {
           </div>
 
           <div className="space-y-2">
-            <div className="text-muted-foreground text-xs font-semibold uppercase">
-              Chats
+            <div className="flex items-center justify-between">
+              <div className="text-muted-foreground text-xs font-semibold uppercase">
+                Chats
+              </div>
+
+              <button
+                className="text-muted-foreground flex items-center space-x-1 text-xs hover:opacity-70"
+                onClick={() => handleNewChat(collection.id)}
+                type="button"
+              >
+                <IconMessagePlus size={16} />
+                <span>New Chat</span>
+              </button>
             </div>
 
             {collectionChats.length === 0 && (
@@ -252,7 +327,13 @@ export const CollectionItem: FC<CollectionItemProps> = ({ collection }) => {
             )}
 
             {collectionChats.map(chat => (
-              <ChatItem key={chat.id} chat={chat} />
+              <div
+                key={chat.id}
+                draggable
+                onDragStart={e => handleChatDragStart(e, chat.id)}
+              >
+                <ChatItem chat={chat} />
+              </div>
             ))}
           </div>
         </div>

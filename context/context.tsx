@@ -73,6 +73,8 @@ interface ChatbotUIContext {
   setChatSettings: Dispatch<SetStateAction<ChatSettings>>
   selectedChat: Tables<"chats"> | null
   setSelectedChat: Dispatch<SetStateAction<Tables<"chats"> | null>>
+  pendingCollectionId: string | null
+  setPendingCollectionId: Dispatch<SetStateAction<string | null>>
   chatFileItems: Tables<"file_items">[]
   setChatFileItems: Dispatch<SetStateAction<Tables<"file_items">[]>>
 
@@ -197,6 +199,8 @@ export const ChatbotUIContext = createContext<ChatbotUIContext>({
   setChatMessages: () => {},
   chatSettings: null,
   setChatSettings: () => {},
+  pendingCollectionId: null,
+  setPendingCollectionId: () => {},
   chatFileItems: [],
   setChatFileItems: () => {},
 

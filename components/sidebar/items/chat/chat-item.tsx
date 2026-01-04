@@ -21,7 +21,8 @@ export const ChatItem: FC<ChatItemProps> = ({ chat }) => {
     selectedWorkspace,
     selectedChat,
     availableLocalModels,
-    assistantImages
+    assistantImages,
+    setPendingCollectionId
   } = useContext(ChatbotUIContext)
 
   const router = useRouter()
@@ -32,6 +33,7 @@ export const ChatItem: FC<ChatItemProps> = ({ chat }) => {
 
   const handleClick = () => {
     if (!selectedWorkspace) return
+    setPendingCollectionId(null)
     return router.push(`/${selectedWorkspace.id}/chat/${chat.id}`)
   }
 

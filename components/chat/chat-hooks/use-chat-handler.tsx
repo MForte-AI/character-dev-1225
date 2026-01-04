@@ -42,6 +42,8 @@ export const useChatHandler = () => {
     selectedWorkspace,
     setSelectedChat,
     setChats,
+    pendingCollectionId,
+    setPendingCollectionId,
     setSelectedTools,
     availableLocalModels,
     abortController,
@@ -99,9 +101,10 @@ export const useChatHandler = () => {
     }
   }, [chatSettings, selectedWorkspace, selectedAssistant, selectedPreset, setChatSettings])
 
-  const handleNewChat = async () => {
+  const handleNewChat = async (collectionId?: string | null) => {
     if (!selectedWorkspace) return
 
+    setPendingCollectionId(collectionId || null)
     setUserInput("")
     setChatMessages([])
     setSelectedChat(null)
@@ -359,11 +362,13 @@ export const useChatHandler = () => {
           selectedWorkspace!,
           messageContent,
           selectedAssistant!,
+          pendingCollectionId,
           newMessageFiles,
           setSelectedChat,
           setChats,
           setChatFiles
         )
+        setPendingCollectionId(null)
       } else {
         const updatedChat = await updateChat(currentChat.id, {
           updated_at: new Date().toISOString()

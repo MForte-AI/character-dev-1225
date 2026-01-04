@@ -82,6 +82,9 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
     embeddingsProvider: "openai"
   })
   const [selectedChat, setSelectedChat] = useState<Tables<"chats"> | null>(null)
+  const [pendingCollectionId, setPendingCollectionId] = useState<string | null>(
+    null
+  )
   const [chatFileItems, setChatFileItems] = useState<Tables<"file_items">[]>([])
 
   // ACTIVE CHAT STORE
@@ -306,6 +309,8 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
         setChatSettings,
         selectedChat,
         setSelectedChat,
+        pendingCollectionId,
+        setPendingCollectionId,
         chatFileItems,
         setChatFileItems,
 
