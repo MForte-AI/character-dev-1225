@@ -12,7 +12,7 @@ import { createAssistantFiles } from "@/db/assistant-files"
 import { createAssistantTools } from "@/db/assistant-tools"
 import { createAssistant, updateAssistant } from "@/db/assistants"
 import { createChat } from "@/db/chats"
-import { createCollectionFiles } from "@/db/collection-files"
+import { createCollectionFile, createCollectionFiles } from "@/db/collection-files"
 import { createCollection } from "@/db/collections"
 import { createFileBasedOnExtension } from "@/db/files"
 import { createModel } from "@/db/models"
@@ -68,12 +68,15 @@ export const SidebarCreateItem: FC<SidebarCreateItemProps> = ({
     presets: createPreset,
     prompts: createPrompt,
     files: async (
-      createState: { file: File } & TablesInsert<"files">,
+      createState: {
+        file: File
+        collectionId?: string | null
+      } & TablesInsert<"files">,
       workspaceId: string
     ) => {
       if (!selectedWorkspace) return
 
-      const { file, ...rest } = createState
+      const { file, collectionId, ...rest } = createState
 
       const createdFile = await createFileBasedOnExtension(
         file,
@@ -81,6 +84,20 @@ export const SidebarCreateItem: FC<SidebarCreateItemProps> = ({
         workspaceId,
         selectedWorkspace.embeddings_provider as "openai" | "local"
       )
+
+      if (collectionId) {
+        try {
+          await createCollectionFile({
+            user_id: createdFile.user_id,
+            collection_id: collectionId,
+            file_id: createdFile.id
+          })
+        } catch (error) {
+          toast.error(
+            `File uploaded but failed to attach to collection. ${error}.`
+          )
+        }
+      }
 
       return createdFile
     },

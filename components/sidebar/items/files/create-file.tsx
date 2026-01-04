@@ -2,6 +2,13 @@ import { ACCEPTED_FILE_TYPES } from "@/components/chat/chat-hooks/use-select-fil
 import { SidebarCreateItem } from "@/components/sidebar/items/all/sidebar-create-item"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from "@/components/ui/select"
 import { ChatbotUIContext } from "@/context/context"
 import { FILE_DESCRIPTION_MAX, FILE_NAME_MAX } from "@/db/limits"
 import { TablesInsert } from "@/supabase/types"
@@ -13,12 +20,14 @@ interface CreateFileProps {
 }
 
 export const CreateFile: FC<CreateFileProps> = ({ isOpen, onOpenChange }) => {
-  const { profile, selectedWorkspace } = useContext(ChatbotUIContext)
+  const { profile, selectedWorkspace, collections } =
+    useContext(ChatbotUIContext)
 
   const [name, setName] = useState("")
   const [isTyping, setIsTyping] = useState(false)
   const [description, setDescription] = useState("")
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
+  const [selectedCollectionId, setSelectedCollectionId] = useState<string>("")
 
   const handleSelectedFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return
@@ -41,6 +50,7 @@ export const CreateFile: FC<CreateFileProps> = ({ isOpen, onOpenChange }) => {
       createState={
         {
           file: selectedFile,
+          collectionId: selectedCollectionId || null,
           user_id: profile.user_id,
           name,
           description,
@@ -66,6 +76,30 @@ export const CreateFile: FC<CreateFileProps> = ({ isOpen, onOpenChange }) => {
           </div>
 
           <div className="space-y-1">
+            <Label>Collection (optional)</Label>
+
+            <Select
+              value={selectedCollectionId || "none"}
+              onValueChange={value =>
+                setSelectedCollectionId(value === "none" ? "" : value)
+              }
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="No collection" />
+              </SelectTrigger>
+
+              <SelectContent>
+                <SelectItem value="none">No collection</SelectItem>
+                {collections.map(collection => (
+                  <SelectItem key={collection.id} value={collection.id}>
+                    {collection.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-1">
             <Label>Name</Label>
 
             <Input
@@ -81,7 +115,7 @@ export const CreateFile: FC<CreateFileProps> = ({ isOpen, onOpenChange }) => {
 
             <Input
               placeholder="File description..."
-              value={name}
+              value={description}
               onChange={e => setDescription(e.target.value)}
               maxLength={FILE_DESCRIPTION_MAX}
             />
