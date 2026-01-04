@@ -9,6 +9,13 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from "@/components/ui/select"
 import { ChatbotUIContext } from "@/context/context"
 import { updateChat } from "@/db/chats"
 import { Tables } from "@/supabase/types"
@@ -20,16 +27,18 @@ interface UpdateChatProps {
 }
 
 export const UpdateChat: FC<UpdateChatProps> = ({ chat }) => {
-  const { setChats } = useContext(ChatbotUIContext)
+  const { setChats, collections } = useContext(ChatbotUIContext)
 
   const buttonRef = useRef<HTMLButtonElement>(null)
 
   const [showChatDialog, setShowChatDialog] = useState(false)
   const [name, setName] = useState(chat.name)
+  const [collectionId, setCollectionId] = useState(chat.collection_id || "")
 
   const handleUpdateChat = async (e: React.MouseEvent<HTMLButtonElement>) => {
     const updatedChat = await updateChat(chat.id, {
-      name
+      name,
+      collection_id: collectionId || null
     })
     setChats(prevState =>
       prevState.map(c => (c.id === chat.id ? updatedChat : c))
@@ -59,6 +68,30 @@ export const UpdateChat: FC<UpdateChatProps> = ({ chat }) => {
           <Label>Name</Label>
 
           <Input value={name} onChange={e => setName(e.target.value)} />
+        </div>
+
+        <div className="space-y-1">
+          <Label>Collection</Label>
+
+          <Select
+            value={collectionId || "none"}
+            onValueChange={value =>
+              setCollectionId(value === "none" ? "" : value)
+            }
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="No collection" />
+            </SelectTrigger>
+
+            <SelectContent>
+              <SelectItem value="none">No collection</SelectItem>
+              {collections.map(collection => (
+                <SelectItem key={collection.id} value={collection.id}>
+                  {collection.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         <DialogFooter>

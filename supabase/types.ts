@@ -339,6 +339,7 @@ export type Database = {
       chats: {
         Row: {
           assistant_id: string | null
+          collection_id: string | null
           context_length: number
           created_at: string
           embeddings_provider: string
@@ -357,6 +358,7 @@ export type Database = {
         }
         Insert: {
           assistant_id?: string | null
+          collection_id?: string | null
           context_length: number
           created_at?: string
           embeddings_provider: string
@@ -375,6 +377,7 @@ export type Database = {
         }
         Update: {
           assistant_id?: string | null
+          collection_id?: string | null
           context_length?: number
           created_at?: string
           embeddings_provider?: string
@@ -392,6 +395,13 @@ export type Database = {
           workspace_id?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "chats_collection_id_fkey"
+            columns: ["collection_id"]
+            isOneToOne: false
+            referencedRelation: "collections"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "chats_assistant_id_fkey"
             columns: ["assistant_id"]
@@ -1826,4 +1836,3 @@ export type Enums<
 
 // Type alias for backward compatibility
 export type TablesAlias<T extends keyof Database["public"]["Tables"]> = Database["public"]["Tables"][T]["Row"]
-
