@@ -25,7 +25,7 @@ import {
 import { AssistantImage } from "@/types/images/assistant-image"
 import { VALID_ENV_KEYS } from "@/types/valid-keys"
 import { useRouter } from "next/navigation"
-import { FC, useEffect, useState } from "react"
+import { FC, useCallback, useEffect, useState } from "react"
 
 interface GlobalStateProps {
   children: React.ReactNode
@@ -169,9 +169,9 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
         clearTimeout(timeoutId)
       }
     }
-  }, [])
+  }, [fetchStartingData, router])
 
-  const fetchStartingData = async () => {
+  const fetchStartingData = useCallback(async () => {
     try {
       const session = (await supabase.auth.getSession()).data.session
 
@@ -243,7 +243,7 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
       router.push("/login")
       return null
     }
-  }
+  }, [router, setProfile, setWorkspaceImages, setWorkspaces])
 
   return (
     <ChatbotUIContext.Provider

@@ -88,9 +88,9 @@ export const FileItem: FC<FileItemProps> = ({ file }) => {
           </div>
 
           <div className="flex items-center justify-between">
-            <div className="text-sm text-muted-foreground">
-              Attach to your next message
-            </div>
+          <div className="text-muted-foreground text-sm">
+            Attach to your next message
+          </div>
             <Button
               size="sm"
               variant="secondary"

@@ -80,7 +80,7 @@ import {
 import { convertBlobToBase64 } from "@/lib/blob-to-b64"
 import { Tables, TablesUpdate } from "@/supabase/types"
 import { CollectionFile, ContentType, DataItemType } from "@/types"
-import { FC, useContext, useEffect, useRef, useState } from "react"
+import { FC, useCallback, useContext, useEffect, useRef, useState } from "react"
 import profile from "react-syntax-highlighter/dist/esm/languages/hljs/profile"
 import { toast } from "sonner"
 import { SidebarDeleteItem } from "./sidebar-delete-item"
@@ -152,6 +152,82 @@ export const SidebarUpdateItem: FC<SidebarUpdateItemProps> = ({
     Tables<"tools">[]
   >([])
 
+  const fetchDataForContentType = useCallback(async () => {
+    switch (contentType) {
+      case "collections": {
+        const collectionFiles =
+          await getCollectionFilesByCollectionId(item.id)
+        setStartingCollectionFiles(collectionFiles.files)
+        setSelectedCollectionFiles([])
+        return
+      }
+      case "assistants": {
+        const assistantFiles = await getAssistantFilesByAssistantId(item.id)
+        setStartingAssistantFiles(assistantFiles.files)
+
+        const assistantCollections =
+          await getAssistantCollectionsByAssistantId(item.id)
+        setStartingAssistantCollections(assistantCollections.collections)
+
+        const assistantTools = await getAssistantToolsByAssistantId(item.id)
+        setStartingAssistantTools(assistantTools.tools)
+
+        setSelectedAssistantFiles([])
+        setSelectedAssistantCollections([])
+        setSelectedAssistantTools([])
+        return
+      }
+      default:
+        return
+    }
+  }, [
+    contentType,
+    item.id,
+    setSelectedAssistantCollections,
+    setSelectedAssistantFiles,
+    setSelectedAssistantTools,
+    setSelectedCollectionFiles,
+    setStartingAssistantCollections,
+    setStartingAssistantFiles,
+    setStartingAssistantTools,
+    setStartingCollectionFiles
+  ])
+
+  const fetchSelectedWorkspaces = useCallback(async () => {
+    switch (contentType) {
+      case "presets": {
+        const item = await getPresetWorkspacesByPresetId(item.id)
+        return item.workspaces
+      }
+      case "prompts": {
+        const item = await getPromptWorkspacesByPromptId(item.id)
+        return item.workspaces
+      }
+      case "files": {
+        const item = await getFileWorkspacesByFileId(item.id)
+        return item.workspaces
+      }
+      case "collections": {
+        const item = await getCollectionWorkspacesByCollectionId(item.id)
+        return item.workspaces
+      }
+      case "assistants": {
+        const item = await getAssistantWorkspacesByAssistantId(item.id)
+        return item.workspaces
+      }
+      case "tools": {
+        const item = await getToolWorkspacesByToolId(item.id)
+        return item.workspaces
+      }
+      case "models": {
+        const item = await getModelWorkspacesByModelId(item.id)
+        return item.workspaces
+      }
+      default:
+        return []
+    }
+  }, [contentType, item.id])
+
   useEffect(() => {
     if (isOpen) {
       const fetchData = async () => {
@@ -161,14 +237,12 @@ export const SidebarUpdateItem: FC<SidebarUpdateItemProps> = ({
           setSelectedWorkspaces(workspaces)
         }
 
-        const fetchDataFunction = fetchDataFunctions[contentType]
-        if (!fetchDataFunction) return
-        await fetchDataFunction(item.id)
+        await fetchDataForContentType()
       }
 
       fetchData()
     }
-  }, [isOpen])
+  }, [fetchDataForContentType, fetchSelectedWorkspaces, isOpen, workspaces.length])
 
   const renderState = {
     chats: null,
@@ -197,78 +271,6 @@ export const SidebarUpdateItem: FC<SidebarUpdateItemProps> = ({
     },
     tools: null,
     models: null
-  }
-
-  const fetchDataFunctions = {
-    chats: null,
-    presets: null,
-    prompts: null,
-    files: null,
-    collections: async (collectionId: string) => {
-      const collectionFiles =
-        await getCollectionFilesByCollectionId(collectionId)
-      setStartingCollectionFiles(collectionFiles.files)
-      setSelectedCollectionFiles([])
-    },
-    assistants: async (assistantId: string) => {
-      const assistantFiles = await getAssistantFilesByAssistantId(assistantId)
-      setStartingAssistantFiles(assistantFiles.files)
-
-      const assistantCollections =
-        await getAssistantCollectionsByAssistantId(assistantId)
-      setStartingAssistantCollections(assistantCollections.collections)
-
-      const assistantTools = await getAssistantToolsByAssistantId(assistantId)
-      setStartingAssistantTools(assistantTools.tools)
-
-      setSelectedAssistantFiles([])
-      setSelectedAssistantCollections([])
-      setSelectedAssistantTools([])
-    },
-    tools: null,
-    models: null
-  }
-
-  const fetchWorkpaceFunctions = {
-    chats: null,
-    presets: async (presetId: string) => {
-      const item = await getPresetWorkspacesByPresetId(presetId)
-      return item.workspaces
-    },
-    prompts: async (promptId: string) => {
-      const item = await getPromptWorkspacesByPromptId(promptId)
-      return item.workspaces
-    },
-    files: async (fileId: string) => {
-      const item = await getFileWorkspacesByFileId(fileId)
-      return item.workspaces
-    },
-    collections: async (collectionId: string) => {
-      const item = await getCollectionWorkspacesByCollectionId(collectionId)
-      return item.workspaces
-    },
-    assistants: async (assistantId: string) => {
-      const item = await getAssistantWorkspacesByAssistantId(assistantId)
-      return item.workspaces
-    },
-    tools: async (toolId: string) => {
-      const item = await getToolWorkspacesByToolId(toolId)
-      return item.workspaces
-    },
-    models: async (modelId: string) => {
-      const item = await getModelWorkspacesByModelId(modelId)
-      return item.workspaces
-    }
-  }
-
-  const fetchSelectedWorkspaces = async () => {
-    const fetchFunction = fetchWorkpaceFunctions[contentType]
-
-    if (!fetchFunction) return []
-
-    const workspaces = await fetchFunction(item.id)
-
-    return workspaces
   }
 
   const handleWorkspaceUpdates = async (
@@ -634,7 +636,7 @@ export const SidebarUpdateItem: FC<SidebarUpdateItemProps> = ({
       <SheetTrigger asChild>{children}</SheetTrigger>
 
       <SheetContent
-        className="flex min-w-[450px] flex-col justify-between"
+        className="flex flex-col justify-between min-w-[450px]"
         side="left"
         onKeyDown={handleKeyDown}
       >
