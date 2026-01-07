@@ -12,8 +12,15 @@ import Image from "next/image"
 import { FC, useContext, useEffect, useRef, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { toast } from "sonner"
+import { Button } from "../ui/button"
 import { Input } from "../ui/input"
 import { TextareaAutosize } from "../ui/textarea-autosize"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from "../ui/dropdown-menu"
 import { ChatCommandInput } from "./chat-command-input"
 import { ChatFilesDisplay } from "./chat-files-display"
 import { useChatHandler } from "./chat-hooks/use-chat-handler"
@@ -51,6 +58,8 @@ export const ChatInput: FC<ChatInputProps> = ({}) => {
     setIsPromptPickerOpen,
     isFilePickerOpen,
     setFocusFile,
+    setIsFilePickerOpen,
+    setHashtagCommand,
     chatSettings,
     selectedTools,
     setSelectedTools,
@@ -141,6 +150,13 @@ export const ChatInput: FC<ChatInputProps> = ({}) => {
     }
   }
 
+  const handleOpenScriptWhispererFiles = () => {
+    setIsPromptPickerOpen(false)
+    setHashtagCommand("")
+    setIsFilePickerOpen(true)
+    setFocusFile(true)
+  }
+
   const handlePaste = (event: React.ClipboardEvent) => {
     const imagesAllowed = LLM_LIST.find(
       llm => llm.modelId === chatSettings?.model
@@ -217,11 +233,26 @@ export const ChatInput: FC<ChatInputProps> = ({}) => {
         </div>
 
         <>
-          <IconCirclePlus
-            className="absolute bottom-[12px] left-3 cursor-pointer p-1 hover:opacity-50"
-            size={32}
-            onClick={() => fileInputRef.current?.click()}
-          />
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                size="icon"
+                variant="ghost"
+                className="absolute bottom-[12px] left-3 p-1 hover:opacity-50"
+              >
+                <IconCirclePlus size={28} />
+              </Button>
+            </DropdownMenuTrigger>
+
+            <DropdownMenuContent align="start" side="top">
+              <DropdownMenuItem onSelect={() => fileInputRef.current?.click()}>
+                Upload from device
+              </DropdownMenuItem>
+              <DropdownMenuItem onSelect={handleOpenScriptWhispererFiles}>
+                Script Whisperer Files
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
 
           {/* Hidden input to select files from device */}
           <Input

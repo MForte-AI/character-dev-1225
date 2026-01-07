@@ -15,6 +15,7 @@ interface SidebarItemProps {
   icon: React.ReactNode
   updateState: any
   renderInputs: (renderState: any) => JSX.Element
+  rowAction?: React.ReactNode
 }
 
 export const SidebarItem: FC<SidebarItemProps> = ({
@@ -23,7 +24,8 @@ export const SidebarItem: FC<SidebarItemProps> = ({
   updateState,
   renderInputs,
   icon,
-  isTyping
+  isTyping,
+  rowAction
 }) => {
   const { selectedWorkspace, setChats, setSelectedAssistant, profile } =
     useContext(ChatbotUIContext)
@@ -124,9 +126,19 @@ export const SidebarItem: FC<SidebarItemProps> = ({
       >
         {icon}
 
-        <div className="ml-3 flex-1 truncate text-sm font-semibold">
+        <div className="ml-3 min-w-0 flex-1 truncate text-sm font-semibold">
           {item.name}
         </div>
+
+        {rowAction && (
+          <div
+            className="ml-auto pl-2 shrink-0"
+            onClick={e => e.stopPropagation()}
+            onKeyDown={e => e.stopPropagation()}
+          >
+            {rowAction}
+          </div>
+        )}
       </div>
     )
   }
@@ -152,9 +164,19 @@ export const SidebarItem: FC<SidebarItemProps> = ({
       >
         {icon}
 
-        <div className="ml-3 flex-1 truncate text-sm font-semibold">
+        <div className="ml-3 min-w-0 flex-1 truncate text-sm font-semibold">
           {item.name}
         </div>
+
+        {rowAction && (
+          <div
+            className="ml-auto pl-2 shrink-0"
+            onClick={e => e.stopPropagation()}
+            onKeyDown={e => e.stopPropagation()}
+          >
+            {rowAction}
+          </div>
+        )}
       </div>
     </SidebarUpdateItem>
   )

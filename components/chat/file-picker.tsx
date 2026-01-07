@@ -2,6 +2,7 @@ import { ChatbotUIContext } from "@/context/context"
 import { Tables } from "@/supabase/types"
 import { IconBooks } from "@tabler/icons-react"
 import { FC, useContext, useEffect, useRef } from "react"
+import { Button } from "../ui/button"
 import { FileIcon } from "../ui/file-icon"
 
 interface FilePickerProps {
@@ -118,7 +119,7 @@ export const FilePicker: FC<FilePickerProps> = ({
                     itemsRef.current[index] = ref
                   }}
                   tabIndex={0}
-                  className="hover:bg-accent focus:bg-accent flex cursor-pointer items-center rounded p-2 focus:outline-none"
+                  className="hover:bg-accent focus:bg-accent flex cursor-pointer items-center justify-between rounded p-2 focus:outline-none"
                   onClick={() => {
                     if ("type" in item) {
                       handleSelectFile(item as Tables<"files">)
@@ -134,19 +135,40 @@ export const FilePicker: FC<FilePickerProps> = ({
                     )(e)
                   }
                 >
-                  {"type" in item ? (
-                    <FileIcon type={(item as Tables<"files">).type} size={32} />
-                  ) : (
-                    <IconBooks size={32} />
-                  )}
+                  <div className="flex min-w-0 items-center">
+                    {"type" in item ? (
+                      <FileIcon
+                        type={(item as Tables<"files">).type}
+                        size={32}
+                      />
+                    ) : (
+                      <IconBooks size={32} />
+                    )}
 
-                  <div className="ml-3 flex flex-col">
-                    <div className="font-bold">{item.name}</div>
+                    <div className="ml-3 flex min-w-0 flex-col">
+                      <div className="truncate font-bold">{item.name}</div>
 
-                    <div className="truncate text-sm opacity-80">
-                      {item.description || "No description."}
+                      <div className="truncate text-sm opacity-80">
+                        {item.description || "No description."}
+                      </div>
                     </div>
                   </div>
+
+                  <Button
+                    className="shrink-0"
+                    size="sm"
+                    variant="secondary"
+                    onClick={e => {
+                      e.stopPropagation()
+                      if ("type" in item) {
+                        handleSelectFile(item as Tables<"files">)
+                      } else {
+                        handleSelectCollection(item)
+                      }
+                    }}
+                  >
+                    Attach
+                  </Button>
                 </div>
               ))}
             </>
