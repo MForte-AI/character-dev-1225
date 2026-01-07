@@ -122,55 +122,6 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
   const [selectedTools, setSelectedTools] = useState<Tables<"tools">[]>([])
   const [toolInUse, setToolInUse] = useState<string>("none")
 
-  useEffect(() => {
-    let timeoutId: NodeJS.Timeout
-
-    const initializeApp = async () => {
-      try {
-        const profile = await fetchStartingData()
-
-        if (profile) {
-          const hostedModelRes = await fetchHostedModels(profile)
-          if (hostedModelRes) {
-            setEnvKeyMap(hostedModelRes.envKeyMap)
-            setAvailableHostedModels(hostedModelRes.hostedModels)
-          }
-        }
-
-        if (process.env.NEXT_PUBLIC_OLLAMA_URL) {
-          try {
-            const localModels = await fetchOllamaModels()
-            if (localModels) {
-              setAvailableLocalModels(localModels)
-            }
-          } catch (ollamaError) {
-            console.warn("Failed to load Ollama models:", ollamaError)
-            // Continue without local models
-          }
-        }
-      } catch (error) {
-        console.error("Failed to initialize app:", error)
-        router.push("/login")
-      }
-    }
-
-    // Set up a timeout to prevent infinite loading
-    timeoutId = setTimeout(() => {
-      console.error("App initialization timed out")
-      router.push("/login")
-    }, 30000) // 30 second timeout
-
-    initializeApp().finally(() => {
-      clearTimeout(timeoutId)
-    })
-
-    return () => {
-      if (timeoutId) {
-        clearTimeout(timeoutId)
-      }
-    }
-  }, [fetchStartingData, router])
-
   const fetchStartingData = useCallback(async () => {
     try {
       const session = (await supabase.auth.getSession()).data.session
@@ -244,6 +195,55 @@ export const GlobalState: FC<GlobalStateProps> = ({ children }) => {
       return null
     }
   }, [router, setProfile, setWorkspaceImages, setWorkspaces])
+
+  useEffect(() => {
+    let timeoutId: NodeJS.Timeout
+
+    const initializeApp = async () => {
+      try {
+        const profile = await fetchStartingData()
+
+        if (profile) {
+          const hostedModelRes = await fetchHostedModels(profile)
+          if (hostedModelRes) {
+            setEnvKeyMap(hostedModelRes.envKeyMap)
+            setAvailableHostedModels(hostedModelRes.hostedModels)
+          }
+        }
+
+        if (process.env.NEXT_PUBLIC_OLLAMA_URL) {
+          try {
+            const localModels = await fetchOllamaModels()
+            if (localModels) {
+              setAvailableLocalModels(localModels)
+            }
+          } catch (ollamaError) {
+            console.warn("Failed to load Ollama models:", ollamaError)
+            // Continue without local models
+          }
+        }
+      } catch (error) {
+        console.error("Failed to initialize app:", error)
+        router.push("/login")
+      }
+    }
+
+    // Set up a timeout to prevent infinite loading
+    timeoutId = setTimeout(() => {
+      console.error("App initialization timed out")
+      router.push("/login")
+    }, 30000) // 30 second timeout
+
+    initializeApp().finally(() => {
+      clearTimeout(timeoutId)
+    })
+
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId)
+      }
+    }
+  }, [fetchStartingData, router, setAvailableHostedModels, setAvailableLocalModels, setEnvKeyMap])
 
   return (
     <ChatbotUIContext.Provider
