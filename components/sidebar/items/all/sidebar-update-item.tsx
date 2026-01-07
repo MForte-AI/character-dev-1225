@@ -196,32 +196,36 @@ export const SidebarUpdateItem: FC<SidebarUpdateItemProps> = ({
   const fetchSelectedWorkspaces = useCallback(async () => {
     switch (contentType) {
       case "presets": {
-        const item = await getPresetWorkspacesByPresetId(item.id)
-        return item.workspaces
+        const workspaceRecord = await getPresetWorkspacesByPresetId(item.id)
+        return workspaceRecord.workspaces
       }
       case "prompts": {
-        const item = await getPromptWorkspacesByPromptId(item.id)
-        return item.workspaces
+        const workspaceRecord = await getPromptWorkspacesByPromptId(item.id)
+        return workspaceRecord.workspaces
       }
       case "files": {
-        const item = await getFileWorkspacesByFileId(item.id)
-        return item.workspaces
+        const workspaceRecord = await getFileWorkspacesByFileId(item.id)
+        return workspaceRecord.workspaces
       }
       case "collections": {
-        const item = await getCollectionWorkspacesByCollectionId(item.id)
-        return item.workspaces
+        const workspaceRecord = await getCollectionWorkspacesByCollectionId(
+          item.id
+        )
+        return workspaceRecord.workspaces
       }
       case "assistants": {
-        const item = await getAssistantWorkspacesByAssistantId(item.id)
-        return item.workspaces
+        const workspaceRecord = await getAssistantWorkspacesByAssistantId(
+          item.id
+        )
+        return workspaceRecord.workspaces
       }
       case "tools": {
-        const item = await getToolWorkspacesByToolId(item.id)
-        return item.workspaces
+        const workspaceRecord = await getToolWorkspacesByToolId(item.id)
+        return workspaceRecord.workspaces
       }
       case "models": {
-        const item = await getModelWorkspacesByModelId(item.id)
-        return item.workspaces
+        const workspaceRecord = await getModelWorkspacesByModelId(item.id)
+        return workspaceRecord.workspaces
       }
       default:
         return []
