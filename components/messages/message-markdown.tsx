@@ -18,7 +18,9 @@ export const MessageMarkdown: FC<MessageMarkdownProps> = ({ content }) => {
           return <p className="mb-2 last:mb-0">{children}</p>
         },
         img({ node, ...props }) {
-          return <img className="max-w-[67%]" {...props} />
+          const altText = typeof props.alt === "string" ? props.alt : ""
+          // eslint-disable-next-line @next/next/no-img-element
+          return <img className="max-w-[67%]" alt={altText} {...props} />
         },
         code({ node, className, children, ...props }) {
           const childArray = React.Children.toArray(children)

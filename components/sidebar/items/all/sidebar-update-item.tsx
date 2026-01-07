@@ -640,7 +640,7 @@ export const SidebarUpdateItem: FC<SidebarUpdateItemProps> = ({
       <SheetTrigger asChild>{children}</SheetTrigger>
 
       <SheetContent
-        className="flex flex-col justify-between min-w-[450px]"
+        className="flex min-w-[450px] flex-col justify-between"
         side="left"
         onKeyDown={handleKeyDown}
       >

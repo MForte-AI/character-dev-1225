@@ -132,7 +132,7 @@ export const SidebarItem: FC<SidebarItemProps> = ({
 
         {rowAction && (
           <div
-            className="ml-auto pl-2 shrink-0"
+            className="ml-auto shrink-0 pl-2"
             onClick={e => e.stopPropagation()}
             onKeyDown={e => e.stopPropagation()}
           >
@@ -170,7 +170,7 @@ export const SidebarItem: FC<SidebarItemProps> = ({
 
         {rowAction && (
           <div
-            className="ml-auto pl-2 shrink-0"
+            className="ml-auto shrink-0 pl-2"
             onClick={e => e.stopPropagation()}
             onKeyDown={e => e.stopPropagation()}
           >
