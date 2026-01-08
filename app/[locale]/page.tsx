@@ -14,7 +14,7 @@ export default function HomePage() {
         <ChatbotUISVG theme={theme === "dark" ? "dark" : "light"} scale={0.3} />
       </div>
 
-      <div className="mt-2 text-4xl font-bold">The Script Whisperer</div>
+      <div className="mt-2 text-4xl font-bold">Script Whisperer</div>
       <div className="mt-2 text-center text-sm text-muted-foreground sm:text-base">
         i'm here to assist, collaborate, evaluate and guide.
       </div>
