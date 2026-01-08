@@ -1,6 +1,6 @@
 export default function HelpPage() {
   return (
-    <div className="flex h-full w-full justify-center">
+    <div className="flex size-full justify-center">
       <div className="w-full max-w-2xl space-y-6 p-6">
         <div className="space-y-2">
           <h1 className="text-3xl font-bold">Script Whisperer Guide</h1>

@@ -15,8 +15,8 @@ export default function HomePage() {
       </div>
 
       <div className="mt-2 text-4xl font-bold">Script Whisperer</div>
-      <div className="mt-2 text-center text-sm text-muted-foreground sm:text-base">
-        i'm here to assist, collaborate, evaluate and guide.
+      <div className="mt-2 text-center text-muted-foreground text-sm sm:text-base">
+        i am here to assist, collaborate, evaluate and guide.
       </div>
 
       <Link

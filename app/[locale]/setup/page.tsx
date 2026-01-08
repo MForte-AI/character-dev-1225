@@ -69,7 +69,13 @@ export default function SetupPage() {
         }
       }
     })()
-  }, [])
+  }, [
+    router,
+    setAvailableHostedModels,
+    setEnvKeyMap,
+    setProfile,
+    setUsername
+  ])
 
   const handleShouldProceed = (proceed: boolean) => {
     if (proceed) {
