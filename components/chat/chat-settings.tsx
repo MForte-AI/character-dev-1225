@@ -29,21 +29,35 @@ export const ChatSettings: FC<ChatSettingsProps> = ({}) => {
     }
   }
 
-  useEffect(() => {
-    if (!chatSettings) return
+  const modelId = chatSettings?.model
 
-    setChatSettings({
-      ...chatSettings,
-      temperature: Math.min(
-        chatSettings.temperature,
-        CHAT_SETTING_LIMITS[chatSettings.model]?.MAX_TEMPERATURE || 1
-      ),
-      contextLength: Math.min(
-        chatSettings.contextLength,
-        CHAT_SETTING_LIMITS[chatSettings.model]?.MAX_CONTEXT_LENGTH || 4096
-      )
+  useEffect(() => {
+    if (!modelId) return
+
+    setChatSettings(prev => {
+      if (!prev) return prev
+
+      const maxTemperature =
+        CHAT_SETTING_LIMITS[prev.model]?.MAX_TEMPERATURE || 1
+      const maxContextLength =
+        CHAT_SETTING_LIMITS[prev.model]?.MAX_CONTEXT_LENGTH || 4096
+      const temperature = Math.min(prev.temperature, maxTemperature)
+      const contextLength = Math.min(prev.contextLength, maxContextLength)
+
+      if (
+        temperature === prev.temperature &&
+        contextLength === prev.contextLength
+      ) {
+        return prev
+      }
+
+      return {
+        ...prev,
+        temperature,
+        contextLength
+      }
     })
-  }, [chatSettings?.model])
+  }, [modelId, setChatSettings])
 
   if (!chatSettings) return null
 

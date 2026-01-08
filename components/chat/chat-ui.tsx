@@ -12,7 +12,7 @@ import useHotkey from "@/lib/hooks/use-hotkey"
 import { resolveClaudeModelId } from "@/lib/models/llm/llm-list"
 import { LLMID, MessageImage } from "@/types"
 import { useParams } from "next/navigation"
-import { FC, useContext, useEffect, useState } from "react"
+import { FC, useCallback, useContext, useEffect, useState } from "react"
 import { ChatHelp } from "./chat-help"
 import { useScroll } from "./chat-hooks/use-scroll"
 import { ChatInput } from "./chat-input"
@@ -58,26 +58,7 @@ export const ChatUI: FC<ChatUIProps> = ({}) => {
 
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
-    const fetchData = async () => {
-      await fetchMessages()
-      await fetchChat()
-
-      scrollToBottom()
-      setIsAtBottom(true)
-    }
-
-    if (params.chatid) {
-      fetchData().then(() => {
-        handleFocusChatInput()
-        setLoading(false)
-      })
-    } else {
-      setLoading(false)
-    }
-  }, [])
-
-  const fetchMessages = async () => {
+  const fetchMessages = useCallback(async () => {
     const fetchedMessages = await getMessagesByChatId(params.chatid as string)
 
     const imagePromises: Promise<MessageImage>[] = fetchedMessages.flatMap(
@@ -149,9 +130,17 @@ export const ChatUI: FC<ChatUIProps> = ({}) => {
     })
 
     setChatMessages(fetchedChatMessages)
-  }
+  }, [
+    params.chatid,
+    setChatFileItems,
+    setChatFiles,
+    setChatImages,
+    setChatMessages,
+    setShowFilesDisplay,
+    setUseRetrieval
+  ])
 
-  const fetchChat = async () => {
+  const fetchChat = useCallback(async () => {
     const chat = await getChatById(params.chatid as string)
     if (!chat) return
 
@@ -180,7 +169,40 @@ export const ChatUI: FC<ChatUIProps> = ({}) => {
       includeWorkspaceInstructions: chat.include_workspace_instructions,
       embeddingsProvider: "openai"
     })
-  }
+  }, [
+    assistants,
+    params.chatid,
+    setChatSettings,
+    setSelectedAssistant,
+    setSelectedChat,
+    setSelectedTools
+  ])
+
+  useEffect(() => {
+    const fetchData = async () => {
+      await fetchMessages()
+      await fetchChat()
+
+      scrollToBottom()
+      setIsAtBottom(true)
+    }
+
+    if (params.chatid) {
+      fetchData().then(() => {
+        handleFocusChatInput()
+        setLoading(false)
+      })
+    } else {
+      setLoading(false)
+    }
+  }, [
+    fetchChat,
+    fetchMessages,
+    handleFocusChatInput,
+    params.chatid,
+    scrollToBottom,
+    setIsAtBottom
+  ])
 
   if (loading) {
     return <Loading />
