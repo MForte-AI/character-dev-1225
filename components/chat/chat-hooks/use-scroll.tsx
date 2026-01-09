@@ -20,6 +20,24 @@ export const useScroll = () => {
   const [userScrolled, setUserScrolled] = useState(false)
   const [isOverflowing, setIsOverflowing] = useState(false)
 
+  const scrollToTop = useCallback(() => {
+    if (messagesStartRef.current) {
+      messagesStartRef.current.scrollIntoView({ behavior: "instant" })
+    }
+  }, [])
+
+  const scrollToBottom = useCallback(() => {
+    isAutoScrolling.current = true
+
+    setTimeout(() => {
+      if (messagesEndRef.current) {
+        messagesEndRef.current.scrollIntoView({ behavior: "instant" })
+      }
+
+      isAutoScrolling.current = false
+    }, 100)
+  }, [])
+
   useEffect(() => {
     if (!isGenerating && userScrolled) {
       setUserScrolled(false)
@@ -50,24 +68,6 @@ export const useScroll = () => {
 
     const isOverflow = target.scrollHeight > target.clientHeight
     setIsOverflowing(isOverflow)
-  }, [])
-
-  const scrollToTop = useCallback(() => {
-    if (messagesStartRef.current) {
-      messagesStartRef.current.scrollIntoView({ behavior: "instant" })
-    }
-  }, [])
-
-  const scrollToBottom = useCallback(() => {
-    isAutoScrolling.current = true
-
-    setTimeout(() => {
-      if (messagesEndRef.current) {
-        messagesEndRef.current.scrollIntoView({ behavior: "instant" })
-      }
-
-      isAutoScrolling.current = false
-    }, 100)
   }, [])
 
   return {
