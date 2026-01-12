@@ -5,6 +5,7 @@ import TranslationsProvider from "@/components/utility/translations-provider"
 import initTranslations from "@/lib/i18n"
 import { Database } from "@/supabase/types"
 import { createServerClient } from "@supabase/ssr"
+import { Analytics } from "@vercel/analytics/react"
 import { Metadata, Viewport } from "next"
 import { Inter } from "next/font/google"
 import { cookies } from "next/headers"
@@ -126,6 +127,7 @@ export default async function RootLayout({
             </div>
           </TranslationsProvider>
         </Providers>
+        <Analytics />
       </body>
     </html>
   )

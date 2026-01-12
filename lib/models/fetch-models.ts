@@ -1,6 +1,5 @@
 import { Tables } from "@/supabase/types"
 import { LLM, LLMID } from "@/types"
-import { toast } from "sonner"
 import { LLM_LIST_MAP } from "./llm/llm-list"
 
 export const fetchHostedModels = async (profile: Tables<"profiles">) => {
@@ -15,23 +14,24 @@ export const fetchHostedModels = async (profile: Tables<"profiles">) => {
 
     const data = await response.json()
 
-    let envKeyMap: any = {}
-    let hostedModels: LLM[] = []
+    const isUsingEnvKeyMap = data.isUsingEnvKeyMap || {}
+    let modelsToAdd: LLM[] = []
 
-    providers.forEach(provider => {
-      const envKey = data[provider]
+    for (const provider of providers) {
+      const providerKey = `${provider}_api_key` as keyof typeof profile
 
-      if (envKey) {
-        envKeyMap[provider] = envKey
-        hostedModels.push(...LLM_LIST_MAP[provider])
-      } else {
-        envKeyMap[provider] = ""
+      if (profile?.[providerKey] || isUsingEnvKeyMap[provider]) {
+        const models = LLM_LIST_MAP[provider]
+
+        if (Array.isArray(models)) {
+          modelsToAdd.push(...models)
+        }
       }
-    })
+    }
 
     return {
-      envKeyMap,
-      hostedModels
+      envKeyMap: isUsingEnvKeyMap,
+      hostedModels: modelsToAdd
     }
   } catch (error) {
     console.warn("Error fetching hosted models: " + error)

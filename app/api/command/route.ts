@@ -15,11 +15,16 @@ export async function POST(request: Request) {
   }
 
   try {
-    const profile = await getServerProfile()
+    let profile: Awaited<ReturnType<typeof getServerProfile>> | null = null
+    try {
+      profile = await getServerProfile()
+    } catch (profileError) {
+      console.warn("Unable to load profile for command route:", profileError)
+    }
 
-    const apiKey = process.env.ANTHROPIC_API_KEY || profile.anthropic_api_key
+    const apiKey = process.env.ANTHROPIC_API_KEY || profile?.anthropic_api_key
 
-    checkApiKey(apiKey, "Anthropic")
+    checkApiKey(apiKey || null, "Anthropic")
 
     const anthropic = new Anthropic({ apiKey: apiKey || "" })
 
