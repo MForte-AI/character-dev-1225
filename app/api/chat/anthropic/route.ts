@@ -93,13 +93,16 @@ export async function POST(request: NextRequest) {
         )
       }
     } catch (error: any) {
-      console.error("Error calling Anthropic API:", error)
-      return new NextResponse(
-        JSON.stringify({
-          message: "An error occurred while calling the Anthropic API"
-        }),
-        { status: 500 }
-      )
+      const errorMessage =
+        error?.error?.message ||
+        error?.message ||
+        "An error occurred while calling the Anthropic API"
+      const errorCode = error?.status || 500
+
+      console.error("Error calling Anthropic API:", errorMessage)
+      return new NextResponse(JSON.stringify({ message: errorMessage }), {
+        status: errorCode
+      })
     }
   } catch (error: any) {
     let errorMessage = error.message || "An unexpected error occurred"
