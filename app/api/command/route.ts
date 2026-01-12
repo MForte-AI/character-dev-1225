@@ -6,7 +6,7 @@ import {
 import { checkApiKey, getServerProfile } from "@/lib/server/server-chat-helpers"
 import Anthropic from "@anthropic-ai/sdk"
 
-export const runtime = "edge"
+export const runtime = "nodejs"
 
 export async function POST(request: Request) {
   const json = await request.json()
