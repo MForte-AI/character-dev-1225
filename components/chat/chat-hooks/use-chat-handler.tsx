@@ -9,7 +9,7 @@ import { buildFinalMessages } from "@/lib/build-prompt"
 import { Tables } from "@/supabase/types"
 import { ChatMessage, ChatPayload, LLMID, ModelProvider } from "@/types"
 import { useRouter } from "next/navigation"
-import { useContext, useEffect, useRef } from "react"
+import { useCallback, useContext, useEffect, useRef } from "react"
 import { toast } from "sonner"
 import {
   LLM_LIST,
@@ -196,9 +196,9 @@ export const useChatHandler = () => {
     return router.push(`/${selectedWorkspace.id}/chat`)
   }
 
-  const handleFocusChatInput = () => {
+  const handleFocusChatInput = useCallback(() => {
     chatInputRef.current?.focus()
-  }
+  }, [chatInputRef])
 
   const handleStopMessage = () => {
     if (abortController) {
