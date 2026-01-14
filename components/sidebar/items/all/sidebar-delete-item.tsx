@@ -10,9 +10,9 @@ import {
 } from "@/components/ui/dialog"
 import { ChatbotUIContext } from "@/context/context"
 import { deleteAssistant } from "@/db/assistants"
-import { deleteChat } from "@/db/chats"
-import { deleteCollection } from "@/db/collections"
-import { deleteFile } from "@/db/files"
+import { clearCollectionFromChats, deleteChat } from "@/db/chats"
+import { deleteCollectionWithRelations } from "@/db/collections"
+import { deleteFileWithRelations } from "@/db/files"
 import { deleteModel } from "@/db/models"
 import { deletePreset } from "@/db/presets"
 import { deletePrompt } from "@/db/prompts"
@@ -21,6 +21,7 @@ import { deleteTool } from "@/db/tools"
 import { Tables } from "@/supabase/types"
 import { ContentType, DataItemType } from "@/types"
 import { FC, useContext, useRef, useState } from "react"
+import { toast } from "sonner"
 
 interface SidebarDeleteItemProps {
   item: DataItemType
@@ -39,7 +40,9 @@ export const SidebarDeleteItem: FC<SidebarDeleteItemProps> = ({
     setCollections,
     setAssistants,
     setTools,
-    setModels
+    setModels,
+    setChatFiles,
+    setNewMessageFiles
   } = useContext(ChatbotUIContext)
 
   const buttonRef = useRef<HTMLButtonElement>(null)
@@ -58,10 +61,10 @@ export const SidebarDeleteItem: FC<SidebarDeleteItemProps> = ({
     },
     files: async (file: Tables<"files">) => {
       await deleteFileFromStorage(file.file_path)
-      await deleteFile(file.id)
+      await deleteFileWithRelations(file.id)
     },
     collections: async (collection: Tables<"collections">) => {
-      await deleteCollection(collection.id)
+      await deleteCollectionWithRelations(collection.id)
     },
     assistants: async (assistant: Tables<"assistants">) => {
       await deleteAssistant(assistant.id)
@@ -94,13 +97,37 @@ export const SidebarDeleteItem: FC<SidebarDeleteItemProps> = ({
 
     if (!deleteFunction || !setStateFunction) return
 
-    await deleteFunction(item as any)
+    try {
+      if (contentType === "collections") {
+        const updatedChats = await clearCollectionFromChats(item.id)
+        if (updatedChats.length > 0) {
+          setChats(prevChats =>
+            prevChats.map(chat => {
+              const updatedChat = updatedChats.find(
+                updated => updated.id === chat.id
+              )
+              return updatedChat || chat
+            })
+          )
+        }
+      }
 
-    setStateFunction((prevItems: any) =>
-      prevItems.filter((prevItem: any) => prevItem.id !== item.id)
-    )
+      await deleteFunction(item as any)
 
-    setShowDialog(false)
+      setStateFunction((prevItems: any) =>
+        prevItems.filter((prevItem: any) => prevItem.id !== item.id)
+      )
+
+      if (contentType === "files") {
+        setChatFiles(prev => prev.filter(file => file.id !== item.id))
+        setNewMessageFiles(prev => prev.filter(file => file.id !== item.id))
+      }
+
+      setShowDialog(false)
+      toast.success(`${contentType.slice(0, -1)} deleted`)
+    } catch (error) {
+      toast.error(`Failed to delete ${contentType.slice(0, -1)}. ${error}`)
+    }
   }
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {

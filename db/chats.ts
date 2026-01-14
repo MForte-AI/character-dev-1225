@@ -79,3 +79,17 @@ export const deleteChat = async (chatId: string) => {
 
   return true
 }
+
+export const clearCollectionFromChats = async (collectionId: string) => {
+  const { data: updatedChats, error } = await supabase
+    .from("chats")
+    .update({ collection_id: null })
+    .eq("collection_id", collectionId)
+    .select("*")
+
+  if (error) {
+    throw new Error(error.message)
+  }
+
+  return updatedChats || []
+}

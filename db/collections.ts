@@ -168,6 +168,37 @@ export const deleteCollection = async (collectionId: string) => {
   return true
 }
 
+export const deleteCollectionWithRelations = async (collectionId: string) => {
+  const { error: collectionFilesError } = await supabase
+    .from("collection_files")
+    .delete()
+    .eq("collection_id", collectionId)
+
+  if (collectionFilesError) {
+    throw new Error(collectionFilesError.message)
+  }
+
+  const { error: assistantCollectionsError } = await supabase
+    .from("assistant_collections")
+    .delete()
+    .eq("collection_id", collectionId)
+
+  if (assistantCollectionsError) {
+    throw new Error(assistantCollectionsError.message)
+  }
+
+  const { error: collectionWorkspacesError } = await supabase
+    .from("collection_workspaces")
+    .delete()
+    .eq("collection_id", collectionId)
+
+  if (collectionWorkspacesError) {
+    throw new Error(collectionWorkspacesError.message)
+  }
+
+  return deleteCollection(collectionId)
+}
+
 export const deleteCollectionWorkspace = async (
   collectionId: string,
   workspaceId: string

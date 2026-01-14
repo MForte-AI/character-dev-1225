@@ -4,6 +4,15 @@ import { NextResponse, type NextRequest } from "next/server"
 import i18nConfig from "./i18nConfig"
 
 export async function middleware(request: NextRequest) {
+  const debugEnabled = process.env.NEXT_PUBLIC_ENABLE_DEBUG === "true"
+  const normalizedPath = request.nextUrl.pathname.replace(/\/+$/, "")
+  const isDebugPath =
+    normalizedPath === "/debug" || normalizedPath.endsWith("/debug")
+
+  if (!debugEnabled && isDebugPath) {
+    return new NextResponse("Not Found", { status: 404 })
+  }
+
   const i18nResult = i18nRouter(request, i18nConfig)
   if (i18nResult) return i18nResult
 

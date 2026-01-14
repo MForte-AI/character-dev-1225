@@ -300,6 +300,55 @@ export const deleteFile = async (fileId: string) => {
   return true
 }
 
+export const deleteFileWithRelations = async (fileId: string) => {
+  const { error: chatFilesError } = await supabase
+    .from("chat_files")
+    .delete()
+    .eq("file_id", fileId)
+
+  if (chatFilesError) {
+    throw new Error(chatFilesError.message)
+  }
+
+  const { error: collectionFilesError } = await supabase
+    .from("collection_files")
+    .delete()
+    .eq("file_id", fileId)
+
+  if (collectionFilesError) {
+    throw new Error(collectionFilesError.message)
+  }
+
+  const { error: assistantFilesError } = await supabase
+    .from("assistant_files")
+    .delete()
+    .eq("file_id", fileId)
+
+  if (assistantFilesError) {
+    throw new Error(assistantFilesError.message)
+  }
+
+  const { error: fileWorkspacesError } = await supabase
+    .from("file_workspaces")
+    .delete()
+    .eq("file_id", fileId)
+
+  if (fileWorkspacesError) {
+    throw new Error(fileWorkspacesError.message)
+  }
+
+  const { error: fileItemsError } = await supabase
+    .from("file_items")
+    .delete()
+    .eq("file_id", fileId)
+
+  if (fileItemsError) {
+    throw new Error(fileItemsError.message)
+  }
+
+  return deleteFile(fileId)
+}
+
 export const deleteFileWorkspace = async (
   fileId: string,
   workspaceId: string

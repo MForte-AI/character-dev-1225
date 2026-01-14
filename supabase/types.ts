@@ -1138,6 +1138,7 @@ export type Database = {
           profile_context: string
           updated_at: string | null
           use_azure_openai: boolean
+          user_role: string | null
           user_id: string
           username: string
         }
@@ -1167,6 +1168,7 @@ export type Database = {
           profile_context: string
           updated_at?: string | null
           use_azure_openai: boolean
+          user_role?: string | null
           user_id: string
           username: string
         }
@@ -1196,6 +1198,7 @@ export type Database = {
           profile_context?: string
           updated_at?: string | null
           use_azure_openai?: boolean
+          user_role?: string | null
           user_id?: string
           username?: string
         }

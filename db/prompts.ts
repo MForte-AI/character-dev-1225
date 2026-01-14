@@ -15,6 +15,19 @@ export const getPromptById = async (promptId: string) => {
   return prompt
 }
 
+export const getPublicPrompts = async () => {
+  const { data: prompts, error } = await supabase
+    .from("prompts")
+    .select("*")
+    .eq("sharing", "public")
+
+  if (!prompts) {
+    throw new Error(error.message)
+  }
+
+  return prompts
+}
+
 export const getPromptWorkspacesByWorkspaceId = async (workspaceId: string) => {
   const { data: workspace, error } = await supabase
     .from("workspaces")
@@ -32,7 +45,20 @@ export const getPromptWorkspacesByWorkspaceId = async (workspaceId: string) => {
     throw new Error(error.message)
   }
 
-  return workspace
+  const publicPrompts = await getPublicPrompts()
+  const workspacePrompts = workspace.prompts || []
+  const promptMap = new Map(workspacePrompts.map(prompt => [prompt.id, prompt]))
+
+  for (const prompt of publicPrompts) {
+    if (!promptMap.has(prompt.id)) {
+      promptMap.set(prompt.id, prompt)
+    }
+  }
+
+  return {
+    ...workspace,
+    prompts: Array.from(promptMap.values())
+  }
 }
 
 export const getPromptWorkspacesByPromptId = async (promptId: string) => {
