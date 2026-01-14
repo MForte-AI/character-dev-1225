@@ -19,7 +19,7 @@ export const getPublicPrompts = async () => {
   const { data: prompts, error } = await supabase
     .from("prompts")
     .select("*")
-    .eq("sharing", "public")
+    .in("sharing", ["public", "global"])
 
   if (!prompts) {
     throw new Error(error.message)

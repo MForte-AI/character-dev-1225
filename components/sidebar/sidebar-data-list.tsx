@@ -220,8 +220,22 @@ export const SidebarDataList: FC<SidebarDataListProps> = ({
     }
   }, [data])
 
-  const dataWithFolders = data.filter(item => item.folder_id)
-  const dataWithoutFolders = data.filter(item => item.folder_id === null)
+  const normalizedData =
+    contentType === "prompts"
+      ? data.map(item => {
+          const prompt = item as Tables<"prompts">
+          const hasFolder =
+            prompt.folder_id &&
+            folders.some(folder => folder.id === prompt.folder_id)
+
+          return hasFolder ? prompt : { ...prompt, folder_id: null }
+        })
+      : data
+
+  const dataWithFolders = normalizedData.filter(item => item.folder_id)
+  const dataWithoutFolders = normalizedData.filter(
+    item => item.folder_id === null
+  )
 
   return (
     <>
