@@ -9,7 +9,6 @@ import { Tables } from "@/supabase/types"
 import { IconRobotFace } from "@tabler/icons-react"
 import Image from "next/image"
 import { FC, useContext, useEffect, useState } from "react"
-import profile from "react-syntax-highlighter/dist/esm/languages/hljs/profile"
 import { SidebarItem } from "../all/sidebar-display-item"
 import { AssistantRetrievalSelect } from "./assistant-retrieval-select"
 import { AssistantToolSelect } from "./assistant-tool-select"
@@ -19,7 +18,8 @@ interface AssistantItemProps {
 }
 
 export const AssistantItem: FC<AssistantItemProps> = ({ assistant }) => {
-  const { selectedWorkspace, assistantImages } = useContext(ChatbotUIContext)
+  const { selectedWorkspace, assistantImages, profile } =
+    useContext(ChatbotUIContext)
 
   const [name, setName] = useState(assistant.name)
   const [isTyping, setIsTyping] = useState(false)
@@ -104,9 +104,20 @@ export const AssistantItem: FC<AssistantItemProps> = ({ assistant }) => {
   if (!profile) return null
   if (!selectedWorkspace) return null
 
-  const displayAssistant = { ...assistant, is_system: true } as Tables<"assistants"> & {
-    is_system: boolean
-  }
+  const isAdmin = profile.user_role === "admin"
+  const isSystemAssistant = Boolean((assistant as any).is_system)
+  const isReadOnly =
+    !isAdmin && (isSystemAssistant || assistant.user_id !== profile.user_id)
+
+  const displayAssistant = isReadOnly
+    ? ({
+        ...assistant,
+        is_system: true
+      } as Tables<"assistants"> & { is_system: boolean })
+    : ({
+        ...assistant,
+        is_system: false
+      } as Tables<"assistants"> & { is_system: boolean })
 
   return (
     <SidebarItem
