@@ -171,6 +171,40 @@ export const updateAssistant = async (
   return updatedAssistant
 }
 
+export const updateAssistantAdmin = async (
+  assistantId: string,
+  assistant: TablesUpdate<"assistants">
+) => {
+  const response = await fetch("/api/admin/assistants/update", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      assistantId,
+      updates: assistant
+    })
+  })
+
+  if (!response.ok) {
+    const text = await response.text()
+    let message = text
+
+    try {
+      const parsed = JSON.parse(text)
+      message = parsed?.message || text
+    } catch {
+      // Fall back to raw response text.
+    }
+
+    throw new Error(message || "Failed to update assistant.")
+  }
+
+  const { assistant: updatedAssistant } = await response.json()
+
+  return updatedAssistant
+}
+
 export const deleteAssistant = async (assistantId: string) => {
   const { error } = await supabase
     .from("assistants")

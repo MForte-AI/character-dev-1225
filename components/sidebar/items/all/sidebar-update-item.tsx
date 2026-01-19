@@ -29,7 +29,8 @@ import {
   createAssistantWorkspaces,
   deleteAssistantWorkspace,
   getAssistantWorkspacesByAssistantId,
-  updateAssistant
+  updateAssistant,
+  updateAssistantAdmin
 } from "@/db/assistants"
 import { updateChat } from "@/db/chats"
 import {
@@ -81,7 +82,6 @@ import { convertBlobToBase64 } from "@/lib/blob-to-b64"
 import { Tables, TablesUpdate } from "@/supabase/types"
 import { CollectionFile, ContentType, DataItemType } from "@/types"
 import { FC, useCallback, useContext, useEffect, useRef, useState } from "react"
-import profile from "react-syntax-highlighter/dist/esm/languages/hljs/profile"
 import { toast } from "sonner"
 import { SidebarDeleteItem } from "./sidebar-delete-item"
 
@@ -113,7 +113,8 @@ export const SidebarUpdateItem: FC<SidebarUpdateItemProps> = ({
     setAssistants,
     setTools,
     setModels,
-    setAssistantImages
+    setAssistantImages,
+    profile
   } = useContext(ChatbotUIContext)
 
   const buttonRef = useRef<HTMLButtonElement>(null)
@@ -429,6 +430,12 @@ export const SidebarUpdateItem: FC<SidebarUpdateItemProps> = ({
       } & TablesUpdate<"assistants">
     ) => {
       const { image, ...rest } = updateState
+      const isAdmin = profile?.user_role === "admin"
+      const isOwner = profile?.user_id === item.user_id
+      const shouldUseAdminUpdate = Boolean(isAdmin && !isOwner)
+      const applyAssistantUpdate = shouldUseAdminUpdate
+        ? updateAssistantAdmin
+        : updateAssistant
 
       const filesToAdd = selectedAssistantFiles.filter(
         selectedFile =>
@@ -508,12 +515,12 @@ export const SidebarUpdateItem: FC<SidebarUpdateItemProps> = ({
         await deleteAssistantTool(assistantId, tool.id)
       }
 
-      let updatedAssistant = await updateAssistant(assistantId, rest)
+      let updatedAssistant = await applyAssistantUpdate(assistantId, rest)
 
       if (image) {
         const filePath = await uploadAssistantImage(updatedAssistant, image)
 
-        updatedAssistant = await updateAssistant(assistantId, {
+        updatedAssistant = await applyAssistantUpdate(assistantId, {
           image_path: filePath
         })
 
