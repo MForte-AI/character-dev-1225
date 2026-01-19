@@ -31,7 +31,7 @@ const pickUpdateFields = (updates: Record<string, unknown>) => {
 }
 
 export async function POST(request: Request) {
-  const cookieStore = cookies()
+  const cookieStore = await cookies()
   const supabase = createServerClient(cookieStore)
 
   const {
