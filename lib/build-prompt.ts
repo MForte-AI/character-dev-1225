@@ -167,19 +167,59 @@ export async function buildFinalMessages(
   })
 
   const messageFileItemsList = messageFileItems ?? []
+  const fileMetadataText = buildFileMetadataText(payload.attachedFiles ?? [])
 
-  if (messageFileItemsList.length > 0) {
-    const retrievalText = buildRetrievalText(messageFileItemsList)
+  if (messageFileItemsList.length > 0 || fileMetadataText) {
+    const retrievalText =
+      messageFileItemsList.length > 0
+        ? buildRetrievalText(messageFileItemsList)
+        : ""
+    const appendBlocks = [fileMetadataText, retrievalText].filter(Boolean)
+    const combinedAppendText = appendBlocks.join("\n\n")
 
     finalMessages[finalMessages.length - 1] = {
       ...finalMessages[finalMessages.length - 1],
       content: `${
         finalMessages[finalMessages.length - 1].content
-      }\n\n${retrievalText}`
+      }\n\n${combinedAppendText}`
     }
   }
 
   return finalMessages
+}
+
+function buildFileMetadataText(files: Tables<"files">[]) {
+  if (!files.length) return ""
+
+  const fileBlocks = files
+    .map(file => {
+      const lines = []
+
+      if (file.document_type) {
+        lines.push(`Document Type: ${file.document_type}`)
+      }
+
+      if (file.genre) {
+        lines.push(`Genre: ${file.genre}`)
+      }
+
+      if (file.logline) {
+        lines.push(`Logline: ${file.logline}`)
+      }
+
+      if (file.page_count) {
+        lines.push(`Page Count: ${file.page_count}`)
+      }
+
+      if (lines.length === 0) return ""
+
+      return `File: ${file.name}\n${lines.join("\n")}`
+    })
+    .filter(Boolean)
+
+  if (!fileBlocks.length) return ""
+
+  return `File metadata for analysis:\n\n${fileBlocks.join("\n\n")}`
 }
 
 function buildRetrievalText(fileItems: Tables<"file_items">[]) {

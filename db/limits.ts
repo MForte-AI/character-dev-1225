@@ -24,6 +24,8 @@ export const PROMPT_CONTENT_MAX = 100000
 // Files
 export const FILE_NAME_MAX = 100
 export const FILE_DESCRIPTION_MAX = 500
+export const FILE_GENRE_MAX = 100
+export const FILE_LOGLINE_MAX = 800
 
 // Collections
 export const COLLECTION_NAME_MAX = 100

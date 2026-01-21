@@ -13,6 +13,7 @@ import {
   IconChevronDown,
   IconChevronRight,
   IconEdit,
+  IconInfoCircle,
   IconMessagePlus
 } from "@tabler/icons-react"
 import { FC, useContext, useEffect, useRef, useState } from "react"
@@ -21,6 +22,15 @@ import { SidebarUpdateItem } from "../all/sidebar-update-item"
 import { CollectionFileSelect } from "./collection-file-select"
 import { cn } from "@/lib/utils"
 import { toast } from "sonner"
+import {
+  Sheet,
+  SheetContent,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle
+} from "@/components/ui/sheet"
+import { Button } from "@/components/ui/button"
+import { formatFileSize } from "../files/file-item"
 
 interface CollectionItemProps {
   collection: Tables<"collections">
@@ -38,6 +48,8 @@ export const CollectionItem: FC<CollectionItemProps> = ({ collection }) => {
   const [isHovering, setIsHovering] = useState(false)
   const [isLoadingFiles, setIsLoadingFiles] = useState(false)
   const [collectionFiles, setCollectionFiles] = useState<CollectionFile[]>([])
+  const [infoFile, setInfoFile] = useState<CollectionFile | null>(null)
+  const [isInfoOpen, setIsInfoOpen] = useState(false)
 
   const handleFileSelect = (
     file: CollectionFile,
@@ -137,7 +149,7 @@ export const CollectionItem: FC<CollectionItemProps> = ({ collection }) => {
     return () => {
       isMounted = false
     }
-  }, [collection.id, isExpanded, files.length])
+  }, [collection.id, files, isExpanded])
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === "Enter") {
@@ -154,6 +166,95 @@ export const CollectionItem: FC<CollectionItemProps> = ({ collection }) => {
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
     >
+      <Sheet
+        open={isInfoOpen}
+        onOpenChange={open => {
+          setIsInfoOpen(open)
+          if (!open) {
+            setInfoFile(null)
+          }
+        }}
+      >
+        <SheetContent side="right" className="w-full sm:max-w-md">
+          <SheetHeader>
+            <SheetTitle>File Details</SheetTitle>
+          </SheetHeader>
+
+          {infoFile && (
+            <div className="mt-4 space-y-3 text-sm">
+              <div className="space-y-1">
+                <div className="text-muted-foreground">Name</div>
+                <div className="font-medium">{infoFile.name}</div>
+              </div>
+
+              <div className="space-y-1">
+                <div className="text-muted-foreground">Type</div>
+                <div className="font-medium">{infoFile.type}</div>
+              </div>
+
+              <div className="space-y-1">
+                <div className="text-muted-foreground">Description</div>
+                <div className="font-medium">
+                  {infoFile.description || "Not set"}
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <div className="text-muted-foreground">Document Type</div>
+                <div className="font-medium">
+                  {infoFile.document_type || "Not set"}
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <div className="text-muted-foreground">Genre</div>
+                <div className="font-medium">
+                  {infoFile.genre || "Not set"}
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <div className="text-muted-foreground">Logline</div>
+                <div className="font-medium whitespace-pre-wrap">
+                  {infoFile.logline || "Not set"}
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <div className="text-muted-foreground">Page Count</div>
+                <div className="font-medium">
+                  {infoFile.page_count ?? "Not set"}
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <div className="text-muted-foreground">Size</div>
+                <div className="font-medium">
+                  {typeof infoFile.size === "number"
+                    ? formatFileSize(infoFile.size)
+                    : "Not set"}
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <div className="text-muted-foreground">Tokens</div>
+                <div className="font-medium">
+                  {typeof infoFile.tokens === "number"
+                    ? infoFile.tokens.toLocaleString()
+                    : "Not set"}
+                </div>
+              </div>
+            </div>
+          )}
+
+          <SheetFooter className="mt-6">
+            <Button variant="outline" onClick={() => setIsInfoOpen(false)}>
+              Close
+            </Button>
+          </SheetFooter>
+        </SheetContent>
+      </Sheet>
+
       <div
         tabIndex={0}
         className={cn(
@@ -298,10 +399,24 @@ export const CollectionItem: FC<CollectionItemProps> = ({ collection }) => {
               collectionFiles.map(file => (
                 <div
                   key={file.id}
-                  className="flex items-center space-x-2 text-sm"
+                  className="flex items-center justify-between space-x-2 text-sm"
                 >
-                  <FileIcon type={file.type} size={22} />
-                  <div className="truncate">{file.name}</div>
+                  <div className="flex min-w-0 items-center space-x-2">
+                    <FileIcon type={file.type} size={22} />
+                    <div className="truncate">{file.name}</div>
+                  </div>
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    aria-label={`View details for ${file.name}`}
+                    onClick={e => {
+                      e.stopPropagation()
+                      setInfoFile(file)
+                      setIsInfoOpen(true)
+                    }}
+                  >
+                    <IconInfoCircle size={18} />
+                  </Button>
                 </div>
               ))}
           </div>

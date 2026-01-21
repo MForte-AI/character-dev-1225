@@ -36,6 +36,7 @@ interface SidebarCreateItemProps {
   contentType: ContentType
   renderInputs: () => JSX.Element
   createState: any
+  isCreateDisabled?: boolean
 }
 
 export const SidebarCreateItem: FC<SidebarCreateItemProps> = ({
@@ -44,7 +45,8 @@ export const SidebarCreateItem: FC<SidebarCreateItemProps> = ({
   contentType,
   renderInputs,
   createState,
-  isTyping
+  isTyping,
+  isCreateDisabled = false
 }) => {
   const {
     selectedWorkspace,
@@ -205,6 +207,7 @@ export const SidebarCreateItem: FC<SidebarCreateItemProps> = ({
     try {
       if (!selectedWorkspace) return
       if (isTyping) return // Prevent creation while typing
+      if (isCreateDisabled) return
 
       const createFunction = createFunctions[contentType]
       const setStateFunction = stateUpdateFunctions[contentType]
@@ -253,14 +256,18 @@ export const SidebarCreateItem: FC<SidebarCreateItemProps> = ({
         <SheetFooter className="mt-2 flex justify-between">
           <div className="flex grow justify-end space-x-2">
             <Button
-              disabled={creating}
+              disabled={creating || isCreateDisabled}
               variant="outline"
               onClick={() => onOpenChange(false)}
             >
               Cancel
             </Button>
 
-            <Button disabled={creating} ref={buttonRef} onClick={handleCreate}>
+            <Button
+              disabled={creating || isCreateDisabled}
+              ref={buttonRef}
+              onClick={handleCreate}
+            >
               {creating ? "Creating..." : "Create"}
             </Button>
           </div>

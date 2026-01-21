@@ -69,6 +69,7 @@ export const useChatHandler = () => {
     selectedPreset,
     setChatSettings,
     models,
+    files,
     isPromptPickerOpen,
     isFilePickerOpen,
     isToolPickerOpen
@@ -253,6 +254,13 @@ export const useChatHandler = () => {
         file => file.id !== "loading"
       )
       const retrievalChatFiles = chatFiles.filter(file => file.id !== "loading")
+      const attachedFiles = useRetrieval
+        ? files.filter(file =>
+            [...retrievalNewMessageFiles, ...retrievalChatFiles].some(
+              attachedFile => attachedFile.id === file.id
+            )
+          )
+        : []
 
       if (
         (retrievalNewMessageFiles.length > 0 ||
@@ -289,7 +297,8 @@ export const useChatHandler = () => {
           : [...chatMessages, tempUserChatMessage],
         assistant: selectedChat?.assistant_id ? selectedAssistant : null,
         messageFileItems: retrievedFileItems,
-        chatFileItems: chatFileItems
+        chatFileItems: chatFileItems,
+        attachedFiles
       }
 
       let generatedText = ""

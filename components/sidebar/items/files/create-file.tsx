@@ -9,10 +9,17 @@ import {
   SelectTrigger,
   SelectValue
 } from "@/components/ui/select"
+import { TextareaAutosize } from "@/components/ui/textarea-autosize"
 import { ChatbotUIContext } from "@/context/context"
-import { FILE_DESCRIPTION_MAX, FILE_NAME_MAX } from "@/db/limits"
+import {
+  FILE_DESCRIPTION_MAX,
+  FILE_GENRE_MAX,
+  FILE_LOGLINE_MAX,
+  FILE_NAME_MAX
+} from "@/db/limits"
 import { TablesInsert } from "@/supabase/types"
 import { FC, useContext, useState } from "react"
+import { DOCUMENT_TYPE_OPTIONS } from "./file-metadata"
 
 interface CreateFileProps {
   isOpen: boolean
@@ -26,6 +33,10 @@ export const CreateFile: FC<CreateFileProps> = ({ isOpen, onOpenChange }) => {
   const [name, setName] = useState("")
   const [isTyping, setIsTyping] = useState(false)
   const [description, setDescription] = useState("")
+  const [documentType, setDocumentType] = useState<string>("")
+  const [logline, setLogline] = useState("")
+  const [genre, setGenre] = useState("")
+  const [pageCount, setPageCount] = useState("")
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [selectedCollectionId, setSelectedCollectionId] = useState<string>("")
 
@@ -44,6 +55,12 @@ export const CreateFile: FC<CreateFileProps> = ({ isOpen, onOpenChange }) => {
   if (!profile) return null
   if (!selectedWorkspace) return null
 
+  const parsedPageCount = pageCount.trim()
+    ? Number.parseInt(pageCount, 10)
+    : null
+  const isValidPageCount = Boolean(parsedPageCount && parsedPageCount > 0)
+  const isCreateDisabled = !selectedFile || !isValidPageCount
+
   return (
     <SidebarCreateItem
       contentType="files"
@@ -54,6 +71,10 @@ export const CreateFile: FC<CreateFileProps> = ({ isOpen, onOpenChange }) => {
           user_id: profile.user_id,
           name,
           description,
+          document_type: documentType || null,
+          logline: logline.trim() || null,
+          genre: genre.trim() || null,
+          page_count: parsedPageCount,
           file_path: "",
           size: selectedFile?.size || 0,
           tokens: 0,
@@ -62,6 +83,7 @@ export const CreateFile: FC<CreateFileProps> = ({ isOpen, onOpenChange }) => {
       }
       isOpen={isOpen}
       isTyping={isTyping}
+      isCreateDisabled={isCreateDisabled}
       onOpenChange={onOpenChange}
       renderInputs={() => (
         <>
@@ -118,6 +140,65 @@ export const CreateFile: FC<CreateFileProps> = ({ isOpen, onOpenChange }) => {
               value={description}
               onChange={e => setDescription(e.target.value)}
               maxLength={FILE_DESCRIPTION_MAX}
+            />
+          </div>
+
+          <div className="space-y-1">
+            <Label>Document Type</Label>
+
+            <Select
+              value={documentType || "none"}
+              onValueChange={value =>
+                setDocumentType(value === "none" ? "" : value)
+              }
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select a document type" />
+              </SelectTrigger>
+
+              <SelectContent>
+                <SelectItem value="none">Select a document type</SelectItem>
+                {DOCUMENT_TYPE_OPTIONS.map(option => (
+                  <SelectItem key={option} value={option}>
+                    {option}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-1">
+            <Label>Logline</Label>
+
+            <TextareaAutosize
+              placeholder="Add a logline..."
+              value={logline}
+              onValueChange={setLogline}
+              minRows={2}
+              maxLength={FILE_LOGLINE_MAX}
+            />
+          </div>
+
+          <div className="space-y-1">
+            <Label>Genre</Label>
+
+            <Input
+              placeholder="Add a genre..."
+              value={genre}
+              onChange={e => setGenre(e.target.value)}
+              maxLength={FILE_GENRE_MAX}
+            />
+          </div>
+
+          <div className="space-y-1">
+            <Label>Page Count</Label>
+
+            <Input
+              placeholder="Enter page count..."
+              type="number"
+              min={1}
+              value={pageCount}
+              onChange={e => setPageCount(e.target.value)}
             />
           </div>
         </>

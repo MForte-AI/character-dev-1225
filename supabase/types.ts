@@ -676,10 +676,14 @@ export type Database = {
         Row: {
           created_at: string
           description: string
+          document_type: string | null
           file_path: string
           folder_id: string | null
+          genre: string | null
           id: string
+          logline: string | null
           name: string
+          page_count: number | null
           sharing: string
           size: number
           tokens: number
@@ -690,10 +694,14 @@ export type Database = {
         Insert: {
           created_at?: string
           description: string
+          document_type?: string | null
           file_path: string
           folder_id?: string | null
+          genre?: string | null
           id?: string
+          logline?: string | null
           name: string
+          page_count?: number | null
           sharing?: string
           size: number
           tokens: number
@@ -704,10 +712,14 @@ export type Database = {
         Update: {
           created_at?: string
           description?: string
+          document_type?: string | null
           file_path?: string
           folder_id?: string | null
+          genre?: string | null
           id?: string
+          logline?: string | null
           name?: string
+          page_count?: number | null
           sharing?: string
           size?: number
           tokens?: number

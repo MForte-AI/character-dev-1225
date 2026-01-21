@@ -2,13 +2,27 @@ import { Button } from "@/components/ui/button"
 import { FileIcon } from "@/components/ui/file-icon"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from "@/components/ui/select"
+import { TextareaAutosize } from "@/components/ui/textarea-autosize"
 import { ChatbotUIContext } from "@/context/context"
-import { FILE_DESCRIPTION_MAX, FILE_NAME_MAX } from "@/db/limits"
+import {
+  FILE_DESCRIPTION_MAX,
+  FILE_GENRE_MAX,
+  FILE_LOGLINE_MAX,
+  FILE_NAME_MAX
+} from "@/db/limits"
 import { getFileFromStorage } from "@/db/storage/files"
 import { Tables } from "@/supabase/types"
 import { FC, useContext, useState } from "react"
 import { SidebarItem } from "../all/sidebar-display-item"
 import { IconPaperclip } from "@tabler/icons-react"
+import { DOCUMENT_TYPE_OPTIONS } from "./file-metadata"
 
 interface FileItemProps {
   file: Tables<"files">
@@ -25,6 +39,18 @@ export const FileItem: FC<FileItemProps> = ({ file }) => {
   const [name, setName] = useState(file.name)
   const [isTyping, setIsTyping] = useState(false)
   const [description, setDescription] = useState(file.description)
+  const [documentType, setDocumentType] = useState(file.document_type || "")
+  const [logline, setLogline] = useState(file.logline || "")
+  const [genre, setGenre] = useState(file.genre || "")
+  const [pageCount, setPageCount] = useState(
+    file.page_count ? file.page_count.toString() : ""
+  )
+
+  const parsedPageCount = pageCount.trim()
+    ? Number.parseInt(pageCount, 10)
+    : null
+  const normalizedPageCount =
+    parsedPageCount && parsedPageCount > 0 ? parsedPageCount : null
 
   const isAttachedToChat =
     newMessageFiles.some(attachedFile => attachedFile.id === file.id) ||
@@ -77,7 +103,14 @@ export const FileItem: FC<FileItemProps> = ({ file }) => {
           {isAttachedToChat ? "Attached" : "Attach"}
         </Button>
       }
-      updateState={{ name, description }}
+      updateState={{
+        name,
+        description,
+        document_type: documentType || null,
+        logline: logline.trim() || null,
+        genre: genre.trim() || null,
+        page_count: normalizedPageCount
+      }}
       renderInputs={() => (
         <>
           <div
@@ -128,6 +161,65 @@ export const FileItem: FC<FileItemProps> = ({ file }) => {
               value={description}
               onChange={e => setDescription(e.target.value)}
               maxLength={FILE_DESCRIPTION_MAX}
+            />
+          </div>
+
+          <div className="space-y-1">
+            <Label>Document Type</Label>
+
+            <Select
+              value={documentType || "none"}
+              onValueChange={value =>
+                setDocumentType(value === "none" ? "" : value)
+              }
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select a document type" />
+              </SelectTrigger>
+
+              <SelectContent>
+                <SelectItem value="none">Select a document type</SelectItem>
+                {DOCUMENT_TYPE_OPTIONS.map(option => (
+                  <SelectItem key={option} value={option}>
+                    {option}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <div className="space-y-1">
+            <Label>Logline</Label>
+
+            <TextareaAutosize
+              placeholder="Add a logline..."
+              value={logline}
+              onValueChange={setLogline}
+              minRows={2}
+              maxLength={FILE_LOGLINE_MAX}
+            />
+          </div>
+
+          <div className="space-y-1">
+            <Label>Genre</Label>
+
+            <Input
+              placeholder="Add a genre..."
+              value={genre}
+              onChange={e => setGenre(e.target.value)}
+              maxLength={FILE_GENRE_MAX}
+            />
+          </div>
+
+          <div className="space-y-1">
+            <Label>Page Count</Label>
+
+            <Input
+              placeholder="Enter page count..."
+              type="number"
+              min={1}
+              value={pageCount}
+              onChange={e => setPageCount(e.target.value)}
             />
           </div>
         </>
