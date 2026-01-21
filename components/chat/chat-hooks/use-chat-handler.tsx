@@ -249,17 +249,22 @@ export const useChatHandler = () => {
       const b64Images = newMessageImages.map(image => image.base64)
 
       let retrievedFileItems: Tables<"file_items">[] = []
+      const retrievalNewMessageFiles = newMessageFiles.filter(
+        file => file.id !== "loading"
+      )
+      const retrievalChatFiles = chatFiles.filter(file => file.id !== "loading")
 
       if (
-        (newMessageFiles.length > 0 || chatFiles.length > 0) &&
+        (retrievalNewMessageFiles.length > 0 ||
+          retrievalChatFiles.length > 0) &&
         useRetrieval
       ) {
         setToolInUse("retrieval")
 
         retrievedFileItems = await handleRetrieval(
-          userInput,
-          newMessageFiles,
-          chatFiles,
+          messageContent,
+          retrievalNewMessageFiles,
+          retrievalChatFiles,
           chatSettings!.embeddingsProvider,
           sourceCount
         )

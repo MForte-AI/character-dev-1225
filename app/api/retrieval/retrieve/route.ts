@@ -5,20 +5,44 @@ import { createClient } from "@supabase/supabase-js"
 import OpenAI from "openai"
 
 export async function POST(request: Request) {
-  const json = await request.json()
-  const { userInput, fileIds, embeddingsProvider, sourceCount } = json as {
+  let json: {
     userInput: string
     fileIds: string[]
     embeddingsProvider: "openai" | "local"
     sourceCount: number
   }
 
+  try {
+    json = await request.json()
+  } catch (error) {
+    console.error("Invalid JSON payload for retrieval:", error)
+    return new Response(
+      JSON.stringify({ message: "Invalid JSON payload for retrieval." }),
+      { status: 400 }
+    )
+  }
+
+  const { userInput, fileIds, embeddingsProvider, sourceCount } = json
+
   const uniqueFileIds = [...new Set(fileIds)]
 
   try {
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+    const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+
+    if (!supabaseUrl || !supabaseServiceKey) {
+      return new Response(
+        JSON.stringify({
+          message:
+            "Missing SUPABASE_SERVICE_ROLE_KEY or NEXT_PUBLIC_SUPABASE_URL."
+        }),
+        { status: 500 }
+      )
+    }
+
     const supabaseAdmin = createClient<Database>(
-      process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY!
+      supabaseUrl,
+      supabaseServiceKey
     )
 
     const profile = await getServerProfile()
@@ -93,7 +117,9 @@ export async function POST(request: Request) {
       status: 200
     })
   } catch (error: any) {
-    const errorMessage = error.error?.message || "An unexpected error occurred"
+    console.error("Retrieval API error:", error)
+    const errorMessage =
+      error?.message || error?.error?.message || "An unexpected error occurred"
     const errorCode = error.status || 500
     return new Response(JSON.stringify({ message: errorMessage }), {
       status: errorCode

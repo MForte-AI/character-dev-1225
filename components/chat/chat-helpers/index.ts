@@ -60,6 +60,9 @@ export const handleRetrieval = async (
 ) => {
   const response = await fetch("/api/retrieval/retrieve", {
     method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
     body: JSON.stringify({
       userInput,
       fileIds: [...newMessageFiles, ...chatFiles].map(file => file.id),
@@ -69,14 +72,32 @@ export const handleRetrieval = async (
   })
 
   if (!response.ok) {
-    console.error("Error retrieving:", response)
+    let detail = ""
+    try {
+      const payload = (await response.json()) as { message?: string }
+      detail = payload?.message || ""
+    } catch (error) {
+      console.error("Error parsing retrieval error response:", error)
+    }
+
+    console.error(
+      "Error retrieving:",
+      detail || response.statusText || response
+    )
+
+    return []
   }
 
-  const { results } = (await response.json()) as {
-    results: Tables<"file_items">[]
-  }
+  try {
+    const { results } = (await response.json()) as {
+      results?: Tables<"file_items">[]
+    }
 
-  return results
+    return Array.isArray(results) ? results : []
+  } catch (error) {
+    console.error("Error parsing retrieval response:", error)
+    return []
+  }
 }
 
 export const createTempMessages = (

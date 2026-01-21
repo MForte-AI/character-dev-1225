@@ -66,12 +66,15 @@ export async function buildFinalMessages(
       return chatMessage
     }
 
-    const nextChatMessageFileItems = nextChatMessage.fileItems
+    const nextChatMessageFileItems = nextChatMessage.fileItems ?? []
+    const chatFileItemsList = chatFileItems ?? []
 
     if (nextChatMessageFileItems.length > 0) {
       const findFileItems = nextChatMessageFileItems
         .map(fileItemId =>
-          chatFileItems.find(chatFileItem => chatFileItem.id === fileItemId)
+          chatFileItemsList.find(
+            chatFileItem => chatFileItem.id === fileItemId
+          )
         )
         .filter(item => item !== undefined) as Tables<"file_items">[]
 
@@ -124,13 +127,15 @@ export async function buildFinalMessages(
   finalMessages = finalMessages.map(message => {
     let content
 
-    if (message.image_paths.length > 0) {
+    const imagePaths = message.image_paths ?? []
+
+    if (imagePaths.length > 0) {
       content = [
         {
           type: "text",
           text: message.content
         },
-        ...message.image_paths.map(path => {
+        ...imagePaths.map(path => {
           let formedUrl = ""
 
           if (path.startsWith("data")) {
@@ -161,8 +166,10 @@ export async function buildFinalMessages(
     }
   })
 
-  if (messageFileItems.length > 0) {
-    const retrievalText = buildRetrievalText(messageFileItems)
+  const messageFileItemsList = messageFileItems ?? []
+
+  if (messageFileItemsList.length > 0) {
+    const retrievalText = buildRetrievalText(messageFileItemsList)
 
     finalMessages[finalMessages.length - 1] = {
       ...finalMessages[finalMessages.length - 1],
